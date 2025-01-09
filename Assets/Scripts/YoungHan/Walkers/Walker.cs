@@ -173,7 +173,7 @@ public class Walker : MonoBehaviour, IPositionable, IMovable
     /// <param name="collision"></param>
     protected void OnCollisionExit2D(Collision2D collision)
     {
-        if (getRigidbody2D.velocity.y < IJumpable.UnjumpableVelocity && _isGrounded == true)
+        if (getRigidbody2D.velocity.y < IMovable.MinimumDropVelocity && _isGrounded == true)
         {
             _isGrounded = false;
         }

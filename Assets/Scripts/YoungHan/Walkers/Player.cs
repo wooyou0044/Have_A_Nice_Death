@@ -24,18 +24,17 @@ public sealed class Player : Runner, IHittable
         get;
     }
 
-    //피격 보고 액션
-
-    private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
+    //피격 액션 델리게이트
+    private Action<IHittable, int> _hitAction = null;
+    //스킬 사용 액션 델리게이트
     
-    //마법구체 발사 액션
+    //private Func<Interaction, bool> _interactionFunction = null;
 
-    private Func<Interaction, bool> _interactionFunction = null;
-
-    public void Initialize(Action<Strike, Strike.Area, GameObject> strikeAction, Func<Interaction, bool> interactionFunction)
+    public void Initialize(Action<IHittable, int> hit)
     {
-        _strikeAction = strikeAction;
-        _interactionFunction = interactionFunction;
+        _hitAction = hit;
+        //_strikeAction = strike;
+        //_interactionFunction = interaction;
     }
 
     public void Heal()
@@ -48,15 +47,13 @@ public sealed class Player : Runner, IHittable
 
     }
 
+    [SerializeField]
+    private Projectile projectile;
+
     public void Attack1()
     {
-        //Strike.PolygonArea polygonArea = new Strike.PolygonArea(position, null, null);
-        //polygonArea.Show();
-        //Strike.TagArea tagArea = new Strike.TagArea(new string[] {"Player"});
-        //tagArea.Show();
-        Strike.TargetArea targetArea = new Strike.TargetArea(new IHittable[1] { this});
-        targetArea.Show();
-
+        Projectile sample = Instantiate(projectile);
+        //sample.Shot(new Strike(), null, position, getTransform.rotation, null);
     }
 
     public void Attack2()
@@ -91,10 +88,10 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
-        {
-            //성공하면 애니메이션 바꾸기
-        }
+        //if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
+        //{
+        //    //성공하면 애니메이션 바꾸기
+        //}
     }
 
     public void MoveDown()

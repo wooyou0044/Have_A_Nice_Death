@@ -1,7 +1,9 @@
 using UnityEngine;
 
+
+
 /// <summary>
-/// 위치 지정이 가능한 객체들이 상속 받는 인터페이스
+/// 특정 위치에서 소환해야 되는 상황에 쓰는 인터페이스
 /// </summary>
 public interface IPositionable
 {
@@ -18,7 +20,9 @@ public interface IPositionable
 public interface IMovable
 {
     //다른 물체와 충돌 시 유효 거리
-    public static readonly float OverlappingDistance = 0.02f;
+    protected static readonly float OverlappingDistance = 0.02f;
+    //땅에 착지 중 땅을 이탈했다고 간주하는 최소 속도
+    protected static readonly float MinimumDropVelocity = -0.49f;
     //오른쪽으로 이동
     public void MoveRight();
     //왼쪽으로 이동
@@ -32,8 +36,6 @@ public interface IMovable
 /// </summary>
 public interface IJumpable
 {
-    //낙하 시 공중에 있는 것으로 간주하는 기준 속도
-    public static readonly float UnjumpableVelocity = -0.49f;
     //뛰어 오르기
     public void Jump();
     //뛸 수 있는지 반환

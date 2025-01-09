@@ -1,4 +1,4 @@
-using UnityEditor;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -30,17 +30,10 @@ public struct Strike
         }
     }
 
-    //타격 대상에게 가해질 버프 & 디버프이다.
-    //public Spell[] spells {
-    //    private set;
-    //    get;
-    //}
-
-    public Strike(int power, byte extension/*, Spell[] spells = null*/)
+    public Strike(int power, byte extension)
     {
         this.power = power;
         this.extension = extension;
-        //this.spells = spells;
     }
 
     /// <summary>
@@ -65,13 +58,6 @@ public struct Strike
             Debug.DrawLine(dot4, dot1, color, duration);
         }
 #endif
-
-        protected static Vector2[] GetColliderEdges(Collider2D collider)
-        {
-
-            return new Vector2[0];
-        }
-
         public abstract void Show();
 
         public abstract bool CanStrike(IHittable hittable);
@@ -143,18 +129,18 @@ public struct Strike
             int length = hittables != null? hittables.Length : 0;
             for(int i = 0; i < length; i++)
             {
-                Vector2[] vectors = GetColliderEdges(hittables[i].GetCollider2D());
-                for (int j = 0; j < vectors.Length; j++)
-                {
-                    if (j > 0)
-                    {
-                        Debug.DrawLine(vectors[j - 1], vectors[j], Color.red, DrawDuration);
-                        if (j == vectors.Length - 1)
-                        {
-                            Debug.DrawLine(vectors[j], vectors[0], Color.red, DrawDuration);
-                        }
-                    }
-                }
+                //Vector2[] vectors = GetColliderEdges(hittables[i].GetCollider2D());
+                //for (int j = 0; j < vectors.Length; j++)
+                //{
+                //    if (j > 0)
+                //    {
+                //        Debug.DrawLine(vectors[j - 1], vectors[j], Color.red, DrawDuration);
+                //        if (j == vectors.Length - 1)
+                //        {
+                //            Debug.DrawLine(vectors[j], vectors[0], Color.red, DrawDuration);
+                //        }
+                //    }
+                //}
             }
 #endif
         }
@@ -239,36 +225,6 @@ public struct Strike
                         {
                             return true;
                         }
-                    }
-                    // 1. Collider의 점들 가져오기
-                    Vector2[] colliderEdges = GetColliderEdges(collider2D);
-                    // 2. 다각형 변과 Collider 경계 검사
-                    for (int i = 0; i < length; i++)
-                    {
-                        Vector2 start = polygon[i];
-                        Vector2 end = polygon[(i + 1) % length];
-
-                        for (int j = 0; j < colliderEdges.Length; j += 2)
-                        {
-                            Vector2 colliderStart = colliderEdges[j];
-                            Vector2 colliderEnd = colliderEdges[j + 1];
-                            if (DoLinesIntersect(start, end, colliderStart, colliderEnd))
-                            {
-                                return true; // 교차하는 변이 존재
-                            }
-                        }
-                    }
-                    bool DoLinesIntersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-                    {
-                        // 선분의 교차 여부를 확인
-                        float det = (b.x - a.x) * (d.y - c.y) - (b.y - a.y) * (d.x - c.x);
-                        if (Mathf.Abs(det) < Mathf.Epsilon)
-                        {
-                            return false; // 선분이 평행함
-                        }
-                        float t = ((c.x - a.x) * (d.y - c.y) - (c.y - a.y) * (d.x - c.x)) / det;
-                        float u = ((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x)) / det;
-                        return (t >= 0 && t <= 1 && u >= 0 && u <= 1); // 교차 조건
                     }
                 }
                 else
