@@ -2,26 +2,37 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// 유저가 조종하게 되는 플레이어 클래스
+/// 유저가 조종하는 플레이어 클래스
 /// </summary>
+[RequireComponent(typeof(Animator))]
 public sealed class Player : Runner, IHittable
 {
-    private static readonly Vector2 LeftRotation = new Vector2(0, 180);
-    private static readonly Vector2 RightRotation = new Vector2(0, 0);
+    private static readonly string MoveAnimation = "Move";
+    private static readonly string JumpAnimation = "Jump";
 
-    public enum Interaction
-    {
-        Pick,
-        MoveUp,
-        MoveDown
-    }
+    private bool _hasAnimator = false;
 
-    [SerializeField]
     private Animator _animator = null;
+
+    private Animator getAnimator
+    {
+        get
+        {
+            if (_hasAnimator == false)
+            {
+                _hasAnimator = true;
+                _animator = GetComponent<Animator>();
+            }
+            return _animator;
+        }
+    }
 
     public bool isAlive
     {
-        get;
+        get
+        {
+            return true;
+        }
     }
 
     //피격 액션 델리게이트
@@ -33,27 +44,53 @@ public sealed class Player : Runner, IHittable
     public void Initialize(Action<IHittable, int> hit)
     {
         _hitAction = hit;
-        //_strikeAction = strike;
-        //_interactionFunction = interaction;
+        //_strikeAction = strike;        //_interactionFunction = interaction;
+    } 
+
+    public override void MoveLeft()
+    {
+        if (isAlive == true)
+        {
+            base.MoveLeft();
+            getTransform.rotation = Quaternion.Euler(LeftRotation);
+            getAnimator.SetBool(MoveAnimation, true);
+        }
     }
 
-    public void Heal()
+    public override void MoveRight()
+    {
+        if (isAlive == true)
+        {
+            base.MoveRight();
+            getTransform.rotation = Quaternion.Euler(RightRotation);
+            getAnimator.SetBool(MoveAnimation, true);
+        }
+    }
+
+    public override void MoveStop()
+    {
+        if (isAlive == true)
+        {
+            base.MoveStop();
+            getAnimator.SetBool(MoveAnimation, false);
+        }
+    }
+
+    public void MoveUp()
+    {
+        //if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
+        //{
+        //    //성공하면 애니메이션 바꾸기
+        //}
+    }
+
+    public void MoveDown()
     {
 
     }
-
-    public void UseLethalMove()
-    {
-
-    }
-
-    [SerializeField]
-    private Projectile projectile;
 
     public void Attack1()
     {
-        Projectile sample = Instantiate(projectile);
-        //sample.Shot(new Strike(), null, position, getTransform.rotation, null);
     }
 
     public void Attack2()
@@ -66,35 +103,17 @@ public sealed class Player : Runner, IHittable
 
     }
 
-    public override void MoveLeft()
+    public void AttackWide()
     {
-        base.MoveLeft();
-        getTransform.rotation = Quaternion.Euler(LeftRotation);
-        _animator?.SetBool("IsWork", true);
+
     }
 
-    public override void MoveRight()
+    public void Interact()
     {
-        base.MoveRight();
-        getTransform.rotation = Quaternion.Euler(RightRotation);
-        _animator?.SetBool("IsWork", true);
+
     }
 
-    public override void MoveStop()
-    {
-        base.MoveStop();
-        _animator?.SetBool("IsWork", false);
-    }
-
-    public void MoveUp()
-    {
-        //if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
-        //{
-        //    //성공하면 애니메이션 바꾸기
-        //}
-    }
-
-    public void MoveDown()
+    public void Heal()
     {
 
     }

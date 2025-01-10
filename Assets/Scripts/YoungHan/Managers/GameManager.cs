@@ -31,7 +31,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController.player?.Initialize(Report);
+        getController._player?.Initialize(Report);
     }
 
     private void Hit(Strike strike, IHittable hittable, GameObject effectObject)
@@ -64,7 +64,7 @@ public sealed class GameManager : Manager<GameManager>
         if (hittable.isAlive == false)
         {
             //사망하면 추가 보고
-            if (instance._controller.player == (Object)hittable)
+            if (instance._controller._player == (Object)hittable)
             {
 
             }
@@ -81,7 +81,7 @@ public sealed class GameManager : Manager<GameManager>
     {
         if(area == null)
         {
-            instance.Hit(strike, instance._controller.player, effectObject);
+            instance.Hit(strike, instance._controller._player, effectObject);
             int count = instance._hittableList.Count;
             for (int i = 0; i < count; i++)
             {
@@ -90,9 +90,9 @@ public sealed class GameManager : Manager<GameManager>
         }
         else
         {
-            if (area.CanStrike(instance._controller.player) == true)
+            if (area.CanStrike(instance._controller._player) == true)
             {
-                instance.Hit(strike, instance._controller.player, effectObject);
+                instance.Hit(strike, instance._controller._player, effectObject);
             }
             int count = instance._hittableList.Count;
             for (int i = 0; i < count; i++)
