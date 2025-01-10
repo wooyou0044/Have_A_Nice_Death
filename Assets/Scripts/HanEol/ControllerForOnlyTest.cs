@@ -99,7 +99,7 @@ public class ControllerForOnlyTest : MonoBehaviour
             }
             if (upInput.isPressed == true)
             {
-                if()
+                //if()
                 player.MoveUp();
             }
             if (jumpInput.isPressed == true)
@@ -163,7 +163,7 @@ public class ControllerForOnlyTest : MonoBehaviour
             if (UnityEngine.Input.GetKey(input.keyCodes[i]) == true)
             {
                 //¿”¿«∫ª
-                if (input.keyCodes[i] == )
+                //if (input.keyCodes[i] == )
 
 
 
