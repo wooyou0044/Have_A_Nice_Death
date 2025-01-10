@@ -27,7 +27,7 @@ public sealed class Player : Runner, IHittable
     //피격 액션 델리게이트
     private Action<IHittable, int> _hitAction = null;
     //스킬 사용 액션 델리게이트
-    
+
     //private Func<Interaction, bool> _interactionFunction = null;
 
     public void Initialize(Action<IHittable, int> hit)
