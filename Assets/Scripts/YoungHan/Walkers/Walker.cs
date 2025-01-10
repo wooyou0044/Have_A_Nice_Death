@@ -4,15 +4,11 @@ using UnityEngine;
 /// <summary>
 /// 위치를 지정할 수 있고 이동할 수 있는 워커 클래스
 /// </summary>
-[DisallowMultipleComponent]
-[RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 
 public class Walker : MonoBehaviour, IPositionable, IMovable
 {
-    protected static readonly Vector2 LeftRotation = new Vector2(0, 180);
-    protected static readonly Vector2 RightRotation = new Vector2(0, 0);
-
     private bool _hasTransform = false;
 
     private Transform _transform = null;
@@ -87,7 +83,6 @@ public class Walker : MonoBehaviour, IPositionable, IMovable
     protected float _movingSpeed = 10;
 
     //땅에 착륙했는지 유무를 판단하는 프로퍼티
-    [SerializeField]
     private bool _isGrounded = false;
 
     public bool isGrounded

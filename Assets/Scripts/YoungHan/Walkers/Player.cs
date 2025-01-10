@@ -4,38 +4,30 @@ using UnityEngine;
 /// <summary>
 /// 유저가 조종하게 되는 플레이어 클래스
 /// </summary>
-[RequireComponent(typeof(Animator))]
 public sealed class Player : Runner, IHittable
 {
-    private bool _hasAnimator = false;
+    private static readonly Vector2 LeftRotation = new Vector2(0, 180);
+    private static readonly Vector2 RightRotation = new Vector2(0, 0);
 
-    private Animator _animator = null;
-
-    private Animator getAnimator
+    public enum Interaction
     {
-        get
-        {
-            if (_hasAnimator == false)
-            {
-                _hasAnimator = true;
-                _animator = GetComponent<Animator>();
-            }
-            return _animator;
-        }
+        Pick,
+        MoveUp,
+        MoveDown
     }
+
+    [SerializeField]
+    private Animator _animator = null;
 
     public bool isAlive
     {
-        get
-        {
-            return true;
-        }
+        get;
     }
 
     //피격 액션 델리게이트
     private Action<IHittable, int> _hitAction = null;
     //스킬 사용 액션 델리게이트
-    
+
     //private Func<Interaction, bool> _interactionFunction = null;
 
     public void Initialize(Action<IHittable, int> hit)
@@ -55,9 +47,13 @@ public sealed class Player : Runner, IHittable
 
     }
 
+    [SerializeField]
+    private Projectile projectile;
+
     public void Attack1()
     {
-
+        Projectile sample = Instantiate(projectile);
+        //sample.Shot(new Strike(), null, position, getTransform.rotation, null);
     }
 
     public void Attack2()
@@ -72,31 +68,22 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveLeft()
     {
-        if (isAlive == true)
-        {
-            base.MoveLeft();
-            getTransform.rotation = Quaternion.Euler(LeftRotation);
-            getAnimator.SetBool("Run", true);
-        }
+        base.MoveLeft();
+        getTransform.rotation = Quaternion.Euler(LeftRotation);
+        _animator?.SetBool("IsWork", true);
     }
 
     public override void MoveRight()
     {
-        if (isAlive == true)
-        {
-            base.MoveRight();
-            getTransform.rotation = Quaternion.Euler(RightRotation);
-            getAnimator.SetBool("Run", true);
-        }
+        base.MoveRight();
+        getTransform.rotation = Quaternion.Euler(RightRotation);
+        _animator?.SetBool("IsWork", true);
     }
 
     public override void MoveStop()
     {
-        if (isAlive == true)
-        {
-            base.MoveStop();
-            getAnimator.SetBool("Run", false);
-        }
+        base.MoveStop();
+        _animator?.SetBool("IsWork", false);
     }
 
     public void MoveUp()
