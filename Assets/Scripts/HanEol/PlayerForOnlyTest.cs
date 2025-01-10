@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 유저가 조종하게 되는 플레이어 클래스
 /// </summary>
-public sealed class Player : Runner, IHittable
+public sealed class PlayerForOnlyTest : Runner, IHittable
 {
     private static readonly Vector2 LeftRotation = new Vector2(0, 180);
     private static readonly Vector2 RightRotation = new Vector2(0, 0);
@@ -27,7 +27,7 @@ public sealed class Player : Runner, IHittable
     //피격 액션 델리게이트
     private Action<IHittable, int> _hitAction = null;
     //스킬 사용 액션 델리게이트
-
+    
     //private Func<Interaction, bool> _interactionFunction = null;
 
     public void Initialize(Action<IHittable, int> hit)
@@ -70,20 +70,20 @@ public sealed class Player : Runner, IHittable
     {
         base.MoveLeft();
         getTransform.rotation = Quaternion.Euler(LeftRotation);
-        _animator?.SetBool("IsWork", true);
+        //_animator?.SetBool("IsWork", true);
     }
 
     public override void MoveRight()
     {
         base.MoveRight();
         getTransform.rotation = Quaternion.Euler(RightRotation);
-        _animator?.SetBool("IsWork", true);
+        //_animator?.SetBool("IsWork", true);
     }
 
     public override void MoveStop()
     {
         base.MoveStop();
-        _animator?.SetBool("IsWork", false);
+        //_animator?.SetBool("IsWork", false);
     }
 
     public void MoveUp()
@@ -108,4 +108,22 @@ public sealed class Player : Runner, IHittable
     {
         return getCollider2D;
     }
+
+    //여기서부턴 임의로 만들어 보는 곳
+
+    private bool isLetter = false;
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Letter"))
+        {
+            OnLetter();
+        }
+    }
+
+    private bool OnLetter()
+    {
+        isLetter = true;
+        return isLetter;
+    }
+
 }
