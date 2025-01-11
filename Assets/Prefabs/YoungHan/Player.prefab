@@ -192,6 +192,8 @@ MonoBehaviour:
   _dashValue: 50
   _dashCoolTime: 1.5
   _isDashed: 0
+  _levitationDelay: 1
+  _levitationCoolTime: 0.4
   _idleClip: {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
   _idleToRunClip: {fileID: 7400000, guid: 7c86be6876b9568499db638a76676fd4, type: 2}
   _idleUturnClip: {fileID: 7400000, guid: 2e6ca9feb81217c40a9539b5e46fb3d9, type: 2}
@@ -202,6 +204,10 @@ MonoBehaviour:
   _jumpFallingClip: {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
   _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
+  _comboMove1Clip: {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
+  _comboMove2Clip: {fileID: 7400000, guid: 8fcce7e6c798a86459b2820ed6e0ec71, type: 2}
+  _comboMove3Clip: {fileID: 7400000, guid: 7e563f1ccdce77345b2f6e1414ebf8d5, type: 2}
+  _comboMove4Clip: {fileID: 7400000, guid: eefc45096a752fb4c9e1fc87e32c2591, type: 2}
   _remainLife: 65
   _lossLife: 0
   _maxLife: 65

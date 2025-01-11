@@ -29,6 +29,14 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _jumpLandingClip = null;
     [SerializeField]
     private AnimationClip _dashClip = null;
+    [SerializeField]
+    private AnimationClip _comboMove1Clip = null;
+    [SerializeField]
+    private AnimationClip _comboMove2Clip = null;
+    [SerializeField]
+    private AnimationClip _comboMove3Clip = null;
+    [SerializeField]
+    private AnimationClip _comboMove4Clip = null;
 
     private bool _hasAnimator = false;
 
@@ -125,6 +133,19 @@ public sealed class Player : Runner, IHittable
             return _maxMana;
         }
     }
+
+    //이건 무기 클래스가 대신해야 한다
+    private enum Combo: byte
+    {
+        None,
+        Combo1,
+        Combo2,
+        Combo3,
+        Combo4,
+    }
+
+    [SerializeField]
+    private Combo _comboCount = Combo.None;
 
     //피격 액션 델리게이트
     private Action<IHittable, int> _hitAction = null;
@@ -310,6 +331,7 @@ public sealed class Player : Runner, IHittable
             base.Jump();
             if(velocity != getRigidbody2D.velocity.y)
             {
+                _comboCount = Combo.None;
                 getSpriteRenderer.flipX = false;
                 Play(_jumpStartClip, _jumpFallingClip , false);
             }
@@ -324,6 +346,7 @@ public sealed class Player : Runner, IHittable
             base.Dash();
             if (velocity != getRigidbody2D.velocity.x)
             {
+                _comboCount = Combo.None;
                 getSpriteRenderer.flipX = false;
                 Play(_dashClip, _jumpFallingClip, false);
             }
@@ -352,7 +375,29 @@ public sealed class Player : Runner, IHittable
     {
         if(isAlive == true)
         {
-            Debug.Log("공격");
+            if (IsLevitate() == false && _comboCount < Combo.Combo4)
+            {
+                switch(_comboCount)
+                {
+                    case Combo.None:
+                        Levitate(false);
+                        Play(_comboMove1Clip, isGrounded == true? _idleClip : _jumpFallingClip, false);
+                        break;
+                    case Combo.Combo1:
+                        Levitate(false);
+                        Play(_comboMove2Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
+                        break;
+                    case Combo.Combo2:
+                        Levitate(false);
+                        Play(_comboMove3Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
+                        break;
+                    case Combo.Combo3:
+                        Levitate(false);
+                        Play(_comboMove4Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
+                        break;
+                }
+                _comboCount++;
+            }
         }
     }
 
@@ -383,7 +428,25 @@ public sealed class Player : Runner, IHittable
 
     public void Hit(Strike strike)
     {
-
+        int result = strike.result;
+        if(result > 0)
+        {
+            //피 채우는 용도
+        }
+        else
+        {
+            //피 깎는 용도
+            if(-result < _remainLife)
+            {
+                _remainLife -= (byte)-result;
+            }
+            //사망
+            else
+            {
+                _remainLife = 0;
+            }
+        }
+        _hitAction?.Invoke(this, result);
     }
 
     public Collider2D GetCollider2D()

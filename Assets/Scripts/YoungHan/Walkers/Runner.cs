@@ -37,6 +37,14 @@ public class Runner : Walker/*, IJumpable*/
 
     private IEnumerator _dashCoroutine = null;
 
+    [SerializeField, Header("공중부양 시간"), Range(0.1f, 10)]
+    protected float _levitationDelay = 0.1f;
+
+    [SerializeField, Header("공중부양 쿨타임"), Range(0, 5)]
+    protected float _levitationCoolTime = 0.3f;
+
+    private IEnumerator _levitationCoroutine = null;
+
 #if UNITY_EDITOR
     protected virtual void OnValidate()
     {
@@ -91,6 +99,7 @@ public class Runner : Walker/*, IJumpable*/
     {
         if (_jumpCount > 0 && _jumpCoroutine == null && getRigidbody2D.gravityScale > 0)
         {
+            StopLevitate();
             _jumpCoroutine = DoJumpAndDelay();
             StartCoroutine(_jumpCoroutine);
             IEnumerator DoJumpAndDelay()
@@ -108,6 +117,7 @@ public class Runner : Walker/*, IJumpable*/
     {
         if (_dashCoroutine == null && _isDashed == false)
         {
+            StopLevitate();
             _dashCoroutine = DoDashAndDelay();
             StartCoroutine(_dashCoroutine);
             IEnumerator DoDashAndDelay()
@@ -123,5 +133,52 @@ public class Runner : Walker/*, IJumpable*/
                 _isDashed = false;
             }
         }
+    }
+
+    private void StopLevitate()
+    {
+        if (_levitationCoroutine != null)
+        {
+            StopCoroutine(_levitationCoroutine);
+            _levitationCoroutine = null;
+            getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+        }
+    }
+
+    protected void Levitate(bool force)
+    {
+        Levitate(force, _levitationDelay);
+    }
+
+    protected void Levitate(bool force, float duration)
+    {
+        if(force == true)
+        {
+            if(_levitationCoroutine != null)
+            {
+                StopCoroutine(_levitationCoroutine);
+            }
+            _levitationCoroutine = DoLevitateAndDelay();
+            StartCoroutine(_levitationCoroutine);
+        }
+        else if(_levitationCoroutine == null)
+        {
+            _levitationCoroutine = DoLevitateAndDelay();
+            StartCoroutine(_levitationCoroutine);
+        }
+        IEnumerator DoLevitateAndDelay()
+        {
+            getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            yield return new WaitForSeconds(duration);
+            getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+            getRigidbody2D.velocity += Vector2.down;
+            yield return new WaitForSeconds(_levitationCoolTime);
+            _levitationCoroutine = null;
+        }
+    }
+
+    public bool IsLevitate()
+    {
+        return _levitationCoroutine != null;
     }
 }
