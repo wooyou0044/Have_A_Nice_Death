@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -39,7 +38,7 @@ public struct Strike
     /// <summary>
     /// 해당 대상이 타격 대상인지 구별하는 클래스(단 이 값이 null이라면 대상을 구별하지 않고 광역 타격)
     /// </summary>
-    public abstract class Area
+    public abstract class Target
     {
 #if UNITY_EDITOR
         private static readonly float DotSize = 0.01f;
@@ -66,11 +65,11 @@ public struct Strike
     /// <summary>
     /// 특정 태그만 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class TagArea : Area
+    public class TagTarget : Target
     {
         private string[] tags;
 
-        public TagArea(string[] tags)
+        public TagTarget(string[] tags)
         {
             this.tags = tags;
         }
@@ -114,7 +113,7 @@ public struct Strike
     /// <summary>
     /// 지정한 대상들만 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class TargetArea : Area
+    public class TargetArea : Target
     {
         private IHittable[] hittables;
 
@@ -165,7 +164,7 @@ public struct Strike
     /// <summary>
     /// 특정 위치의 특정 태그 값을 가지면 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class PolygonArea : TagArea
+    public class PolygonArea : TagTarget
     {
         private Vector2 center;
 

@@ -1,14 +1,21 @@
 using UnityEngine;
 
-
-
 /// <summary>
-/// 특정 위치에서 소환해야 되는 상황에 쓰는 인터페이스
+/// 트랜스폼을 반환하는 용도를 가진 인터페이스
 /// </summary>
-public interface IPositionable
+public interface ITransformable
 {
-    //위치 지정이 가능한 프로퍼티
-    Vector2 position {
+    //왼쪽 방향 오일러 벡터
+    protected static readonly Vector2 LeftRotation = new Vector2(0, 180);
+    //오른쪽 방향 오일러 벡터
+    protected static readonly Vector2 RightRotation = new Vector2(0, 0);
+
+    public Vector2 position {
+        get;
+        set;
+    }
+
+    public Quaternion rotation {
         get;
         set;
     }
@@ -34,13 +41,13 @@ public interface IMovable
 /// <summary>
 /// 뛰어 오를 수 있는 객체들이 상속 받는 인터페이스
 /// </summary>
-public interface IJumpable
-{
-    //뛰어 오르기
-    public void Jump();
-    //뛸 수 있는지 반환
-    public bool CanJump();
-}
+//public interface IJumpable
+//{
+//    //뛰어 오르기
+//    public void Jump();
+//    //뛸 수 있는지 반환
+//    public bool CanJump();
+//}
 
 /// <summary>
 /// 피격 당할 수 있는 객체들이 상속 받는 인터페이스
@@ -58,8 +65,6 @@ public interface IHittable
     }
 
     public void Hit(Strike strike);
-
-    //public void Hit(Spell[] spells);
 
     public Collider2D GetCollider2D();
 }

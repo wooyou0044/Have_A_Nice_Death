@@ -5,13 +5,14 @@ using UnityEngine;
 /// 게임의 진행을 총괄하는 매니저, 싱글턴을 상속 받은 클래스
 /// </summary>
 [RequireComponent(typeof(Controller))]
+[RequireComponent(typeof(ObjectPooler))]
+
 public sealed class GameManager : Manager<GameManager>
 {
     private bool _hasController = false;
 
-    private Controller _controller;
+    private Controller _controller = null;
 
-    //플레이어를 조종할 수 있는 컨트롤러
     private Controller getController {
         get
         {
@@ -24,33 +25,52 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private List<IHittable> _hittableList = new List<IHittable>();
+    private bool _hasObjectPooler = false;
 
-    private List<GameObject> _effectObjectList = new List<GameObject>();
+    private ObjectPooler _objectPooler = null;
+
+    private ObjectPooler getObjectPooler {
+        get
+        {
+            if(_hasObjectPooler == false)
+            {
+                _hasObjectPooler = true;
+                _objectPooler = GetComponent<ObjectPooler>();
+            }
+            return _objectPooler;
+        }
+    }
+
+    private List<IHittable> _hittableList = new List<IHittable>();
 
     protected override void Initialize()
     {
         _destroyOnLoad = true;
         getController._player?.Initialize(Report);
+        MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
+        foreach (MonoBehaviour monoBehaviour in monoBehaviours)
+        {
+            if (monoBehaviour is IHittable hittable)
+            {
+                _hittableList.Add(hittable);
+            }
+        }
     }
 
-    private void Hit(Strike strike, IHittable hittable, GameObject effectObject)
+    private void Hit(IHittable hittable, Strike strike, GameObject effect, Transform transform)
     {
-        ShowEffect(effectObject, hittable.GetCollider2D().bounds.center);
-        hittable.Hit(strike);
+        hittable.Hit(strike, effect, transform, ShowEffect);
     }
 
     /// <summary>
-    /// 특정 위치에 일어나는 효과 오브젝트를 보여주는 함수
+    ///  특정 위치에 일어나는 효과 오브젝트를 보여주는 함수
     /// </summary>
-    /// <param name="effectObject"></param>
+    /// <param name="original"></param>
     /// <param name="position"></param>
-    public void ShowEffect(GameObject effectObject, Vector2 position)
+    /// <param name="transform"></param>
+    public void ShowEffect(GameObject original, Vector2 position, Transform transform)
     {
-        if(effectObject != null)
-        {
-
-        }
+        getObjectPooler.Set(original, position, transform);
     }
 
     /// <summary>
@@ -72,37 +92,15 @@ public sealed class GameManager : Manager<GameManager>
     }
 
     /// <summary>
-    /// 타격이 들어왔을 때 호출하는 함수
+    /// 대상을 타격 할 때 호출하는 함수
     /// </summary>
+    /// <param name="target"></param>
     /// <param name="strike"></param>
-    /// <param name="area"></param>
-    /// <param name="effectObject"></param>
-    public static void Report(Strike strike, Strike.Area area, GameObject effectObject)
+    /// <param name="effect"></param>
+    /// <param name="transform"></param>
+    public static void Report(Strike.Target target, Strike strike, Transform transform, GameObject effect)
     {
-        if(area == null)
-        {
-            instance.Hit(strike, instance._controller._player, effectObject);
-            int count = instance._hittableList.Count;
-            for (int i = 0; i < count; i++)
-            {
-                instance.Hit(strike, instance._hittableList[i], effectObject);
-            }
-        }
-        else
-        {
-            if (area.CanStrike(instance._controller._player) == true)
-            {
-                instance.Hit(strike, instance._controller._player, effectObject);
-            }
-            int count = instance._hittableList.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (area.CanStrike(instance._hittableList[i]) == true)
-                {
-                    instance.Hit(strike, instance._hittableList[i], effectObject);
-                }
-            }
-        }
+        target.Hit(strike, instance._hittableList, instance.Hit, effect, transform);
     }
 
     //스킬을 사용할 때 호출하는 함수

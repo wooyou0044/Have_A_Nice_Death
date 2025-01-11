@@ -8,11 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 
-public class Walker : MonoBehaviour, IPositionable, IMovable
+public class Walker : MonoBehaviour, ITransformable, IMovable
 {
-    protected static readonly Vector2 LeftRotation = new Vector2(0, 180);
-    protected static readonly Vector2 RightRotation = new Vector2(0, 0);
-
     private bool _hasTransform = false;
 
     private Transform _transform = null;
@@ -69,19 +66,6 @@ public class Walker : MonoBehaviour, IPositionable, IMovable
 
     private List<Collision2D> _rightCollision2D = new List<Collision2D>();
 
-    //객체의 위치값을 이동시키거나 반환하는 프로퍼티
-    public Vector2 position
-    {
-        get
-        {
-            return getTransform.position;
-        }
-        set
-        {
-            getTransform.position = value;
-        }
-    }
-
     //이동 속도
     [SerializeField, Header("이동 속도"), Range(0, float.MaxValue)]
     protected float _movingSpeed = 10;
@@ -95,6 +79,30 @@ public class Walker : MonoBehaviour, IPositionable, IMovable
         get
         {
             return _isGrounded;
+        }
+    }
+
+    //객체의 위치값을 설정 하거나 반환하는 프로퍼티
+    public Vector2 position {
+        get
+        {
+            return getTransform.position;
+        }
+        set
+        {
+            getTransform.position = value;
+        }
+    }
+
+    //객체의 회전값을 설정 하거나 반환하는 프로퍼티
+    public Quaternion rotation {
+        get
+        {
+            return getTransform.rotation;
+        }
+        set
+        {
+            getTransform.rotation = value;
         }
     }
 
@@ -176,7 +184,7 @@ public class Walker : MonoBehaviour, IPositionable, IMovable
     /// 낙하나 양쪽 충돌체와 떨어졌는지 확인하는 메서드
     /// </summary>
     /// <param name="collision"></param>
-    protected void OnCollisionExit2D(Collision2D collision)
+    protected virtual void OnCollisionExit2D(Collision2D collision)
     {
         if (getRigidbody2D.velocity.y < IMovable.MinimumDropVelocity && _isGrounded == true)
         {

@@ -85,7 +85,7 @@ public class Projectile : MonoBehaviour
 
     private Strike _strike;
     private string[] _tags;
-    private Action<Strike, Strike.Area, GameObject> _action1 = null;
+    private Action<Strike, Strike.Target, GameObject> _action1 = null;
     private Action<GameObject, Vector2> _action2 = null;
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -106,7 +106,7 @@ public class Projectile : MonoBehaviour
         _action2?.Invoke(_explosionObject, position);
     }
 
-    private void Shot(Vector2 position, Quaternion rotation, Strike strike, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
+    private void Shot(Vector2 position, Quaternion rotation, Strike strike, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         gameObject.SetActive(true);
         getCollider2D.enabled = true;
@@ -143,7 +143,7 @@ public class Projectile : MonoBehaviour
     /// <param name="tags"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    public void Shot(Strike strike, Vector2 start, Vector2 target, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
+    public void Shot(Strike strike, Vector2 start, Vector2 target, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         Shot(start, Quaternion.LookRotation((target - start).normalized), strike, tags, action1, action2);
     }
@@ -157,7 +157,7 @@ public class Projectile : MonoBehaviour
     /// <param name="tags"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    public void Shot(Strike strike, Vector2 position, Quaternion rotation, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
+    public void Shot(Strike strike, Vector2 position, Quaternion rotation, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         Shot(position, rotation, strike, tags, action1, action2);
     }

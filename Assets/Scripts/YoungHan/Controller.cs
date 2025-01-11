@@ -57,6 +57,9 @@ public class Controller : MonoBehaviour
     //점프
     [SerializeField, Header("점프")]
     private KeyCode[] _jumpKeyCodes;
+    //대쉬
+    [SerializeField, Header("대쉬")]
+    private KeyCode[] _dashKeyCodes;
     //상호 작용
     [SerializeField, Header("상호 작용")]
     private KeyCode[] _interactionKeyCodes;
@@ -126,6 +129,11 @@ public class Controller : MonoBehaviour
                     _player.Jump();
                 }
             }
+            //대쉬
+            if(GetKey(_dashKeyCodes) == true)
+            {
+                _player.Dash();
+            }
             //상호작용
             if (GetKey(_interactionKeyCodes) == true)
             {
@@ -134,7 +142,7 @@ public class Controller : MonoBehaviour
             //체력 회복
             if (GetKey(_healKeyCodes) == true)
             {
-                _player.Heal();
+                _player.Heal(true);
             }
         }
         _upInput.isPressed = false;
