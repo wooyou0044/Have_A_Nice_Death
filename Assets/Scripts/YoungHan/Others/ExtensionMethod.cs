@@ -7,8 +7,39 @@ using UnityEngine;
 /// </summary>
 public static partial class ExtensionMethod
 {
+    public static void SetState(this Parameter parameter, Animator animator, string key)
+    {
+        if (parameter != null)
+        {
+            parameter.Set(animator, key);
+        }
+        else
+        {
+            animator?.SetTrigger(key);
+        }
+    }
+
+    public static void Play(this AnimatorHandler animatorHandler, Animator animator)
+    {
+        animatorHandler?.Play(animator);
+    }
+
     /// <summary>
-    /// 타격할 수 있는 대상이 타격 당할 때 쓰는 확장 메서드
+    /// 사용자가 대상에게 스킬을 쓰게 만드는 확장 메서드
+    /// </summary>
+    /// <param name="skill"></param>
+    /// <param name="user"></param>
+    /// <param name="target"></param>
+    public static void Use(this Skill skill, ISkillable user, IHittable target)
+    {
+        if(skill != null)
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// 타격 할 수 있는 대상이 타격 받을 때 쓰는 확장 메서드
     /// </summary>
     /// <param name="hittable"></param>
     /// <param name="strike"></param>
@@ -25,19 +56,19 @@ public static partial class ExtensionMethod
     }
 
     /// <summary>
-    /// 타겟 클래스가 지목하는 대상을 타격하는 확장 메서드
+    /// 영역 범위 안의 대상을 타격하는 확장 메서드
     /// </summary>
-    /// <param name="target"></param>
+    /// <param name="area"></param>
     /// <param name="strike"></param>
     /// <param name="hittables"></param>
     /// <param name="action"></param>
     /// <param name="effect"></param>
     /// <param name="transform"></param>
-    public static void Hit(this Strike.Target target, Strike strike, IEnumerable<IHittable> hittables, Action<IHittable, Strike, GameObject, Transform> action, GameObject effect, Transform transform)
+    public static void Hit(this Strike.Area area, Strike strike, IEnumerable<IHittable> hittables, Action<IHittable, Strike, GameObject, Transform> action, GameObject effect, Transform transform)
     {
         if (hittables != null && action != null)
         {
-            if (target == null)
+            if (area == null)
             {
                 foreach(IHittable hittable in hittables)
                 {
@@ -48,7 +79,7 @@ public static partial class ExtensionMethod
             {
                 foreach (IHittable hittable in hittables)
                 {
-                    if (target.CanStrike(hittable) == true)
+                    if (area.CanStrike(hittable) == true)
                     {
                         action.Invoke(hittable, strike, effect, transform);
                     }

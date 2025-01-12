@@ -72,7 +72,20 @@ public interface IHittable
 /// <summary>
 /// 상호 작용 할 수 있는 객체들이 상속 받는 인터페이스
 /// </summary>
-public interface Iinteractable
+public interface IPickable
 {
-    public bool CanInteraction(Vector2 position);
+
+}
+
+
+public interface ISkillable
+{
+
+}
+
+public interface IAnimationable
+{
+    public Animator animator {
+        get;
+    }
 }

@@ -77,7 +77,7 @@ public sealed class GameManagerForTest : Manager<GameManagerForTest>
     /// <param name="strike"></param>
     /// <param name="area"></param>
     /// <param name="effectObject"></param>
-    public static void Report(Strike strike, Strike.Target area, GameObject effectObject)
+    public static void Report(Strike strike, Strike.Area area, GameObject effectObject)
     {
         if(area == null)
         {

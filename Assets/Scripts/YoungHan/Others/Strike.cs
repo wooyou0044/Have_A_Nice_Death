@@ -1,14 +1,20 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 대상을 타격하는 구조체
 /// </summary>
+[Serializable]
 public struct Strike
 {
     //타격하는 강도
+    [SerializeField, Header("양수면 회복, 음수면 공격")]
     private int power;
 
     //만약 타격 용도가 공격이라면 공격량을 확장하는 용도
+    [SerializeField, Header("용도가 공격 시 피해량을 ")]
     private byte extension;
 
     //최종적으로 대상에게 가해질 결과값을 반환한다.
@@ -19,7 +25,7 @@ public struct Strike
             //power가 음수이면 공격을 위한 용도
             if (power < 0)
             {
-                return power - Random.Range(0, extension);
+                return power - UnityEngine.Random.Range(0, extension);
             }
             //power가 양수이면 회복을 시키기 위한 용도
             else
@@ -35,16 +41,17 @@ public struct Strike
         this.extension = extension;
     }
 
+
     /// <summary>
     /// 해당 대상이 타격 대상인지 구별하는 클래스(단 이 값이 null이라면 대상을 구별하지 않고 광역 타격)
     /// </summary>
-    public abstract class Target
+    public abstract class Area
     {
 #if UNITY_EDITOR
         private static readonly float DotSize = 0.01f;
         protected static readonly float DrawDuration = 3;
 
-        protected static void DrawDot(Vector2 point, Color color, float duration)
+        protected static void DrawDot(Vector2 point, Color color, float duration = 0)
         {
             float half = DotSize * 0.5f;
             Vector2 dot1 = new Vector2(point.x + half, point.y + half);
@@ -65,7 +72,7 @@ public struct Strike
     /// <summary>
     /// 특정 태그만 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class TagTarget : Target
+    public class TagTarget : Area
     {
         private string[] tags;
 
@@ -73,7 +80,6 @@ public struct Strike
         {
             this.tags = tags;
         }
-
 
         public override void Show()
         {
@@ -113,7 +119,7 @@ public struct Strike
     /// <summary>
     /// 지정한 대상들만 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class TargetArea : Target
+    public class TargetArea : Area
     {
         private IHittable[] hittables;
 
@@ -128,18 +134,7 @@ public struct Strike
             int length = hittables != null? hittables.Length : 0;
             for(int i = 0; i < length; i++)
             {
-                //Vector2[] vectors = GetColliderEdges(hittables[i].GetCollider2D());
-                //for (int j = 0; j < vectors.Length; j++)
-                //{
-                //    if (j > 0)
-                //    {
-                //        Debug.DrawLine(vectors[j - 1], vectors[j], Color.red, DrawDuration);
-                //        if (j == vectors.Length - 1)
-                //        {
-                //            Debug.DrawLine(vectors[j], vectors[0], Color.red, DrawDuration);
-                //        }
-                //    }
-                //}
+
             }
 #endif
         }
@@ -166,44 +161,27 @@ public struct Strike
     /// </summary>
     public class PolygonArea : TagTarget
     {
-        private Vector2 center;
+        private Vector2[] vertices;
 
-        private Vector2[] points;
-
-        public PolygonArea(Vector2 center, Vector2[] points, string[] tags) : base(tags)
+        public PolygonArea(Vector2[] vertices, string[] tags) : base(tags)
         {
-            this.center = center;
-            this.points = points;
+            this.vertices = vertices;
         }
 
         public override void Show()
         {
 #if UNITY_EDITOR
-            int length = points != null ? points.Length : 0;
-            if (length > 0)
+            int length = vertices != null ? vertices.Length : 0;
+            if(length > 1)
             {
-                if (length > 1)
+                for (int i = 0; i < length - 1; i++)
                 {
-                    for (int i = 1; i < length; i++)
-                    {
-                        if (center + points[i - 1] != center + points[i])
-                        {
-                            Debug.DrawLine(center + points[i - 1], center + points[i], Color.red, DrawDuration);
-                        }
-                        else
-                        {
-                            DrawDot(center + points[i], Color.red, DrawDuration);
-                        }
-                    }
-                }
-                else if (length > 0)
-                {
-                    DrawDot(center + points[0], Color.red, DrawDuration);
+                    Debug.DrawLine(vertices[i], vertices[i+ 1], Color.red);
                 }
             }
-            else
+            else if(length > 0)
             {
-                DrawDot(center, Color.red, DrawDuration);
+                DrawDot(vertices[0], Color.red);
             }
 #endif
         }
@@ -213,22 +191,16 @@ public struct Strike
             if (base.CanStrike(hittable) == true)
             {
                 Collider2D collider2D = hittable.GetCollider2D();
-                int length = points != null ? points.Length : 0;
-                if (length > 0)
+                if(collider2D != null)
                 {
-                    Vector2[] polygon = new Vector2[length];
-                    for(int i = 0; i < length; i++)
+                    int length = vertices != null ? vertices.Length : 0;
+                    for (int i = 0; i < length; i++)
                     {
-                        polygon[i] += center;
-                        if (collider2D.OverlapPoint(polygon[i]))
+                        if (collider2D.OverlapPoint(vertices[i]) == true)
                         {
                             return true;
                         }
                     }
-                }
-                else
-                {
-                    return collider2D.OverlapPoint(center);
                 }
             }
             return false;

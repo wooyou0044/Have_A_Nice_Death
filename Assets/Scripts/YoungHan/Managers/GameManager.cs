@@ -55,6 +55,10 @@ public sealed class GameManager : Manager<GameManager>
                 _hittableList.Add(hittable);
             }
         }
+        IHittable hittable1 = getController._player;
+        Debug.Log(hittable1);
+        ISkillable skillable = hittable1 as ISkillable;
+        Debug.Log(skillable);
     }
 
     private void Hit(IHittable hittable, Strike strike, GameObject effect, Transform transform)
@@ -98,14 +102,8 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="strike"></param>
     /// <param name="effect"></param>
     /// <param name="transform"></param>
-    public static void Report(Strike.Target target, Strike strike, Transform transform, GameObject effect)
+    public static void Report(Strike.Area target, Strike strike, Transform transform, GameObject effect)
     {
         target.Hit(strike, instance._hittableList, instance.Hit, effect, transform);
-    }
-
-    //스킬을 사용할 때 호출하는 함수
-    public static void Report(Skill skill)
-    {
-
     }
 }

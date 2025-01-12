@@ -48,7 +48,7 @@ public class Projectile : MonoBehaviour
     [SerializeField, Header("해당 객체가 소멸하면서 나타날 효과 오브젝트")]
     private GameObject _explosionObject = null;
     [SerializeField, Header("폭발 모양")]
-    private Shape _strikeShape = null;
+    private Shape _shape = null;
 
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]
@@ -85,7 +85,7 @@ public class Projectile : MonoBehaviour
 
     private Strike _strike;
     private string[] _tags;
-    private Action<Strike, Strike.Target, GameObject> _action1 = null;
+    private Action<Strike, Strike.Area, GameObject> _action1 = null;
     private Action<GameObject, Vector2> _action2 = null;
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -102,11 +102,11 @@ public class Projectile : MonoBehaviour
     {
         StopAllCoroutines();
         Vector2 position = getTransform.position;
-        _action1?.Invoke(_strike, new Strike.PolygonArea(position, null, _tags), _hitObject);
-        _action2?.Invoke(_explosionObject, position);
+        //_action1?.Invoke(_strike, new Strike.PolygonArea(position, null, _tags), _hitObject);
+        //_action2?.Invoke(_explosionObject, position);
     }
 
-    private void Shot(Vector2 position, Quaternion rotation, Strike strike, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
+    private void Shot(Vector2 position, Quaternion rotation, Strike strike, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         gameObject.SetActive(true);
         getCollider2D.enabled = true;
@@ -143,7 +143,7 @@ public class Projectile : MonoBehaviour
     /// <param name="tags"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    public void Shot(Strike strike, Vector2 start, Vector2 target, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
+    public void Shot(Strike strike, Vector2 start, Vector2 target, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         Shot(start, Quaternion.LookRotation((target - start).normalized), strike, tags, action1, action2);
     }
@@ -157,7 +157,7 @@ public class Projectile : MonoBehaviour
     /// <param name="tags"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    public void Shot(Strike strike, Vector2 position, Quaternion rotation, string[] tags, Action<Strike, Strike.Target, GameObject> action1, Action<GameObject, Vector2> action2)
+    public void Shot(Strike strike, Vector2 position, Quaternion rotation, string[] tags, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2> action2)
     {
         Shot(position, rotation, strike, tags, action1, action2);
     }
