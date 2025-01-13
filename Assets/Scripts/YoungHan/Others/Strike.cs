@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -35,13 +33,6 @@ public struct Strike
         }
     }
 
-    public Strike(int power, byte extension)
-    {
-        this.power = power;
-        this.extension = extension;
-    }
-
-
     /// <summary>
     /// 해당 대상이 타격 대상인지 구별하는 클래스(단 이 값이 null이라면 대상을 구별하지 않고 광역 타격)
     /// </summary>
@@ -64,7 +55,7 @@ public struct Strike
             Debug.DrawLine(dot4, dot1, color, duration);
         }
 #endif
-        public abstract void Show();
+        public abstract void Show(Color color);
 
         public abstract bool CanStrike(IHittable hittable);
     }
@@ -81,20 +72,21 @@ public struct Strike
             this.tags = tags;
         }
 
-        public override void Show()
+        public override void Show(Color color)
         {
 #if UNITY_EDITOR
+            string hexColor = ColorUtility.ToHtmlStringRGB(color);
             int length = tags != null ? tags.Length : 0;
             if (length > 0)
             {
                 for (int i = 0; i < length; i++)
                 {
-                    Debug.Log($"<color=red>타격 대상:{tags[i]}</color>");
+                    Debug.Log($"<b><color=#{hexColor}>{"태그 이름:" + tags[i]}</color></b>");
                 }
             }
             else
             {
-                Debug.Log($"<color=black>타격 대상 없음</color>");
+                Debug.Log($"<b><color=#{hexColor}>{"타격 대상 없음"}</color></b>");
             }
 #endif
         }
@@ -128,13 +120,21 @@ public struct Strike
             this.hittables = hittables;
         }
 
-        public override void Show()
+        public override void Show(Color color)
         {
 #if UNITY_EDITOR
+            string hexColor = ColorUtility.ToHtmlStringRGB(color);
             int length = hittables != null? hittables.Length : 0;
-            for(int i = 0; i < length; i++)
+            if (length > 0)
             {
-
+                for (int i = 0; i < length; i++)
+                {
+                    Debug.Log($"<b><color=#{hexColor}>{"대상 이름:" + hittables[i]}</color></b>");
+                }
+            }
+            else
+            {
+                Debug.Log($"<b><color=#{hexColor}>{"타격 대상 없음"}</color></b>");
             }
 #endif
         }
@@ -168,7 +168,25 @@ public struct Strike
             this.vertices = vertices;
         }
 
-        public override void Show()
+        public void Show(Color color, float duration)
+        {
+#if UNITY_EDITOR
+            int length = vertices != null ? vertices.Length : 0;
+            if (length > 1)
+            {
+                for (int i = 0; i < length - 1; i++)
+                {
+                    Debug.DrawLine(vertices[i], vertices[i + 1], color, duration);
+                }
+            }
+            else if (length > 0)
+            {
+                DrawDot(vertices[0], color, duration);
+            }
+#endif
+        }
+
+        public override void Show(Color color)
         {
 #if UNITY_EDITOR
             int length = vertices != null ? vertices.Length : 0;
@@ -176,12 +194,12 @@ public struct Strike
             {
                 for (int i = 0; i < length - 1; i++)
                 {
-                    Debug.DrawLine(vertices[i], vertices[i+ 1], Color.red);
+                    Debug.DrawLine(vertices[i], vertices[i+ 1], color);
                 }
             }
             else if(length > 0)
             {
-                DrawDot(vertices[0], Color.red);
+                DrawDot(vertices[0], color);
             }
 #endif
         }

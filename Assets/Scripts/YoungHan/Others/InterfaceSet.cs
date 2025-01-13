@@ -39,37 +39,6 @@ public interface IMovable
 }
 
 /// <summary>
-/// 뛰어 오를 수 있는 객체들이 상속 받는 인터페이스
-/// </summary>
-//public interface IJumpable
-//{
-//    //뛰어 오르기
-//    public void Jump();
-//    //뛸 수 있는지 반환
-//    public bool CanJump();
-//}
-
-/// <summary>
-/// 피격 당할 수 있는 객체들이 상속 받는 인터페이스
-/// </summary>
-public interface IHittable
-{
-    public bool isAlive {
-        get;
-    }
-
-    public string tag
-    {
-        set;
-        get;
-    }
-
-    public void Hit(Strike strike);
-
-    public Collider2D GetCollider2D();
-}
-
-/// <summary>
 /// 상호 작용 할 수 있는 객체들이 상속 받는 인터페이스
 /// </summary>
 public interface IPickable

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = nameof(Skill), order = 0)]
@@ -25,10 +26,10 @@ public class Skill : ScriptableObject
     /// </summary>
     /// <param name="user"></param>
     /// <param name="target"></param>
-    /// <param name="hitAction"></param>
+    /// <param name="strikeAction"></param>
     /// <param name="effectAction"></param>
     /// <param name="function"></param>
-    public void Use(Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> hitAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+    public void Use(Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
     {
         if (effectAction != null)
         {
@@ -45,42 +46,109 @@ public class Skill : ScriptableObject
                 effectAction.Invoke(splashObject, target.GetCollider2D().bounds.center, null);
             }
         }
-        //공격 대상이 있고
-        if(target != null)
+        //공격 모양이 있으면
+        if (shape != null)
         {
-            //공격 모양이 있으면
-            if (shape != null)
+            //사용자의 Transform 값을 주면 사용자의 범위 안에서 행해지는 근거리 스플래쉬 딜
+            if (user != null)
             {
-                //사용자의 Transform 값을 주면 사용자의 범위 안에서 행해지는 근거리 스플래쉬 딜
-                if (user != null)
-                {
-                    hitAction?.Invoke(strike, shape.GetPolygonArea(user, new string[] {target.tag}), hitObject);
-                }
-                //그렇지 않으면 특정 대상에 유착된 스플래쉬 딜
-                else
-                {
-                    hitAction?.Invoke(strike, shape.GetPolygonArea(target.GetCollider2D().transform, new string[] { target.tag }), hitObject);
-                }
+                strikeAction?.Invoke(strike, shape.GetPolygonArea(user, new string[] { target.tag }), hitObject);
             }
-            //공격 모양이 없으면 그 대상만 타격
-            else
+            //그렇지 않으면 특정 대상에 유착된 스플래쉬 딜
+            else if(target != null)
             {
-                hitAction?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
+                strikeAction?.Invoke(strike, shape.GetPolygonArea(target.transform, new string[] { target.tag }), hitObject);
             }
         }
-        //그것도 아니라면 모든 대상 타격
+        //공격 모양이 없으면 그 대상만 타격
         else
         {
-            hitAction?.Invoke(strike, null, hitObject);
+            strikeAction?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
         }
-        //발사체가 있다면
-        if(function != null)
+        //발사체를 반환하는 함수가 있다면
+        if (function != null)
         {
             Projectile projectile = function.Invoke(this.projectile);
-            if(projectile != null)
-            {
+            projectile?.Shot(user, target, strikeAction, effectAction);
+        }
+    }
 
+
+    [Serializable]
+    public struct Action : ISerializationCallbackReceiver
+    {
+        [SerializeField, Header("사용할 스킬")]
+        private Skill skill;
+
+        [SerializeField, Header("스킬 사용과 동시에 동작하는 애니메이터")]
+        private AnimatorHandler animatorHandler;
+
+        [SerializeField, Header("이 내용이 있어야 동작하는 필수 애니메이션 클립")]
+        private List<AnimationClip> essentialClips;
+
+        public void OnBeforeSerialize()
+        {
+        }
+
+        public void OnAfterDeserialize()
+        {
+            int count = essentialClips.Count;
+            if (count > 0)
+            {
+                List<AnimationClip> list = new List<AnimationClip>();
+                for (int i = 0; i < count; i++)
+                {
+                    if (essentialClips[i] != null && list.Contains(essentialClips[i]) == false)
+                    {
+                        list.Add(essentialClips[i]);
+                    }
+                    else if (i == count - 1)
+                    {
+                        if (list.Contains(essentialClips[i]) == true)
+                        {
+                            list.Add(null);
+                        }
+                        else
+                        {
+                            list.Add(essentialClips[i]);
+                        }
+                    }
+                }
+                essentialClips = list;
             }
+        }
+
+        public bool TryUse(Animator animator, Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+        {
+            int count = essentialClips.Count;
+            if (animator != null)
+            {
+                if (count > 0)
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    for (int i = 0; i < count; i++)
+                    {
+                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && stateInfo.normalizedTime >= 1.0)
+                        {
+                            animatorHandler?.Play(animator);
+                            skill?.Use(user, target, strikeAction, effectAction, function);
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    animatorHandler?.Play(animator);
+                    skill?.Use(user, target, strikeAction, effectAction, function);
+                    return true;
+                }
+            }
+            else if (count == 0)
+            {
+                skill?.Use(user, target, strikeAction, effectAction, function);
+                return true;
+            }
+            return false;
         }
     }
 }
