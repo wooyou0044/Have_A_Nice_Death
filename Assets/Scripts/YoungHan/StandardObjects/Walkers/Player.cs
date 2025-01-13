@@ -5,9 +5,28 @@ using UnityEngine;
 /// <summary>
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
+[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
 public sealed class Player : Runner, IHittable
 {
+
+    private bool _hasSpriteRenderer = false;
+
+    private SpriteRenderer _spriteRenderer = null;
+
+    private SpriteRenderer getSpriteRenderer
+    {
+        get
+        {
+            if (_hasSpriteRenderer == false)
+            {
+                _hasSpriteRenderer = true;
+                _spriteRenderer = GetComponent<SpriteRenderer>();
+            }
+            return _spriteRenderer;
+        }
+    }
+
     [Space(10f), Header("애니메이션 클립")]
     [SerializeField]
     private AnimationClip _idleClip = null;
@@ -29,14 +48,6 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _jumpLandingClip = null;
     [SerializeField]
     private AnimationClip _dashClip = null;
-    [SerializeField]
-    private AnimationClip _comboMove1Clip = null;
-    [SerializeField]
-    private AnimationClip _comboMove2Clip = null;
-    [SerializeField]
-    private AnimationClip _comboMove3Clip = null;
-    [SerializeField]
-    private AnimationClip _comboMove4Clip = null;
 
     private bool _hasAnimator = false;
 
@@ -55,21 +66,6 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    private bool _hasSpriteRenderer = false;
-
-    private SpriteRenderer _spriteRenderer = null;
-
-    private SpriteRenderer getSpriteRenderer {
-        get
-        {
-            if (_hasSpriteRenderer == false)
-            {
-                _hasSpriteRenderer = true;
-                _spriteRenderer = GetComponent<SpriteRenderer>();
-            }
-            return _spriteRenderer;
-        }
-    }
 
     [Space(10f), Header("체력")]
     //활성 체력'으로, 남아있는 체력을 의미한다.
@@ -134,24 +130,18 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    //이건 무기 클래스가 대신해야 한다
-    private enum Combo: byte
-    {
-        None,
-        Combo1,
-        Combo2,
-        Combo3,
-        Combo4,
-    }
-
     [SerializeField]
-    private Combo _comboCount = Combo.None;
+    private Weapon _weapon1;
 
-    //피격 액션 델리게이트
+    private Action<bool> _boundingAction = null;
+
     private Action<IHittable, int> _hitAction = null;
-    //스킬 사용 액션 델리게이트
 
-    //private Func<Interaction, bool> _interactionFunction = null;
+    private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
+
+    private Action<GameObject, Vector2, Transform> _effectAction = null;
+
+    private Func<Projectile, Projectile> _projectileFunction = null;
 
     private IEnumerator _animationCoroutine = null;
 
@@ -334,7 +324,6 @@ public sealed class Player : Runner, IHittable
             base.Jump();
             if(velocity != getRigidbody2D.velocity.y)
             {
-                _comboCount = Combo.None;
                 getSpriteRenderer.flipX = false;
                 Play(_jumpStartClip, _jumpFallingClip , false);
             }
@@ -349,19 +338,21 @@ public sealed class Player : Runner, IHittable
             base.Dash();
             if (velocity != getRigidbody2D.velocity.x)
             {
-                _comboCount = Combo.None;
                 getSpriteRenderer.flipX = false;
                 Play(_dashClip, _jumpFallingClip, false);
             }
         }
     }
 
-    public void Initialize(Action<IHittable, int> hit)
+    public void Initialize(Action<bool> bounding, Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<Projectile, Projectile> projectile)
     {
-        GameObject gg = new GameObject();
+        _boundingAction = bounding;
         _hitAction = hit;
-        //_strikeAction = strike;        //_interactionFunction = interaction;
+        _strikeAction = strike;
+        _effectAction = effect;
+        _projectileFunction = projectile;
     }
+
     public void MoveUp()
     {
         //if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
@@ -377,31 +368,9 @@ public sealed class Player : Runner, IHittable
 
     public void Attack1()
     {
-        if(isAlive == true)
+        if(isAlive == true && _weapon1 != null)
         {
-            if (IsLevitate() == false && _comboCount < Combo.Combo4)
-            {
-                switch(_comboCount)
-                {
-                    case Combo.None:
-                        Levitate(false);
-                        Play(_comboMove1Clip, isGrounded == true? _idleClip : _jumpFallingClip, false);
-                        break;
-                    case Combo.Combo1:
-                        Levitate(false);
-                        Play(_comboMove2Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
-                        break;
-                    case Combo.Combo2:
-                        Levitate(false);
-                        Play(_comboMove3Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
-                        break;
-                    case Combo.Combo3:
-                        Levitate(false);
-                        Play(_comboMove4Clip, isGrounded == true ? _idleClip : _jumpFallingClip, false);
-                        break;
-                }
-                _comboCount++;
-            }
+            _weapon1.TryUse(getAnimator, getTransform, null, _strikeAction, _effectAction, _projectileFunction);
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -22,15 +23,4 @@ public static partial class ExtensionMethod
             animator?.SetTrigger(key);
         }
     }
-
-    /// <summary>
-    /// 애니메이터 핸들러가 애니메이션을 동작시킬 때 쓰는 함수
-    /// </summary>
-    /// <param name="animatorHandler"></param>
-    /// <param name="animator"></param>
-    public static void Play(this AnimatorHandler animatorHandler, Animator animator)
-    {
-        animatorHandler?.Play(animator);
-    }
-
 }

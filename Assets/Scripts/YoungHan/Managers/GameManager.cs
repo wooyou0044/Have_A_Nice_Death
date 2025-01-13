@@ -46,7 +46,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(Report);
+        getController._player?.Initialize(MoveLadder, Report, Report, ShowEffect, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -56,6 +56,11 @@ public sealed class GameManager : Manager<GameManager>
             }
         }
         //Strike.Area area = new Strike.TargetArea(new IHittable[] { _hittableList[0], null});
+    }
+
+    private void MoveLadder(bool bounding)
+    {
+
     }
 
     /// <summary>
@@ -109,6 +114,13 @@ public sealed class GameManager : Manager<GameManager>
         }
         else
         {
+#if UNITY_EDITOR
+            if(area is Strike.PolygonArea polygonArea)
+            {
+                polygonArea.Show(Color.red, 3);
+            }
+#endif
+
             foreach (IHittable hittable in instance._hittableList)
             {
                 if (area.CanStrike(hittable) == true)

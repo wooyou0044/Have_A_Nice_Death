@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6219897535074757962}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -188,13 +188,13 @@ MonoBehaviour:
   _isGrounded: 0
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
   _jumpValue: 15
-  _jumpLimit: 2
-  _jumpCount: 2
+  _jumpLimit: 1
+  _jumpCount: 1
   _dashValue: 50
   _dashCoolTime: 1.5
   _isDashed: 0
-  _levitationDelay: 1
-  _levitationCoolTime: 0.4
+  _levitationDelay: 0.5
+  _levitationCoolTime: 0.2
   _idleClip: {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
   _idleToRunClip: {fileID: 7400000, guid: 7c86be6876b9568499db638a76676fd4, type: 2}
   _idleUturnClip: {fileID: 7400000, guid: 2e6ca9feb81217c40a9539b5e46fb3d9, type: 2}
@@ -205,16 +205,12 @@ MonoBehaviour:
   _jumpFallingClip: {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
   _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
-  _comboMove1Clip: {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
-  _comboMove2Clip: {fileID: 7400000, guid: 8fcce7e6c798a86459b2820ed6e0ec71, type: 2}
-  _comboMove3Clip: {fileID: 7400000, guid: 7e563f1ccdce77345b2f6e1414ebf8d5, type: 2}
-  _comboMove4Clip: {fileID: 7400000, guid: eefc45096a752fb4c9e1fc87e32c2591, type: 2}
   _remainLife: 65
   _lossLife: 0
   _maxLife: 65
   _remainMana: 0
   _maxMana: 50
-  _comboCount: 0
+  _weapon1: {fileID: 11400000, guid: d240cd5aef5b30448a5988016469ff28, type: 2}
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0
