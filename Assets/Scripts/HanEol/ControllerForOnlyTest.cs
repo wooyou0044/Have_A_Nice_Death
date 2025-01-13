@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -155,6 +157,9 @@ public class ControllerForOnlyTest : MonoBehaviour
     /// 특정 키보드 입력을 받는 객체에 해당 키가 눌러졌는지 확인하고 결과를 넣어주는 메서드
     /// </summary>
     /// <param name="input"></param>
+    /// 
+
+    //임시본
     private void Set(ref Input input)
     {
         int length = input.keyCodes != null ? input.keyCodes.Length : 0;
@@ -162,11 +167,6 @@ public class ControllerForOnlyTest : MonoBehaviour
         {
             if (UnityEngine.Input.GetKey(input.keyCodes[i]) == true)
             {
-                //임의본
-                //if (input.keyCodes[i] == )
-
-
-
                 //원본
                 input.isPressed = true;
                 break;
@@ -174,3 +174,4 @@ public class ControllerForOnlyTest : MonoBehaviour
         }
     }
 }
+

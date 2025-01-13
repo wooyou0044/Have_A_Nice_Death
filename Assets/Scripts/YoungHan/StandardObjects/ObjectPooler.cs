@@ -25,19 +25,20 @@ public sealed class ObjectPooler : MonoBehaviour
 
     //미사일 오브젝트들을 관리하는 딕셔너리
     private Dictionary<Projectile, List<Projectile>> _projectiles = new Dictionary<Projectile, List<Projectile>>();
-       
+
     /// <summary>
     /// 게임에서 일어날 효과 이펙트들을 풀링해주는 메서드
     /// </summary>
     /// <param name="original"></param>
     /// <param name="position"></param>
     /// <param name="transform"></param>
-    public void Set(GameObject original, Vector2 position, Transform transform = null)
+    public void ShowEffect(GameObject original, Vector2 position, Transform transform = null)
     {
         if(original != null)
         {
+            bool parent = transform != null;
             //해당 프리팹을 키 값으로 보유하고 있다면
-            if(_gameObjects.ContainsKey(original) == true)
+            if (_gameObjects.ContainsKey(original) == true)
             {
                 //키의 리스트 목록을 순회하면서 비활성화 된 오브젝트를 찾는다.
                 foreach(GameObject gameObject in _gameObjects[original])
@@ -45,7 +46,7 @@ public sealed class ObjectPooler : MonoBehaviour
                     if(gameObject.activeInHierarchy == false)
                     {
                         gameObject.transform.position = position;
-                        if(transform != null)
+                        if(parent == true)
                         {
                             gameObject.transform.parent = transform;
                             gameObject.transform.rotation = transform.rotation;
@@ -59,34 +60,51 @@ public sealed class ObjectPooler : MonoBehaviour
                         return;
                     }
                 }
-                bool parent = transform != null;
                 GameObject value = Instantiate(original, position, parent ? transform.rotation : Quaternion.identity, parent ? transform : getTransform);
                 _gameObjects[original].Add(value);
             }
             //그게 아니라면 키 값을 설정하고 객체를 생성한다.
             else
             {
-                bool parent = transform != null;
                 GameObject value = Instantiate(original, position, parent ? transform.rotation: Quaternion.identity, parent ? transform: getTransform);
                 _gameObjects.Add(original, new List<GameObject>() { value });
             }
         }
     }
 
-    public void Set(Projectile original, Vector2 position, Transform transform = null)
+    /// <summary>
+    /// 해당 프리팹 클론을 반환하는 함수
+    /// </summary>
+    /// <param name="original"></param>
+    /// <param name="adhesion"></param>
+    /// <returns></returns>
+    public Projectile GetProjectile(Projectile original)
     {
         if (original != null)
         {
             if(_projectiles.ContainsKey(original) == true)
             {
-
+                //키의 리스트 목록을 순회하면서 비활성화 된 오브젝트를 찾는다.
+                foreach (Projectile projectile in _projectiles[original])
+                {
+                    if (projectile.gameObject.activeInHierarchy == false)
+                    {
+                        projectile.transform.parent = getTransform;
+                        return projectile;
+                    }
+                }
+                Projectile value = Instantiate(original, getTransform);
+                value.gameObject.SetActive(false);
+                _projectiles[original].Add(value);
             }
             else
             {
-                bool parent = transform != null;
-                Projectile value = Instantiate(original, position, parent ? transform.rotation : Quaternion.identity, parent ? transform : getTransform);
+                Projectile value = Instantiate(original, getTransform);
+                value.gameObject.SetActive(false);
                 _projectiles.Add(original, new List<Projectile>() { value });
+                return value;
             }
         }
+        return null;
     }
 }
