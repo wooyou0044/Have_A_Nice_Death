@@ -69,12 +69,12 @@ public sealed class GameManager : Manager<GameManager>
         {
             if (bounding == true)
             {
-                ladder.MoveUp();
+                //ladder.MoveUp();
                 return true;
             }
             else
             {
-                ladder.MoveStop();
+                //ladder.MoveStop();
             }
         }
         return false;

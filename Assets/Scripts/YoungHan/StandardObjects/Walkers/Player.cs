@@ -228,6 +228,25 @@ public sealed class Player : Runner, IHittable
         return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(animation) == true;
     }
 
+    private IEnumerator DoRecoverAnimation()
+    {
+        Levitate(false);
+        yield return null;
+        do
+        {
+            yield return null;
+        } while (getAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0);
+        if(isGrounded == true)
+        {
+            Play(null, _idleClip, false);
+        }
+        else
+        {
+            Play(null, _jumpFallingClip, false);
+        }
+        _animationCoroutine = null;
+    }
+
     private AnimationClip GetCurrentClips()
     {
         if (gameObject.activeInHierarchy == true)
@@ -263,33 +282,37 @@ public sealed class Player : Runner, IHittable
 
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
+        bool isGrounded = this.isGrounded;
         base.OnCollisionEnter2D(collision);
-        if (isGrounded == true)
+        if (isGrounded != this.isGrounded)
         {
+            Debug.Log(this.isGrounded);
             getSpriteRenderer.flipX = false;
-            if (GetCurrentClips() != _dashClip)
-            {
-                Play(_jumpLandingClip, _idleClip, false);
-            }
+            Play(_jumpLandingClip, _idleClip, false);
         }
     }
 
     protected override void OnCollisionStay2D(Collision2D collision)
     {
+        bool isGrounded = this.isGrounded;
         base.OnCollisionStay2D(collision);
-        if (isGrounded == true && getRigidbody2D.velocity.y == 0 && GetCurrentClips() == _jumpFallingClip)
+        if (isGrounded != this.isGrounded /*&& getRigidbody2D.velocity.y == 0*/)
         {
-            Play(_jumpLandingClip, _idleClip, false);
+            //Debug.Log(this.isGrounded);
+            //getSpriteRenderer.flipX = false;
+            //Play(_jumpLandingClip, _idleClip, false);
         }
     }
 
     protected override void OnCollisionExit2D(Collision2D collision)
     {
+        bool isGrounded = this.isGrounded;
         base.OnCollisionExit2D(collision);
-        if(isGrounded == false)
+        if (isGrounded != this.isGrounded)
         {
-            getSpriteRenderer.flipX = false;
-            Play(null, _jumpFallingClip, false);
+            //Debug.Log(this.isGrounded);
+            //getSpriteRenderer.flipX = false;
+            //Play(null, _jumpFallingClip, false);
         }
     }
 
@@ -303,19 +326,27 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveLeft()
     {
-        if (isAlive == true && GetCurrentClips() != _zipUpClip)
+        if (isAlive == true)
         {
-            base.MoveLeft();
-            PlayMove(ITransformable.LeftRotation);
+            AnimationClip animationClip = GetCurrentClips();
+            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            {
+                base.MoveLeft();
+                PlayMove(ITransformable.LeftRotation);
+            }
         }
     }
 
     public override void MoveRight()
     {
-        if (isAlive == true && GetCurrentClips() != _zipUpClip)
+        if (isAlive == true)
         {
-            base.MoveRight();
-            PlayMove(ITransformable.RightRotation);
+            AnimationClip animationClip = GetCurrentClips();
+            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            {
+                base.MoveRight();
+                PlayMove(ITransformable.RightRotation);
+            }
         }
     }
 
@@ -323,8 +354,7 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            AnimationClip animationClip = GetCurrentClips();
-            if(animationClip == _runClip)
+            if(GetCurrentClips() == _runClip)
             {
                 Play(_runToIdleClip, _idleClip, false);
             }
@@ -349,7 +379,7 @@ public sealed class Player : Runner, IHittable
 
     public override void Dash()
     {
-        if (isAlive == true)
+        if (isAlive == true && GetCurrentClips() != _zipUpClip)
         {
             float velocity = getRigidbody2D.velocity.x;
             base.Dash();
@@ -372,10 +402,10 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        if(_boundingFunction != null && _boundingFunction.Invoke(true) == true)
-        {
-            Play(null, _zipUpClip, false);
-        }
+        //if(_boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        //{
+        //    Play(null, _zipUpClip, false);
+        //}
     }
     
     public void MoveDown()
@@ -387,7 +417,12 @@ public sealed class Player : Runner, IHittable
     {
         if(isAlive == true && _weapon1 != null && _weapon1.TryUse(getAnimator, getTransform, null, _strikeAction, _effectAction, _projectileFunction) == true)
         {
-
+            //if (_animationCoroutine != null)
+            //{
+            //    StopCoroutine(_animationCoroutine);
+            //}
+            //_animationCoroutine = DoRecoverAnimation();
+            //StartCoroutine(_animationCoroutine);
         }
     }
 

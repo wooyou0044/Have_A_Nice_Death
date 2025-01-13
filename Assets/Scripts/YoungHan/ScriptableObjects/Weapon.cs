@@ -10,6 +10,8 @@ public class Weapon : ScriptableObject
 
 
 
+
+
     public bool TryUse(Animator animator,Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
     {
         return action1.TryUse(animator, user, target, strikeAction, effectAction, function);

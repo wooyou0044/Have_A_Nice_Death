@@ -62,13 +62,11 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
         }
     }
 
+    private Collision2D _groundCollision2D = null;
+
     private List<Collision2D> _leftCollision2D = new List<Collision2D>();
 
     private List<Collision2D> _rightCollision2D = new List<Collision2D>();
-
-    //이동 속도
-    [SerializeField, Header("이동 속도"), Range(0, float.MaxValue)]
-    protected float _movingSpeed = 10;
 
     //땅에 착륙했는지 유무를 판단하는 프로퍼티
     [SerializeField]
@@ -81,6 +79,10 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
             return _isGrounded;
         }
     }
+
+    //이동 속도
+    [SerializeField, Header("이동 속도"), Range(0, float.MaxValue)]
+    protected float _movingSpeed = 10;
 
     //객체의 위치값을 설정 하거나 반환하는 프로퍼티
     public Vector2 position {
@@ -146,6 +148,8 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
             if (point.x > minX && point.x < maxX && point.y < centerY)
             {
                 _isGrounded = true;
+                _groundCollision2D = collision;
+                break;
             }
         }
     }
@@ -155,13 +159,11 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
     /// </summary>
     /// <param name="collision"></param>
     protected virtual void OnCollisionStay2D(Collision2D collision)
-    {
-        if (_isGrounded == false && getRigidbody2D.velocity.y == 0 && (_leftCollision2D.Count > 0 || _rightCollision2D.Count > 0))
-        {
-            _isGrounded = true;
-        }
+    {       
         Bounds bounds = getCollider2D.bounds;
         float radius = bounds.size.x * 0.5f;
+        float minX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.75f));
+        float maxX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.25f));
         float centerY = bounds.min.y + radius + (radius * Mathf.Sin(Mathf.PI * -0.25f));
         for (int i = 0; i < collision.contactCount; i++)
         {
@@ -177,6 +179,14 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
                     _rightCollision2D.Add(collision);
                 }
             }
+            else if (point.x > minX && point.x < maxX)
+            {
+                _isGrounded = true;
+            }
+        }
+        if (_isGrounded == false)
+        {
+            SearchGround(minX, maxX, centerY);
         }
     }
 
@@ -186,12 +196,47 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
     /// <param name="collision"></param>
     protected virtual void OnCollisionExit2D(Collision2D collision)
     {
-        if (getRigidbody2D.velocity.y < IMovable.MinimumDropVelocity && _isGrounded == true)
-        {
-            _isGrounded = false;
-        }
+        //if (getRigidbody2D.velocity.y < IMovable.MinimumDropVelocity && _isGrounded == true)
+        //{
+        //    _isGrounded = false;
+        //}
         _leftCollision2D.Remove(collision);
         _rightCollision2D.Remove(collision);
+        Bounds bounds = getCollider2D.bounds;
+        float radius = bounds.size.x * 0.5f;
+        float minX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.75f));
+        float maxX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.25f));
+        float centerY = bounds.min.y + radius + (radius * Mathf.Sin(Mathf.PI * -0.25f));
+        SearchGround(minX, maxX, centerY);
+    }
+
+    private void SearchGround(float minX, float maxX, float centerY)
+    {
+        foreach (Collision2D collision2D in _leftCollision2D)
+        {
+            for (int i = 0; i < collision2D.contactCount; i++)
+            {
+                Vector2 point = collision2D.contacts[i].point;
+                if (point.x > minX && point.x < maxX && point.y < centerY)
+                {
+                    _isGrounded = true;
+                    return;
+                }
+            }
+        }
+        foreach (Collision2D collision2D in _rightCollision2D)
+        {
+            for (int i = 0; i < collision2D.contactCount; i++)
+            {
+                Vector2 point = collision2D.contacts[i].point;
+                if (point.x > minX && point.x < maxX && point.y < centerY)
+                {
+                    _isGrounded = true;
+                    return;
+                }
+            }
+        }
+        _isGrounded = false;
     }
 
     /// <summary>

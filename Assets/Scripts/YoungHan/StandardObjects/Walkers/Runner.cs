@@ -24,11 +24,12 @@ public class Runner : Walker/*, IJumpable*/
     private IEnumerator _jumpCoroutine = null;
 
     //대쉬 후 다시 대쉬 할 수 있게 기다리는 최소 시간
-    private static readonly float DashDelay = 0.2f;
+    
 
     [SerializeField, Header("대쉬 강도"), Range(0, 100)]
     protected float _dashValue = 50;
-
+    [SerializeField, Header("대쉬 지속 시간"), Range(0, 5)]
+    private float _dashDelay = 0.2f;
     [SerializeField, Header("대쉬 쿨타임"), Range(0, 5)]
     protected float _dashCoolTime = 1.5f;
 
@@ -59,7 +60,7 @@ public class Runner : Walker/*, IJumpable*/
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         base.OnCollisionEnter2D(collision);
-        if(isGrounded == true && getRigidbody2D.velocity.y <= 0)
+        if(isGrounded == true)
         {
             if(_jumpCoroutine != null)
             {
@@ -125,7 +126,7 @@ public class Runner : Walker/*, IJumpable*/
                 _isDashed = true;
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
                 getRigidbody2D.AddForce(new Vector2(getTransform.forward.normalized.z * _dashValue, 0), ForceMode2D.Impulse);
-                yield return new WaitForSeconds(DashDelay);
+                yield return new WaitForSeconds(_dashDelay);
                 getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
                 getRigidbody2D.velocity += Vector2.down;
                 _dashCoroutine = null;

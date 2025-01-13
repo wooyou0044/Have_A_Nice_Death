@@ -1307,6 +1307,14 @@ PrefabInstance:
       propertyPath: _weapon1
       value: 
       objectReference: {fileID: 11400000, guid: d240cd5aef5b30448a5988016469ff28, type: 2}
+    - target: {fileID: 73628374627255756, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: _dashDelay
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 982539927111367623, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: m_GravityScale
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3174008157489837258, guid: 871d5908166c9de4da60c903c290196f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
