@@ -111,19 +111,29 @@ public sealed class PlayerForOnlyTest : Runner, IHittable
 
     //여기서부턴 임의로 만들어 보는 곳
 
-    private bool isLetter = false;
+    public bool isLadder = false;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Letter"))
+        if (collision.CompareTag("Ladder"))
         {
-            OnLetter();
+            isLadder = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ladder"))
+        {
+            isLadder = false;
         }
     }
 
-    private bool OnLetter()
-    {
-        isLetter = true;
-        return isLetter;
-    }
+   
+
+    //private bool OnLetter()
+    //{
+    //    
+    //    return isLatter;
+    //}
 
 }
