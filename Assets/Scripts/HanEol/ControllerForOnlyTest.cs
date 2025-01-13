@@ -160,10 +160,6 @@ public class ControllerForOnlyTest : MonoBehaviour
     /// 
 
     //임시본
-    [SerializeField] private float moveUpSpeed;
-    [SerializeField]private Rigidbody2D rd;
-    [SerializeField]private Vector2 getLadder;
-
     private void Set(ref Input input)
     {
         int length = input.keyCodes != null ? input.keyCodes.Length : 0;
@@ -171,63 +167,10 @@ public class ControllerForOnlyTest : MonoBehaviour
         {
             if (UnityEngine.Input.GetKey(input.keyCodes[i]) == true)
             {
-                if (input.keyCodes[i] == upInput.keyCodes[i] && player.isLadder == true)
-                {
-                    GettingUpLadder();
-                }
                 //원본
                 input.isPressed = true;
                 break;
             }
-        }
-    }
-    public void GettingUpLadder()
-    {
-        //필요한 Rigidbody2D, 수치 값이 없으면 할당
-        if(getLadder != new Vector2(0, moveUpSpeed))
-        {
-            getLadder = new Vector2(0, moveUpSpeed);
-        }
-        if(rd == null)
-        {
-            rd = GetComponent<Rigidbody2D>();
-        }
-        StartCoroutine(GettingUp());
-        //사다리면 올라가세요~
-        IEnumerator GettingUp()
-        {
-            
-            float originalGravity = 0;
-            //새로 설정하는 값을 최소화하기 위한 설정
-            if(originalGravity != rd.gravityScale)
-            {
-                originalGravity = rd.gravityScale;
-                Ladder.MovePlayer(this.transform);
-            }
-            
-            while (player.isLadder == true)
-            {
-                if (UnityEngine.Input.GetKey(jumpInput.keyCodes[0]) == true)
-                {                    
-                    break;
-                }
-                //최초 실행시 중력 제거, X, 회전 정지
-                if(rd.gravityScale != 0)
-                {
-                    rd.gravityScale = 0;
-                    rd.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
-                }
-                //W 꾹 눌러도 일정한 속도를 유지하기 위한 조건문
-                if(rd.velocity != getLadder)
-                {
-                    rd.velocity = getLadder;
-                }
-                //여기부터 반복
-                yield return null;
-            }
-            //사다리에서 벗어나면 다시 움직일 수 있게 함
-            rd.constraints = RigidbodyConstraints2D.None;
-            rd.gravityScale = originalGravity;
         }
     }
 }
