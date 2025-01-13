@@ -232,11 +232,14 @@ public sealed class Player : Runner, IHittable
 
     private AnimationClip GetCurrentClips()
     {
-        AnimatorClipInfo[] clipInfos = getAnimator.GetCurrentAnimatorClipInfo(0);
-        int length = clipInfos != null ? clipInfos.Length : 0;
-        if(length > 0)
+        if (gameObject.activeInHierarchy == true)
         {
-            return clipInfos[0].clip;
+            AnimatorClipInfo[] clipInfos = getAnimator.GetCurrentAnimatorClipInfo(0);
+            int length = clipInfos != null ? clipInfos.Length : 0;
+            if (length > 0)
+            {
+                return clipInfos[0].clip;
+            }
         }
         return null;
     }
@@ -355,6 +358,7 @@ public sealed class Player : Runner, IHittable
 
     public void Initialize(Action<IHittable, int> hit)
     {
+        GameObject gg = new GameObject();
         _hitAction = hit;
         //_strikeAction = strike;        //_interactionFunction = interaction;
     }

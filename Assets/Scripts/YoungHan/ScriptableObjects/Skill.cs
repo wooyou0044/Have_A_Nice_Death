@@ -59,7 +59,7 @@ public class Skill : ScriptableObject
                 //그렇지 않으면 특정 대상에 유착된 스플래쉬 딜
                 else
                 {
-                    hitAction?.Invoke(strike, shape.GetPolygonArea(target.GetCollider2D().transform, new string[] { target.tag }), hitObject);
+                    hitAction?.Invoke(strike, shape.GetPolygonArea(target.transform, new string[] { target.tag }), hitObject);
                 }
             }
             //공격 모양이 없으면 그 대상만 타격
@@ -73,14 +73,11 @@ public class Skill : ScriptableObject
         {
             hitAction?.Invoke(strike, null, hitObject);
         }
-        //발사체가 있다면
+        //발사체를 반환하는 함수가 있다면
         if(function != null)
         {
             Projectile projectile = function.Invoke(this.projectile);
-            if(projectile != null)
-            {
-
-            }
+            projectile?.Shot(user, target, hitAction, effectAction);
         }
     }
 }

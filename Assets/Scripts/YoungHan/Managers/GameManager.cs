@@ -55,15 +55,7 @@ public sealed class GameManager : Manager<GameManager>
                 _hittableList.Add(hittable);
             }
         }
-        IHittable hittable1 = getController._player;
-        Debug.Log(hittable1);
-        ISkillable skillable = hittable1 as ISkillable;
-        Debug.Log(skillable);
-    }
-
-    private void Hit(IHittable hittable, Strike strike, GameObject effect, Transform transform)
-    {
-        hittable.Hit(strike, effect, transform, ShowEffect);
+        //Strike.Area area = new Strike.TargetArea(new IHittable[] { _hittableList[0], null});
     }
 
     /// <summary>
@@ -72,9 +64,9 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="original"></param>
     /// <param name="position"></param>
     /// <param name="transform"></param>
-    public void ShowEffect(GameObject original, Vector2 position, Transform transform)
+    public static void ShowEffect(GameObject original, Vector2 position, Transform transform)
     {
-        getObjectPooler.Set(original, position, transform);
+        instance.getObjectPooler.ShowEffect(original, position, transform);
     }
 
     /// <summary>
@@ -85,6 +77,7 @@ public sealed class GameManager : Manager<GameManager>
     public static void Report(IHittable hittable, int result)
     {
         //데미지가 이 대상에게 얼마나 들어왔는지 보고하고 ui로 값을 전송
+
         if (hittable.isAlive == false)
         {
             //사망하면 추가 보고
@@ -98,12 +91,43 @@ public sealed class GameManager : Manager<GameManager>
     /// <summary>
     /// 대상을 타격 할 때 호출하는 함수
     /// </summary>
-    /// <param name="target"></param>
     /// <param name="strike"></param>
+    /// <param name="area"></param>
     /// <param name="effect"></param>
-    /// <param name="transform"></param>
-    public static void Report(Strike.Area target, Strike strike, Transform transform, GameObject effect)
+    public static void Report(Strike strike, Strike.Area area, GameObject effect)
     {
-        target.Hit(strike, instance._hittableList, instance.Hit, effect, transform);
+        if (area == null)
+        {
+            foreach (IHittable hittable in instance._hittableList)
+            {
+                if (hittable != null)
+                {
+                    instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
+                    hittable.Hit(strike);
+                }
+            }
+        }
+        else
+        {
+            foreach (IHittable hittable in instance._hittableList)
+            {
+                if (area.CanStrike(hittable) == true)
+                {
+                    instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
+                    hittable.Hit(strike);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 미사일을 반환하는 함수
+    /// </summary>
+    /// <param name="projectile"></param>
+    /// <param name="adhesion"></param>
+    /// <returns></returns>
+    public static Projectile GetProjectile(Projectile projectile)
+    {
+        return instance.getObjectPooler.GetProjectile(projectile);
     }
 }
