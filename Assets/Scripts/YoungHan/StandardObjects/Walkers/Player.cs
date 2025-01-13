@@ -48,6 +48,8 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _jumpLandingClip = null;
     [SerializeField]
     private AnimationClip _dashClip = null;
+    [SerializeField]
+    private AnimationClip _zipUpClip = null;
 
     private bool _hasAnimator = false;
 
@@ -133,18 +135,24 @@ public sealed class Player : Runner, IHittable
     [SerializeField]
     private Weapon _weapon1;
 
-    private Action<bool> _boundingAction = null;
-
     private Action<IHittable, int> _hitAction = null;
 
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
 
     private Action<GameObject, Vector2, Transform> _effectAction = null;
 
+    private Func<bool, bool> _boundingFunction = null;
+
     private Func<Projectile, Projectile> _projectileFunction = null;
 
     private IEnumerator _animationCoroutine = null;
 
+    /// <summary>
+    /// 첫 번째 애니메이션을 재생시키고 두 번째 애니메이션을 재생시키는 함수, bool은 스프라이트 렌더러를 일시적으로 반전 시킴
+    /// </summary>
+    /// <param name="first"></param>
+    /// <param name="second"></param>
+    /// <param name="flip"></param>
     private void Play(AnimationClip first, AnimationClip second, bool flip)
     {
         if (_animationCoroutine != null)
@@ -285,9 +293,17 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(GetCurrentClips() == _zipUpClip)
+        {
+            Play(null, _jumpFallingClip, false);
+        }
+    }
+
     public override void MoveLeft()
     {
-        if (isAlive == true)
+        if (isAlive == true && GetCurrentClips() != _zipUpClip)
         {
             base.MoveLeft();
             PlayMove(ITransformable.LeftRotation);
@@ -296,7 +312,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveRight()
     {
-        if (isAlive == true)
+        if (isAlive == true && GetCurrentClips() != _zipUpClip)
         {
             base.MoveRight();
             PlayMove(ITransformable.RightRotation);
@@ -320,6 +336,7 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
+            _boundingFunction?.Invoke(false);
             float velocity = getRigidbody2D.velocity.y;
             base.Jump();
             if(velocity != getRigidbody2D.velocity.y)
@@ -344,21 +361,21 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action<bool> bounding, Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<Projectile, Projectile> projectile)
+    public void Initialize(Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
     {
-        _boundingAction = bounding;
         _hitAction = hit;
         _strikeAction = strike;
         _effectAction = effect;
+        _boundingFunction = bounding;
         _projectileFunction = projectile;
     }
 
     public void MoveUp()
     {
-        //if(_interactionFunction != null && _interactionFunction.Invoke(Interaction.MoveUp) == true)
-        //{
-        //    //성공하면 애니메이션 바꾸기
-        //}
+        if(_boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        {
+            Play(null, _zipUpClip, false);
+        }
     }
     
     public void MoveDown()
@@ -368,9 +385,9 @@ public sealed class Player : Runner, IHittable
 
     public void Attack1()
     {
-        if(isAlive == true && _weapon1 != null)
+        if(isAlive == true && _weapon1 != null && _weapon1.TryUse(getAnimator, getTransform, null, _strikeAction, _effectAction, _projectileFunction) == true)
         {
-            _weapon1.TryUse(getAnimator, getTransform, null, _strikeAction, _effectAction, _projectileFunction);
+
         }
     }
 

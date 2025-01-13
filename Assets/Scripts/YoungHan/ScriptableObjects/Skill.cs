@@ -26,10 +26,11 @@ public class Skill : ScriptableObject
     /// </summary>
     /// <param name="user"></param>
     /// <param name="target"></param>
+    /// <param name="tags"></param>
     /// <param name="strikeAction"></param>
     /// <param name="effectAction"></param>
     /// <param name="function"></param>
-    public void Use(Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+    public void Use(Transform user, IHittable target, string[] tags, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
     {
         if (effectAction != null)
         {
@@ -52,18 +53,28 @@ public class Skill : ScriptableObject
             //사용자의 Transform 값을 주면 사용자의 범위 안에서 행해지는 근거리 스플래쉬 딜
             if (user != null)
             {
-                strikeAction?.Invoke(strike, shape.GetPolygonArea(user, new string[] { target.tag }), hitObject);
+               // strikeAction?.Invoke(strike, shape.GetPolygonArea(user, new string[] { target.tag }), hitObject);
             }
             //그렇지 않으면 특정 대상에 유착된 스플래쉬 딜
             else if(target != null)
             {
-                strikeAction?.Invoke(strike, shape.GetPolygonArea(target.transform, new string[] { target.tag }), hitObject);
+                //strikeAction?.Invoke(strike, shape.GetPolygonArea(target.transform, new string[] { target.tag }), hitObject);
             }
         }
-        //공격 모양이 없으면 그 대상만 타격
+        //공격 모양이 없으면
         else
         {
-            strikeAction?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
+            int length = tags != null ? tags.Length : 0;
+            if(length > 0)
+            {
+
+            }
+            else
+            {
+
+            }
+
+            //strikeAction?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
         }
         //발사체를 반환하는 함수가 있다면
         if (function != null)
@@ -79,11 +90,11 @@ public class Skill : ScriptableObject
     {
         [SerializeField, Header("사용할 스킬")]
         private Skill skill;
-
+        [SerializeField, Header("대상의 태그값")]
+        private string[] tags;
         [SerializeField, Header("스킬 사용과 동시에 동작하는 애니메이터")]
         private AnimatorHandler animatorHandler;
-
-        [SerializeField, Header("이 내용이 있어야 동작하는 필수 애니메이션 클립")]
+        [SerializeField, Header("발동 필수 애니메이션 클립")]
         private List<AnimationClip> essentialClips;
 
         public void OnBeforeSerialize()
@@ -92,6 +103,30 @@ public class Skill : ScriptableObject
 
         public void OnAfterDeserialize()
         {
+            int length = tags != null ? tags.Length : 0;
+            if(length > 0)
+            {
+                List<string> list = new List<string>();
+                for (int i = 0; i < length; i++)
+                {
+                    if (string.IsNullOrEmpty(tags[i]) == false && list.Contains(tags[i]) == false)
+                    {
+                        list.Add(tags[i]);
+                    }
+                    else if (i == length - 1)
+                    {
+                        if (list.Contains(tags[i]) == true)
+                        {
+                            list.Add(null);
+                        }
+                        else
+                        {
+                            list.Add(tags[i]);
+                        }
+                    }
+                }
+                tags = list.ToArray();
+            }
             int count = essentialClips.Count;
             if (count > 0)
             {
@@ -120,7 +155,7 @@ public class Skill : ScriptableObject
 
         public bool TryUse(Animator animator, Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
         {
-            int count = essentialClips.Count;
+            int count = essentialClips != null ? essentialClips.Count : 0;
             if (animator != null)
             {
                 if (count > 0)
@@ -131,7 +166,7 @@ public class Skill : ScriptableObject
                         if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && stateInfo.normalizedTime >= 1.0)
                         {
                             animatorHandler?.Play(animator);
-                            skill?.Use(user, target, strikeAction, effectAction, function);
+                            skill?.Use(user, target, tags, strikeAction, effectAction, function);
                             return true;
                         }
                     }
@@ -139,13 +174,13 @@ public class Skill : ScriptableObject
                 else
                 {
                     animatorHandler?.Play(animator);
-                    skill?.Use(user, target, strikeAction, effectAction, function);
+                    skill?.Use(user, target, tags, strikeAction, effectAction, function);
                     return true;
                 }
             }
             else if (count == 0)
             {
-                skill?.Use(user, target, strikeAction, effectAction, function);
+                skill?.Use(user, target, tags, strikeAction, effectAction, function);
                 return true;
             }
             return false;

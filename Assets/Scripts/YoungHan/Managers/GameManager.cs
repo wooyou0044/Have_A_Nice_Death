@@ -43,10 +43,12 @@ public sealed class GameManager : Manager<GameManager>
 
     private List<IHittable> _hittableList = new List<IHittable>();
 
+    private List<Ladder> ladderList = new List<Ladder>();
+
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(MoveLadder, Report, Report, ShowEffect, GetProjectile);
+        getController._player?.Initialize(Report, Report, ShowEffect, TryUseLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -54,13 +56,28 @@ public sealed class GameManager : Manager<GameManager>
             {
                 _hittableList.Add(hittable);
             }
+            else if (monoBehaviour is Ladder ladder)
+            {
+                ladderList.Add(ladder);
+            }
         }
-        //Strike.Area area = new Strike.TargetArea(new IHittable[] { _hittableList[0], null});
     }
 
-    private void MoveLadder(bool bounding)
+    private bool TryUseLadder(bool bounding)
     {
-
+        foreach(Ladder ladder in ladderList)
+        {
+            if (bounding == true)
+            {
+                ladder.MoveUp();
+                return true;
+            }
+            else
+            {
+                ladder.MoveStop();
+            }
+        }
+        return false;
     }
 
     /// <summary>

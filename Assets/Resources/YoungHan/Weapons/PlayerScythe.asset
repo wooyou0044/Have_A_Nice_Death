@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   action1:
     skill: {fileID: 11400000, guid: 8d03f79c3d830b3449e3c67872c3e860, type: 2}
+    tags:
+    - Enemy
+    - 
     animatorHandler: {fileID: 11400000, guid: 97c068b302368f24d98f72f8de0df9cc, type: 2}
     essentialClips: []

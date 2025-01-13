@@ -97,7 +97,7 @@ public class Controller : MonoBehaviour
             {
                 _player.MoveStop();
             }
-            if (_upInput.isPressed == true)
+            if (_upInput.isPressed == true && _downInput.isPressed == false)
             {
                 _player.MoveUp();
             }
@@ -120,7 +120,7 @@ public class Controller : MonoBehaviour
             //มกวม
             if (GetKey(_jumpKeyCodes) == true)
             {
-                if (_downInput.isPressed == true)
+                if (_downInput.isPressed == true && _upInput.isPressed == false)
                 {
                     _player.MoveDown();
                 }

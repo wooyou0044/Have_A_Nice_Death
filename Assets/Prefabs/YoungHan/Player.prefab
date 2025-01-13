@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: d65aa75959f0b0548a9e0fbac93510a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -205,6 +205,7 @@ MonoBehaviour:
   _jumpFallingClip: {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
   _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
+  _zipUpClip: {fileID: 7400000, guid: e3dad2b7c84bfb94db965db18e2d0c9b, type: 2}
   _remainLife: 65
   _lossLife: 0
   _maxLife: 65
