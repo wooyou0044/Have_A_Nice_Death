@@ -20,7 +20,19 @@ public class YoungHan : MonoBehaviour
             spriteRenderer.sharedMaterial.color = color;
         }
     }
+    [SerializeField]
+    private AnimatorPlayer animatorPlayer;
 
+    [SerializeField]
+    AnimationClip clip;
+
+    private void Update()
+    {
+        if(gameObject.activeSelf == true && animatorPlayer != null)
+        {
+            animatorPlayer.Play(clip, true);
+        }
+    }
 
     /// <summary>
     /// 특정 점이 주어진 콜라이더2D 내에 있는지 확인합니다.

@@ -162,23 +162,23 @@ public sealed class Player : Runner, IHittable
         _animationCoroutine = DoPlay();
         StartCoroutine(_animationCoroutine);
         IEnumerator DoPlay()
-        {
-            if (flip == true)
-            {
-                getSpriteRenderer.flipX = true;
-            }
+        {  
             if (first != null)
             {
+                if (flip == true)
+                {
+                    getSpriteRenderer.flipX = true;
+                }
                 getAnimator.Play(first.name);
                 yield return null;
                 yield return new WaitWhile(() => IsPlaying(first.name));
             }
-            if (flip == true)
-            {
-                getSpriteRenderer.flipX = false;
-            }
             if (second != null)
             {
+                if (flip == true)
+                {
+                    getSpriteRenderer.flipX = false;
+                }
                 getAnimator.Play(second.name);
                 yield return null;
                 yield return new WaitWhile(() => IsPlaying(second.name));
