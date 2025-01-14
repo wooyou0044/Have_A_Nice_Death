@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 워커를 상속 받은 뛸 수 있는 러너 클래스
 /// </summary>
-public class Runner : Walker/*, IJumpable*/
+public class Runner : Walker
 {
     //점프 후 다시 점프 할 수 있게 기다리는 최소 시간
     private static readonly float JumpDelay = 0.05f;
@@ -22,9 +22,6 @@ public class Runner : Walker/*, IJumpable*/
     private byte _jumpCount = 0;
 
     private IEnumerator _jumpCoroutine = null;
-
-    //대쉬 후 다시 대쉬 할 수 있게 기다리는 최소 시간
-    
 
     [SerializeField, Header("대쉬 강도"), Range(0, 100)]
     protected float _dashValue = 50;
@@ -47,9 +44,17 @@ public class Runner : Walker/*, IJumpable*/
     private IEnumerator _levitationCoroutine = null;
 
 #if UNITY_EDITOR
-    protected virtual void OnValidate()
+    protected override void OnValidate()
     {
-        _jumpCount = _jumpLimit;
+        base.OnValidate();
+        if (isGrounded == true)
+        {
+            _jumpCount = _jumpLimit;
+        }
+        else
+        {
+            _jumpCount = 0;
+        }
     }
 #endif
 
@@ -125,7 +130,7 @@ public class Runner : Walker/*, IJumpable*/
             {
                 _isDashed = true;
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                getRigidbody2D.AddForce(new Vector2(getTransform.forward.normalized.z * _dashValue, 0), ForceMode2D.Impulse);
+                getRigidbody2D.velocity = new Vector2(getTransform.forward.normalized.z * _dashValue, 0);
                 yield return new WaitForSeconds(_dashDelay);
                 getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
                 getRigidbody2D.velocity += Vector2.down;

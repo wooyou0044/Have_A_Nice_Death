@@ -1,29 +1,28 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AnimatorPlayer))]
 public sealed class Player : Runner, IHittable
 {
+    private static readonly float MinimumDropVelocity = -0.49f;
 
-    private bool _hasSpriteRenderer = false;
+    private bool _hasAnimatorPlayer = false;
 
-    private SpriteRenderer _spriteRenderer = null;
+    private AnimatorPlayer _animatorPlayer = null;
 
-    private SpriteRenderer getSpriteRenderer
+    private AnimatorPlayer getAnimatorPlayer
     {
         get
         {
-            if (_hasSpriteRenderer == false)
+            if (_hasAnimatorPlayer == false)
             {
-                _hasSpriteRenderer = true;
-                _spriteRenderer = GetComponent<SpriteRenderer>();
+                _hasAnimatorPlayer = true;
+                _animatorPlayer = GetComponent<AnimatorPlayer>();
             }
-            return _spriteRenderer;
+            return _animatorPlayer;
         }
     }
 
@@ -50,24 +49,6 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _dashClip = null;
     [SerializeField]
     private AnimationClip _zipUpClip = null;
-
-    private bool _hasAnimator = false;
-
-    private Animator _animator = null;
-
-    private Animator getAnimator
-    {
-        get
-        {
-            if (_hasAnimator == false)
-            {
-                _hasAnimator = true;
-                _animator = GetComponent<Animator>();
-            }
-            return _animator;
-        }
-    }
-
 
     [Space(10f), Header("체력")]
     //활성 체력'으로, 남아있는 체력을 의미한다.
@@ -132,6 +113,8 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    private float _chargingTime = 0;
+
     [SerializeField]
     private Weapon _weapon1;
 
@@ -145,65 +128,24 @@ public sealed class Player : Runner, IHittable
 
     private Func<Projectile, Projectile> _projectileFunction = null;
 
-    private IEnumerator _animationCoroutine = null;
-
-    /// <summary>
-    /// 첫 번째 애니메이션을 재생시키고 두 번째 애니메이션을 재생시키는 함수, bool은 스프라이트 렌더러를 일시적으로 반전 시킴
-    /// </summary>
-    /// <param name="first"></param>
-    /// <param name="second"></param>
-    /// <param name="flip"></param>
-    private void Play(AnimationClip first, AnimationClip second, bool flip)
-    {
-        if (_animationCoroutine != null)
-        {
-            StopCoroutine(_animationCoroutine);
-        }
-        _animationCoroutine = DoPlay();
-        StartCoroutine(_animationCoroutine);
-        IEnumerator DoPlay()
-        {  
-            if (first != null)
-            {
-                if (flip == true)
-                {
-                    getSpriteRenderer.flipX = true;
-                }
-                getAnimator.Play(first.name);
-                yield return null;
-                yield return new WaitWhile(() => IsPlaying(first.name));
-            }
-            if (second != null)
-            {
-                if (flip == true)
-                {
-                    getSpriteRenderer.flipX = false;
-                }
-                getAnimator.Play(second.name);
-                yield return null;
-                yield return new WaitWhile(() => IsPlaying(second.name));
-            }
-            _animationCoroutine = null;
-        }
-    }
 
     private void PlayMove(bool straight)
     {
-        AnimationClip animationClip = GetCurrentClips();
+        AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
         if (straight == false)
         {
             if (animationClip == _idleClip)
             {
-                Play(_idleUturnClip, _idleClip, true);
+                getAnimatorPlayer.Play(_idleUturnClip, _idleClip, true);
             }
             else if (animationClip == _runToIdleClip || animationClip == _idleToRunClip || animationClip == _idleUturnClip || animationClip == _runClip)
             {
-                Play(_runUturnClip, _runClip, true);
+                getAnimatorPlayer.Play(_runUturnClip, _runClip, true);
             }
         }
         else if (animationClip == _idleClip)
         {
-            Play(_idleToRunClip, _runClip, false);
+            getAnimatorPlayer.Play(_idleToRunClip, _runClip, false);
         }
     }
 
@@ -220,45 +162,6 @@ public sealed class Player : Runner, IHittable
             PlayMove(false);
             getTransform.rotation = Quaternion.Euler(rotation);
         }
-    }
-
-    private bool IsPlaying(string animation)
-    {
-        AnimatorStateInfo stateInfo = getAnimator.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(animation) == true;
-    }
-
-    private IEnumerator DoRecoverAnimation()
-    {
-        Levitate(false);
-        yield return null;
-        do
-        {
-            yield return null;
-        } while (getAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0);
-        if(isGrounded == true)
-        {
-            Play(null, _idleClip, false);
-        }
-        else
-        {
-            Play(null, _jumpFallingClip, false);
-        }
-        _animationCoroutine = null;
-    }
-
-    private AnimationClip GetCurrentClips()
-    {
-        if (gameObject.activeInHierarchy == true)
-        {
-            AnimatorClipInfo[] clipInfos = getAnimator.GetCurrentAnimatorClipInfo(0);
-            int length = clipInfos != null ? clipInfos.Length : 0;
-            if (length > 0)
-            {
-                return clipInfos[0].clip;
-            }
-        }
-        return null;
     }
 
 #if UNITY_EDITOR
@@ -286,41 +189,24 @@ public sealed class Player : Runner, IHittable
         base.OnCollisionEnter2D(collision);
         if (isGrounded != this.isGrounded)
         {
-            Debug.Log(this.isGrounded);
-            getSpriteRenderer.flipX = false;
-            Play(_jumpLandingClip, _idleClip, false);
-        }
-    }
-
-    protected override void OnCollisionStay2D(Collision2D collision)
-    {
-        bool isGrounded = this.isGrounded;
-        base.OnCollisionStay2D(collision);
-        if (isGrounded != this.isGrounded /*&& getRigidbody2D.velocity.y == 0*/)
-        {
-            //Debug.Log(this.isGrounded);
-            //getSpriteRenderer.flipX = false;
-            //Play(_jumpLandingClip, _idleClip, false);
+            getAnimatorPlayer.Play(_jumpLandingClip, _idleClip, false);
         }
     }
 
     protected override void OnCollisionExit2D(Collision2D collision)
     {
-        bool isGrounded = this.isGrounded;
         base.OnCollisionExit2D(collision);
-        if (isGrounded != this.isGrounded)
+        if (isGrounded == false && getRigidbody2D.velocity.y < MinimumDropVelocity)
         {
-            //Debug.Log(this.isGrounded);
-            //getSpriteRenderer.flipX = false;
-            //Play(null, _jumpFallingClip, false);
+            getAnimatorPlayer.Play(_jumpFallingClip);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(GetCurrentClips() == _zipUpClip)
+        if(getAnimatorPlayer.IsPlaying(_zipUpClip) == true)
         {
-            Play(null, _jumpFallingClip, false);
+            getAnimatorPlayer.Play(_jumpFallingClip, false);
         }
     }
 
@@ -328,11 +214,13 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            AnimationClip animationClip = GetCurrentClips();
-            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
             {
                 base.MoveLeft();
-                PlayMove(ITransformable.LeftRotation);
+                PlayMove(LeftRotation);
             }
         }
     }
@@ -341,11 +229,13 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            AnimationClip animationClip = GetCurrentClips();
-            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
             {
                 base.MoveRight();
-                PlayMove(ITransformable.RightRotation);
+                PlayMove(RightRotation);
             }
         }
     }
@@ -354,9 +244,9 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            if(GetCurrentClips() == _runClip)
+            if(getAnimatorPlayer.IsPlaying(_runClip) == true)
             {
-                Play(_runToIdleClip, _idleClip, false);
+                getAnimatorPlayer.Play(_runToIdleClip, _idleClip, false);
             }
             base.MoveStop();
         }
@@ -371,22 +261,28 @@ public sealed class Player : Runner, IHittable
             base.Jump();
             if(velocity != getRigidbody2D.velocity.y)
             {
-                getSpriteRenderer.flipX = false;
-                Play(_jumpStartClip, _jumpFallingClip , false);
+                getAnimatorPlayer.Play(_jumpStartClip, _jumpFallingClip , false);
             }
         }
     }
 
     public override void Dash()
     {
-        if (isAlive == true && GetCurrentClips() != _zipUpClip)
+        if (isAlive == true)
         {
-            float velocity = getRigidbody2D.velocity.x;
             base.Dash();
-            if (velocity != getRigidbody2D.velocity.x)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
             {
-                getSpriteRenderer.flipX = false;
-                Play(_dashClip, _jumpFallingClip, false);
+                _boundingFunction?.Invoke(false);
+                if (isGrounded == true)
+                {
+                    getAnimatorPlayer.Play(_dashClip, _idleClip, false);
+                }
+                else
+                {
+                    getAnimatorPlayer.Play(_dashClip, _jumpFallingClip, false);
+                }
             }
         }
     }
@@ -402,10 +298,10 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        //if(_boundingFunction != null && _boundingFunction.Invoke(true) == true)
-        //{
-        //    Play(null, _zipUpClip, false);
-        //}
+        if (_boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        {
+            getAnimatorPlayer.Play(_zipUpClip);
+        }
     }
     
     public void MoveDown()
@@ -413,25 +309,31 @@ public sealed class Player : Runner, IHittable
 
     }
 
-    public void Attack1()
+    public void AttackBasic(bool pressed)
     {
-        if(isAlive == true && _weapon1 != null && _weapon1.TryUse(getAnimator, getTransform, null, _strikeAction, _effectAction, _projectileFunction) == true)
+        if(_weapon1 != null)
         {
-            //if (_animationCoroutine != null)
-            //{
-            //    StopCoroutine(_animationCoroutine);
-            //}
-            //_animationCoroutine = DoRecoverAnimation();
-            //StartCoroutine(_animationCoroutine);
+            if(pressed == true)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        if(pressed == false)
+        {
+            _chargingTime = 0;
         }
     }
 
-    public void Attack2()
+    public void Attack1()
     {
 
     }
 
-    public void Attack3()
+    public void Attack2()
     {
 
     }
@@ -454,13 +356,24 @@ public sealed class Player : Runner, IHittable
     public void Hit(Strike strike)
     {
         int result = strike.result;
-        if(result > 0)
+        //피 채우는 용도라면
+        if (result > 0)
         {
-            //피 채우는 용도
+            //최대 체력 보다 값이 넘을 경우는 최대 체력이 된다.
+            if (_remainLife + result > _maxLife - _lossLife)
+            {
+                _remainLife = (byte)(_maxLife - _lossLife);
+            }
+            //그렇지 않으면 값을 더해준다.
+            else
+            {
+                _remainLife += (byte)result;
+            }
         }
+        //피 깎는 용도라면
         else
         {
-            //피 깎는 용도
+            //
             if(-result < _remainLife)
             {
                 _remainLife -= (byte)-result;

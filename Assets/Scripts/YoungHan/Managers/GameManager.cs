@@ -67,15 +67,15 @@ public sealed class GameManager : Manager<GameManager>
     {
         foreach(Ladder ladder in ladderList)
         {
-            if (bounding == true)
-            {
-                //ladder.MoveUp();
-                return true;
-            }
-            else
-            {
-                //ladder.MoveStop();
-            }
+            //if (bounding == true)
+            //{
+            //    ladder.MoveUp();
+            //    return true;
+            //}
+            //else
+            //{
+            //    ladder.MoveStop();
+            //}
         }
         return false;
     }

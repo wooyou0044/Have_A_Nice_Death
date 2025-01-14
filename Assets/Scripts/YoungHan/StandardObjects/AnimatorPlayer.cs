@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator))]
-public class AnimatorPlayer : MonoBehaviour
+public sealed class AnimatorPlayer : MonoBehaviour
 {
     private bool _hasSpriteRenderer = false;
 
@@ -29,7 +30,7 @@ public class AnimatorPlayer : MonoBehaviour
 
     private Animator _animator = null;
 
-    private Animator getAnimator
+    public Animator animator
     {
         get
         {
@@ -57,11 +58,63 @@ public class AnimatorPlayer : MonoBehaviour
 
     private void OnDisable()
     {
-        if(_coroutine != null)
+        Stop();
+    }
+
+    private void OnApplicationQuit()
+    {
+        Stop();
+    }
+
+    /// <summary>
+    /// 강제로 애니메이션을 멈추게 만드는 함수
+    /// </summary>
+    public void Stop()
+    {
+        if (_coroutine != null)
         {
             StopCoroutine(_coroutine);
             _coroutine = null;
         }
+    }
+
+    /// <summary>
+    /// 애니메이터 Trigger를 재생시키는 함수
+    /// </summary>
+    /// <param name="key"></param>
+    public void Play(string key)
+    {
+        animator.SetTrigger(key);
+    }
+
+    /// <summary>
+    /// 애니메이터 Bool을 재생시키는 함수
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public void Play(string key, bool value)
+    {
+        animator.SetBool(key, value);
+    }
+
+    /// <summary>
+    /// 애니메이터 Int를 재생시키는 함수
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public void Play(string key, int value)
+    {
+        animator.SetInteger(key, value);
+    }
+
+    /// <summary>
+    /// 애니메이터 Float을 재생시키는 함수
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    public void Play(string key, float value)
+    {
+        animator.SetFloat(key, value);
     }
 
     /// <summary>
@@ -71,34 +124,7 @@ public class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip animationClip, bool force = true)
     {
-        if(enabled == false)
-        {
-            return;
-        }
-        if (_coroutine != null)
-        {
-            if(force == false)
-            {
-                return;
-            }
-            StopCoroutine(_coroutine);
-        }
-        _coroutine = DoPlay();
-        StartCoroutine(_coroutine);
-        IEnumerator DoPlay()
-        {
-            if(getSpriteRenderer.flipX == true)
-            {
-                getSpriteRenderer.flipX = false;
-            }
-            if (animationClip != null)
-            {
-                getAnimator.Play(animationClip.name, 0, 0f);
-                yield return null;
-                yield return new WaitWhile(() => IsPlaying(animationClip.name));
-            }
-            _coroutine = null;
-        }
+        Play(animationClip, null, false, force);
     }
 
     /// <summary>
@@ -110,7 +136,7 @@ public class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if (enabled == false)
+        if (enabled == false && Application.isPlaying == true)
         {
             return;
         }
@@ -136,9 +162,14 @@ public class AnimatorPlayer : MonoBehaviour
                 {
                     getSpriteRenderer.flipX = true;
                 }
-                getAnimator.Play(first.name, 0, 0f);
+                animator.Play(first.name, 0, 0f);
                 yield return null;
-                yield return new WaitWhile(() => IsPlaying(first.name));
+                Func<bool> func = () =>
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(first.name) == true;
+                };
+                yield return new WaitWhile(func);
             }
             if (second != null)
             {
@@ -146,9 +177,14 @@ public class AnimatorPlayer : MonoBehaviour
                 {
                     getSpriteRenderer.flipX = false;
                 }
-                getAnimator.Play(second.name, 0, 0f);
+                animator.Play(second.name, 0, 0f);
                 yield return null;
-                yield return new WaitWhile(() => IsPlaying(second.name));
+                Func<bool> func = () =>
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(second.name) == true;
+                };
+                yield return new WaitWhile(func);
             }
             _coroutine = null;
         }
@@ -161,8 +197,7 @@ public class AnimatorPlayer : MonoBehaviour
     /// <returns>애니메이션 이름이 일치하면 참을 반환</returns>
     public bool IsPlaying(string text)
     {
-        AnimatorStateInfo stateInfo = getAnimator.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(text) == true;
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(text);
     }
 
     /// <summary>
@@ -172,7 +207,7 @@ public class AnimatorPlayer : MonoBehaviour
     /// <returns>애니메이션 클립이 일치하면 참을 반환</returns>
     public bool IsPlaying(AnimationClip animationClip)
     {
-        return IsPlaying(animationClip != null ? animationClip.name : null);
+        return GetCurrentClips() == animationClip;
     }
 
     /// <summary>
@@ -181,7 +216,7 @@ public class AnimatorPlayer : MonoBehaviour
     /// <returns>현재 재생 중인 애니메이션 클립을 반환함</returns>
     public AnimationClip GetCurrentClips()
     {
-        AnimatorClipInfo[] clipInfos = getAnimator.GetCurrentAnimatorClipInfo(0);
+        AnimatorClipInfo[] clipInfos = animator.GetCurrentAnimatorClipInfo(0);
         int length = clipInfos != null ? clipInfos.Length : 0;
         if (length > 0)
         {
