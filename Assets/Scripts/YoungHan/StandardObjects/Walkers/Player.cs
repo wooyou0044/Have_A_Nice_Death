@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AnimatorPlayer))]
 public sealed class Player : Runner, IHittable
 {
     private static readonly float MinimumDropVelocity = -0.49f;
@@ -216,8 +214,10 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
-            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
             {
                 base.MoveLeft();
                 PlayMove(LeftRotation);
@@ -229,8 +229,10 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
-            if (animationClip != _dashClip && animationClip != _zipUpClip)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
             {
                 base.MoveRight();
                 PlayMove(RightRotation);
@@ -266,11 +268,11 @@ public sealed class Player : Runner, IHittable
 
     public override void Dash()
     {
-        if (isAlive == true && getAnimatorPlayer.IsPlaying(_zipUpClip) == false)
+        if (isAlive == true)
         {
-            float velocity = getRigidbody2D.velocity.x;
             base.Dash();
-            if (velocity != getRigidbody2D.velocity.x)
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
             {
                 _boundingFunction?.Invoke(false);
                 if (isGrounded == true)
@@ -309,7 +311,7 @@ public sealed class Player : Runner, IHittable
 
     public void AttackBasic(bool pressed)
     {
-        if(isAlive == true && _weapon1 != null)
+        if(_weapon1 != null)
         {
             if(pressed == true)
             {

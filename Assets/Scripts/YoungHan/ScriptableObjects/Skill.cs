@@ -27,38 +27,40 @@ public class Skill : ScriptableObject
     /// <param name="user"></param>
     /// <param name="target"></param>
     /// <param name="tags"></param>
-    /// <param name="strikeAction"></param>
-    /// <param name="effectAction"></param>
-    /// <param name="function"></param>
-    public void Use(Transform user, IHittable target, string[] tags, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+    /// <param name="action2"></param>
+    /// <param name="action1"></param>
+    /// <param name="func"></param>
+    public void Use(Transform user, IHittable target, string[] tags, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func)
     {
-        if (effectAction != null)
+        if (action1 != null)
         {
             //사용자의 Transform 값을 주면 근거리에서 휘두르는 공격
             if (user != null)
             {
                 Vector2 position = user.position;
-                effectAction.Invoke(shotObject, position, user);
-                effectAction.Invoke(splashObject, position, null);
+                action1.Invoke(shotObject, position, user);
+                action1.Invoke(splashObject, position, null);
             }
             //그렇지 않다면 원거리 대상을 향한 갑작스런 광역 공격(혹은 타점에 대한 경고 이펙트를 줄 수 있다)
             else if(target != null)
             {
-                effectAction.Invoke(splashObject, target.GetCollider2D().bounds.center, null);
+                action1.Invoke(splashObject, target.GetCollider2D().bounds.center, null);
             }
         }
         //공격 모양이 있으면
         if (shape != null)
         {
-            //사용자의 Transform 값을 주면 사용자의 범위 안에서 행해지는 근거리 스플래쉬 딜
-            if (user != null)
+            if(user != null)
             {
-               // strikeAction?.Invoke(strike, shape.GetPolygonArea(user, new string[] { target.tag }), hitObject);
+                action2?.Invoke(strike, shape.GetPolygonArea(user, tags), hitObject);
             }
-            //그렇지 않으면 특정 대상에 유착된 스플래쉬 딜
             else if(target != null)
             {
-                //strikeAction?.Invoke(strike, shape.GetPolygonArea(target.transform, new string[] { target.tag }), hitObject);
+                action2?.Invoke(strike, shape.GetPolygonArea(target.transform, tags), hitObject);
+            }
+            else
+            {
+                action2?.Invoke(strike, new Strike.TagTarget(tags), hitObject);
             }
         }
         //공격 모양이 없으면
@@ -67,20 +69,22 @@ public class Skill : ScriptableObject
             int length = tags != null ? tags.Length : 0;
             if(length > 0)
             {
-
+                action2?.Invoke(strike, new Strike.TagTarget(tags), hitObject);
+            }
+            else if(target != null)
+            {
+                action2?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
             }
             else
             {
-
+                action2?.Invoke(strike, null, hitObject);
             }
-
-            //strikeAction?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
         }
         //발사체를 반환하는 함수가 있다면
-        if (function != null)
+        if (func != null)
         {
-            Projectile projectile = function.Invoke(this.projectile);
-            projectile?.Shot(user, target, strikeAction, effectAction);
+            Projectile projectile = func.Invoke(this.projectile);
+            projectile?.Shot(user, target, action1, action2);
         }
     }
 
@@ -153,34 +157,34 @@ public class Skill : ScriptableObject
             }
         }
 
-        public bool TryUse(Animator animator, Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+        public bool TryUse(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, AnimatorPlayer animatorPlayer)
         {
             int count = essentialClips != null ? essentialClips.Count : 0;
-            if (animator != null)
+            if (animatorPlayer != null)
             {
                 if (count > 0)
                 {
-                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    AnimatorStateInfo stateInfo = animatorPlayer.animator.GetCurrentAnimatorStateInfo(0);
                     for (int i = 0; i < count; i++)
                     {
-                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && stateInfo.normalizedTime >= 1.0)
+                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && stateInfo.normalizedTime >= 1.0f)
                         {
-                            animatorHandler?.Play(animator);
-                            skill?.Use(user, target, tags, strikeAction, effectAction, function);
+                            animatorHandler?.Play(animatorPlayer.animator);
+                            skill?.Use(user, target, tags, action1, action2, func);
                             return true;
                         }
                     }
                 }
                 else
                 {
-                    animatorHandler?.Play(animator);
-                    skill?.Use(user, target, tags, strikeAction, effectAction, function);
+                    animatorHandler?.Play(animatorPlayer.animator);
+                    skill?.Use(user, target, tags, action1, action2, func);
                     return true;
                 }
             }
             else if (count == 0)
             {
-                skill?.Use(user, target, tags, strikeAction, effectAction, function);
+                skill?.Use(user, target, tags, action1, action2, func);
                 return true;
             }
             return false;
