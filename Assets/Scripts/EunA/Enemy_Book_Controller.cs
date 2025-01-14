@@ -11,8 +11,7 @@ public class Enemy_Book_AI : Walker
     float detectTime;
     int enemyHealth;
     Animator EnemyBookAnimator;
-
-    public LayerMask playerLayerMask;
+    
     public GameObject PaperPlaneMuzzle;
     public AnimationClip idleClip;
     public AnimationClip uturnClip;
@@ -22,31 +21,38 @@ public class Enemy_Book_AI : Walker
     public AnimationClip dieClip;
 
     float BookSightRange;
+    float BookAttackRange;
 
     bool isAttacking = false;
 
     float moveElapsedTime;
     float moveTime = 4.0f;
-    float moveDistance;
     bool isFacingRight;
     bool isUturn;
 
+    
     int facingRight;
-    Collider2D Detectplayer;
     Rigidbody2D enemyRigid;
+    Collider2D Detectplayer;
     Vector2 leftEnemyLocation;
     Vector2 nowEnemyLocation;
     Vector2 rightEnemyLocation;
 
     [SerializeField]
     AnimatorPlayer BookAnimatorPlayer;
+    [SerializeField]
+    float moveDistance;
+    [SerializeField]
+    LayerMask playerLayerMask;
+    
+
 
     void Start()
     {
         enemyHealth = 15;
         EnemyBookAnimator = GetComponent<Animator>();
-        enemyRigid = GetComponent<Rigidbody2D>();
-        BookSightRange = 10;
+        BookSightRange = 5;
+        BookAttackRange = 3;
         moveDistance = 4.0f;
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
         BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
@@ -57,21 +63,26 @@ public class Enemy_Book_AI : Walker
     void Update()
     {
         DetectPlayer();
+    }
 
-        if (Detectplayer == null)
+    void DetectPlayer()
+    {        
+        Detectplayer = Physics2D.OverlapCircle(transform.position, BookSightRange, playerLayerMask);
+
+        if (Detectplayer != null)
         {
-            BookWander();
+            
         }
 
         else
         {
-
+            BookWander();
         }
     }
 
-    void DetectPlayer()
+    void FindPlayer()
     {
-        Detectplayer = Physics2D.OverlapCircle(transform.position, BookSightRange, playerLayerMask);
+
     }
 
 
@@ -140,7 +151,7 @@ public class Enemy_Book_AI : Walker
             MoveStop();
             rightEnemyLocation = new Vector2(transform.position.x, transform.position.y);
 
-            if (isUturn == true)
+            if (isUturn == true && gameObject.transform.eulerAngles == new Vector3(0, 0))
             {
                 BookAnimatorPlayer.Play(uturnClip);
                 isUturn = false;
@@ -151,6 +162,11 @@ public class Enemy_Book_AI : Walker
                 BookAnimatorPlayer.Play(idleClip);
             }
             Invoke("Turn", 0.36f);
+
+            if (gameObject.transform.rotation == Quaternion.Euler(0, 180, 0))
+            {
+                isUturn = true;
+            }
             isFacingRight = false;
         }
     }
@@ -162,10 +178,10 @@ public class Enemy_Book_AI : Walker
         if (rightEnemyLocation.x - nowEnemyLocation.x >= moveDistance)
         {
             MoveStop();
-            if (isUturn == false)
+            if (isUturn == true && gameObject.transform.eulerAngles == new Vector3(0, 180))
             {
                 BookAnimatorPlayer.Play(uturnClip);
-                isUturn = true;
+                isUturn = false;
             }
 
             if (BookAnimatorPlayer.isEndofFrame)
@@ -173,6 +189,12 @@ public class Enemy_Book_AI : Walker
                 BookAnimatorPlayer.Play(idleClip);
             }
             Invoke("Turn", 0.36f);
+            Debug.Log(isUturn);
+
+            if (gameObject.transform.rotation == Quaternion.Euler(0, 0, 0))
+            {
+                isUturn = true;
+            }
             isFacingRight = true;
         }
     }
@@ -188,6 +210,15 @@ public class Enemy_Book_AI : Walker
         {
             gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(this.transform.position, BookSightRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(this.transform.position, BookAttackRange);
     }
 
 }

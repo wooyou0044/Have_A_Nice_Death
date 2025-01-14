@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class WomanGhostAi_Clone : Walker
 {
-    bool isspotted;
-    [SerializeField]
+    //자식오브젝트
+    [SerializeField,Header("자식스크립트")]
+    surpriseImote getSurprisedImote;
+    [SerializeField,Header("자식애니메이션")]
     private Animator surprisedAnimator;
 
-    [SerializeField]
+    //애니메이션 클립들
+    [SerializeField, Header("애니메이션 클립")]
     private AnimatorPlayer animatorPlayer;
-
-    [SerializeField,Header("애니메이션 클립")]
+    [SerializeField]
     private AnimationClip idleClip;
     [SerializeField]
     private AnimationClip spotteddClip;
@@ -22,11 +25,11 @@ public class WomanGhostAi_Clone : Walker
     private AnimationClip uturnClip;
 
     //적 감지
+    [SerializeField,Header("적 감지")]
     public LayerMask playerLayermask;
 
     [SerializeField, Header("공격범위")] float ghostSightRange;
     Transform target;
-    bool isturn;
 
     private bool movingRight = true;
     private Vector2 startPos;
@@ -37,13 +40,21 @@ public class WomanGhostAi_Clone : Walker
     {
         startPos = transform.position;
         animatorPlayer = GetComponent<AnimatorPlayer>();
-        surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();                
+        surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();
+        getSurprisedImote.stop = true;
     }
 
     private void Update()
     {
         Move();
         DetectPlayer();
+
+        //만약 내 하위 오브젝트 불값이 false라면?
+        if(getSurprisedImote.stop == false)
+        {
+            //하위 오브젝트 꺼라
+            surprisedAnimator.gameObject.SetActive(false);
+        }
     }
 
     void Move()
@@ -91,16 +102,19 @@ public class WomanGhostAi_Clone : Walker
             if(target == null)
             {
                 animatorPlayer.Play(spotteddClip, true);
+                animatorPlayer.animator.SetBool("isAttack",true);
+                // skill 넣을곳
+                getSurprisedImote.stop = true;
             }
             target = player.transform;
 
-
             ShowExclamationMark();
-            SpottedPlayer();         
+            SpottedPlayer();
         }
         else if(target != null)
         {
             animatorPlayer.Play(idleClip, true);
+            animatorPlayer.animator.SetBool("isAttack", false);
             target = null;
         }
     }
@@ -122,24 +136,22 @@ public class WomanGhostAi_Clone : Walker
         {
             // 느낌표 활성화
             surprisedAnimator.gameObject.SetActive(true);
-            Invoke(nameof(HideExclamationMark), 1f);
-
         }
     }
-    void HideExclamationMark()
-    {
-        if (surprisedAnimator != null)
-        {
-            surprisedAnimator.gameObject.SetActive(false);
-        }
-    }
-    private void WomanUturn()
-    {        
-        //Vector2 movement = movingRight ? Vector2.right : Vector2.left;        
-        //if()
+    //void HideExclamationMark()
+    //{
+        //if(surprisedAnimator != null)
         //{
-        //    animatorPlayer.Play(uturnClip, true);
-        //}        
-    }
+        //    surprisedAnimator.gameObject.SetActive(false);
+        //}
+
+        //timer += Time.deltaTime;
+        //if (timer > 2)
+        //{            
+        //    surprisedAnimator.gameObject.SetActive(false);
+        //    timer = 0;
+        //}
+    //}
+    
     
 }
