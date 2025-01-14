@@ -1326,6 +1326,14 @@ PrefabInstance:
       propertyPath: _dashDelay
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 73628374627255756, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: _jumpLimit
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 73628374627255756, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: _isGrounded
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 982539927111367623, guid: 871d5908166c9de4da60c903c290196f, type: 3}
       propertyPath: m_GravityScale
       value: 3
