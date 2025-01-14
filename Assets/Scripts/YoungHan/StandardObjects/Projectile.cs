@@ -37,6 +37,8 @@ public class Projectile : MonoBehaviour
     [SerializeField, Header("해당 객체가 소멸하면서 나타날 효과 오브젝트")]
     private GameObject _explosionObject = null;
 
+    private IEnumerator _coroutine = null;
+
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]
     private float _gizmoDuration = 1;
@@ -90,19 +92,17 @@ public class Projectile : MonoBehaviour
     /// <param name="rotation"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    private void Shot(Vector2 position, Quaternion rotation, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2, Transform> action2)
+    private void Shot(Vector2 position, Quaternion rotation, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
         getTransform.position = position;
         getTransform.rotation = rotation;
-        _action1 = action1;
-        _action2 = action2;
+        _action1 = action2;
+        _action2 = action1;
         StopAllCoroutines();
         StartCoroutine(DoProject());
         IEnumerator DoProject()
         {
-
             yield return new WaitForSeconds(_dealyTime);
-
             float duration = _flyingTime;
             while (duration >= 0 || _flyingTime == 0)
             {
@@ -116,7 +116,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public void Shot(Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> action1, Action<GameObject, Vector2, Transform> action2)
+    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
         if (user != null)
         {

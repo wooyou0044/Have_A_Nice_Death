@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7350480242592044362}
-  - component: {fileID: 6219897535074757962}
   - component: {fileID: 687849211858934552}
-  - component: {fileID: 3492141047092672303}
-  - component: {fileID: 8692664755183204470}
   - component: {fileID: 5485927661889974639}
   - component: {fileID: 6554630391433859905}
+  - component: {fileID: 3492141047092672303}
+  - component: {fileID: 6219897535074757962}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -38,47 +37,6 @@ Transform:
   - {fileID: 7339798286695344316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6219897535074757962
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1671469481644130997}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0d6a7271a298794491051f0d39e19eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isGrounded: 0
-  _movingSpeed: 10
-  _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
-  _jumpValue: 15
-  _jumpLimit: 1
-  _jumpCount: 0
-  _dashValue: 50
-  _dashDelay: 0.2
-  _dashCoolTime: 1.5
-  _isDashed: 0
-  _levitationDelay: 0.5
-  _levitationCoolTime: 0.2
-  _idleClip: {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
-  _idleToRunClip: {fileID: 7400000, guid: 7c86be6876b9568499db638a76676fd4, type: 2}
-  _idleUturnClip: {fileID: 7400000, guid: 2e6ca9feb81217c40a9539b5e46fb3d9, type: 2}
-  _runClip: {fileID: 7400000, guid: 61c8e4dea0cb2f3418d8d1ddad228de5, type: 2}
-  _runToIdleClip: {fileID: 7400000, guid: c826f230ea51dbd4d82d69b4e5bbc8fa, type: 2}
-  _runUturnClip: {fileID: 7400000, guid: 1086ebed10acb9a41863729a0404011f, type: 2}
-  _jumpStartClip: {fileID: 7400000, guid: a3be67727dbe26945b83e21d6b99ffca, type: 2}
-  _jumpFallingClip: {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
-  _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
-  _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
-  _zipUpClip: {fileID: 7400000, guid: e3dad2b7c84bfb94db965db18e2d0c9b, type: 2}
-  _remainLife: 65
-  _lossLife: 0
-  _maxLife: 65
-  _remainMana: 0
-  _maxMana: 50
-  _weapon1: {fileID: 11400000, guid: d240cd5aef5b30448a5988016469ff28, type: 2}
 --- !u!212 &687849211858934552
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -131,39 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &3492141047092672303
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1671469481644130997}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6cd45e07d9b44a241a21cc1818151464, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8692664755183204470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1671469481644130997}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01e4c81c291abf146a7472287813e289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!70 &5485927661889974639
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -226,6 +151,68 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!95 &3492141047092672303
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671469481644130997}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6cd45e07d9b44a241a21cc1818151464, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6219897535074757962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1671469481644130997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d6a7271a298794491051f0d39e19eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isGrounded: 0
+  _movingSpeed: 10
+  _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
+  _jumpValue: 15
+  _jumpLimit: 1
+  _jumpCount: 1
+  _dashValue: 50
+  _dashDelay: 0.2
+  _dashCoolTime: 1.5
+  _isDashed: 0
+  _levitationDelay: 0.5
+  _levitationCoolTime: 0.2
+  _idleClip: {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
+  _idleToRunClip: {fileID: 7400000, guid: 7c86be6876b9568499db638a76676fd4, type: 2}
+  _idleUturnClip: {fileID: 7400000, guid: 2e6ca9feb81217c40a9539b5e46fb3d9, type: 2}
+  _runClip: {fileID: 7400000, guid: 61c8e4dea0cb2f3418d8d1ddad228de5, type: 2}
+  _runToIdleClip: {fileID: 7400000, guid: c826f230ea51dbd4d82d69b4e5bbc8fa, type: 2}
+  _runUturnClip: {fileID: 7400000, guid: 1086ebed10acb9a41863729a0404011f, type: 2}
+  _jumpStartClip: {fileID: 7400000, guid: a3be67727dbe26945b83e21d6b99ffca, type: 2}
+  _jumpFallingClip: {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
+  _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
+  _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
+  _zipUpClip: {fileID: 7400000, guid: e3dad2b7c84bfb94db965db18e2d0c9b, type: 2}
+  _remainLife: 65
+  _lossLife: 0
+  _maxLife: 65
+  _remainMana: 0
+  _maxMana: 50
+  _weapon1: {fileID: 11400000, guid: d240cd5aef5b30448a5988016469ff28, type: 2}
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0

@@ -1327,6 +1327,10 @@ PrefabInstance:
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 73628374627255756, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: _dashValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 73628374627255756, guid: 871d5908166c9de4da60c903c290196f, type: 3}
       propertyPath: _jumpLimit
       value: 3
       objectReference: {fileID: 0}

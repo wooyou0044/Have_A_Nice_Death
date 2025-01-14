@@ -130,7 +130,7 @@ public class Runner : Walker
             {
                 _isDashed = true;
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                getRigidbody2D.AddForce(new Vector2(getTransform.forward.normalized.z * _dashValue, 0), ForceMode2D.Impulse);
+                getRigidbody2D.velocity = new Vector2(getTransform.forward.normalized.z * _dashValue, 0);
                 yield return new WaitForSeconds(_dashDelay);
                 getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
                 getRigidbody2D.velocity += Vector2.down;
