@@ -13,6 +13,10 @@ public class Spooksmen_AI : Walker
 
     LayerMask playerLayer;
 
+    [SerializeField] AnimationClip uTurnClip;
+    [SerializeField] AnimationClip idleClip;
+    [SerializeField] AnimationClip surprisedClip;
+
     [Header("플레이어 감지")]
     // 감지하는 범위
     [SerializeField] float sightRange;
@@ -21,24 +25,28 @@ public class Spooksmen_AI : Walker
     [SerializeField] Transform surprisedPos;
     [SerializeField] LayerMask playerMask;
 
+    [Header("배회")]
+    [SerializeField] float wonderRange;
+
     Animator myAnimator;
+    AnimatorPlayer myPlayer;
 
     Transform targetPos;
     // 만들어진 위치
-    Transform createdPos;
+    Vector2 createdPos;
+    Vector2 destination;
 
     GameObject surprised;
-    // 임시
-    int count = 0;
 
-    float uTurn;
+    float homeDistance;
 
-    bool isRight;
-    bool isMove;
+    bool isHome;
+    bool isOverturn;
 
     private void Awake()
     {
         myAnimator = GetComponent<Animator>();
+        myPlayer = GetComponent<AnimatorPlayer>();
     }
 
     void Start()
@@ -46,6 +54,10 @@ public class Spooksmen_AI : Walker
         // 놀란 이펙트 생성
         surprised = Instantiate(surprisedMark, surprisedPos);
         surprised.SetActive(false);
+
+        createdPos = transform.position;
+        homeDistance = 0.5f;
+        isHome = true;
     }
 
     void Update()
@@ -60,103 +72,161 @@ public class Spooksmen_AI : Walker
         player = Physics2D.OverlapCircle(transform.position, sightRange, playerMask);
         if (player != null)
         {
-            // 플레이어가 발견될 때 한번만 실행 -> 따라다니다가 내 자리로 돌아가고 나서 돌아다니다가 다시 플레이어 발견했을 때 실행 (FollowPlayer)
-            // 임시로
-            count++;
-            if (count==1)
+            targetPos = player.transform;
+            if (isHome)
             {
-                myAnimator.SetTrigger("Detect");
+                if(transform.rotation.eulerAngles.y == targetPos.rotation.eulerAngles.y)
+                {
+                    transform.rotation = Quaternion.Euler(0, Mathf.Abs(targetPos.rotation.eulerAngles.y - 180), 0);
+                    isOverturn = true;
+                }
+                else
+                {
+                    isOverturn = false;
+                }
+
+                if(isOverturn)
+                {
+                    myPlayer.Play(surprisedClip, idleClip, true, false);
+                }
+                else
+                {
+                    myPlayer.Play(surprisedClip, idleClip, false, false);
+                }
+
                 surprised.SetActive(true);
+                isHome = false;
             }
-            else
+            if(myPlayer.isEndofFrame)
             {
                 surprised.SetActive(false);
+                //FollowPlayer();
+                MovePosition(targetPos.position.x);
             }
 
-            targetPos = player.transform;
-            FollowPlayer();
         }
         else
         {
-            // 내 자리가 아니면 다시 돌아가고 내 자리면 돌아다니기(ComeBackCreatedPosition, WonderSpotRange)
-            //ComeBackCreatedPosition();
-            //Debug.Log("createdPos : " + createdPos.position);
+            // 내 자리가 아니면 다시 돌아가기
+            if(createdPos.x != transform.position.x)
+            {
+                // 돌아왔으면 자리 범위 돌아다니기
+                if(Mathf.Abs(createdPos.x - transform.position.x) < homeDistance)
+                {
+                    transform.position = new Vector2(createdPos.x, transform.position.y);
+                    // 생성된 위치로 돌아가면 돌아다니기 위해 위치 저장
+                    destination = new Vector2(transform.position.x + wonderRange, transform.position.y);
+                    isHome = true;
+                }
+                else
+                {
+                    //ComeBackCreatedPosition();
+                    MovePosition(createdPos.x);
+                }
+            }
+
+            // 내 자리면 돌아다니기(WonderSpotRange)
+            if(isHome)
+            {
+                WonderSpotRange();
+            }
             surprised.SetActive(false);
         }
     }
 
     // 플레이어가 감지되면 따라다니기
-    void FollowPlayer()
-    {
-        if(transform.position.x <= targetPos.position.x)
-        {
-            // 만약에 지금 rotation y 좌표가 180이면 돌기
-            if (transform.rotation.eulerAngles.y >= 180)
-            {
-                // 돌때는 MoveStop();
-                MoveStop();
-                isRight = true;
-                myAnimator.SetBool("isUturn", true);
-            }
-            else
-            {
-                //transform.rotation = Quaternion.Euler(0, 0, 0);
-                // 오른쪽으로 이동
-                MoveRight();
-            }
-        }
-        else
-        {
-            // 만약에 지금 rotation y 좌표가 0이면 돌기
-            if(transform.rotation.eulerAngles.y <= 0)
-            {
-                // 돌때는 MoveStop();
-                MoveStop();
-                isRight = false;
-                myAnimator.SetBool("isUturn", true);
-            }
+    //void FollowPlayer()
+    //{
+    //    if(transform.position.x <= targetPos.position.x)
+    //    {
+    //        MoveRight();
+    //    }
+    //    else
+    //    {
+    //        MoveLeft();
+    //    }
+    //}
 
-            else
-            {
-                //transform.rotation = Quaternion.Euler(0, 180, 0);
-                // 왼쪽으로 이동
-                MoveLeft();
-            }
+    public override void MoveLeft()
+    {
+        if (transform.rotation.eulerAngles.y <= 0)
+        {
+            MoveStop();
+            myPlayer.Play(uTurnClip, idleClip, true);
+            transform.rotation = Quaternion.Euler(0, -180, 0);
+        }
+        if(myPlayer.isEndofFrame)
+        {
+            base.MoveLeft();
         }
     }
 
-    public void UTurn()
+    public override void MoveRight()
     {
-        if (isRight)
+        if (transform.rotation.eulerAngles.y >= 180)
         {
+            MoveStop();
+            myPlayer.Play(uTurnClip, idleClip, true);
             transform.rotation = Quaternion.Euler(0, 0, 0);
         }
-        else
+        if (myPlayer.isEndofFrame)
         {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
+            base.MoveRight();
         }
-        myAnimator.SetBool("isUturn", false);
-        //isMove = true;
     }
 
     // 플레이어가 일정 범위를 벗어나면 내 자리로 돌아오기
-    void ComeBackCreatedPosition()
-    {
-        //if (transform.position.x != createdPos.position.x)
-        //{
-        //    // 어딜 돌아볼건지는 일단 나중에 설정
-        //    myRigid.velocity = new Vector2(-moveSpeed, 0);
-        //}
+    //void ComeBackCreatedPosition()
+    //{
+    //    if (transform.position.x < createdPos.x)
+    //    {
+    //        MoveRight();
+    //    }
 
-        // 제자리로 돌아오면 isSurprised 켜두기
+    //    else if (transform.position.x > createdPos.x)
+    //    {
+    //        MoveLeft();
+    //    }
+    //}
+
+    void MovePosition(float posX)
+    {
+        if(transform.position.x <= posX)
+        {
+            MoveRight();
+        }
+        else
+        {
+            MoveLeft();
+        }
+    }
+
+    public void SurprisedNotActive()
+    {
+        surprised.SetActive(false);
     }
 
     // 플레이어 만나기 전에 돌아다니기
     void WonderSpotRange()
     {
-
+        Debug.Log(Vector2.Distance(transform.position, destination));
+        if(Vector2.Distance(transform.position, destination) > 0)
+        {
+            if(transform.position.x <= destination.x)
+            {
+                base.MoveRight();
+            }
+            else
+            {
+                base.MoveLeft();
+            }
+        }
     }
 
-    // 플레이어가 왼쪽 오른쪽 이동할 때 Uturn하기
+    // 공격
+    void Attack()
+    {
+
+    }
 
 }

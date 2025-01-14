@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 8164909506301244467}
   - component: {fileID: 1093075537261705675}
   - component: {fileID: 1987722185614619135}
+  - component: {fileID: 3072912941559313003}
   m_Layer: 0
   m_Name: Spooksmen
   m_TagString: Untagged
@@ -159,7 +160,7 @@ Animator:
   m_GameObject: {fileID: 5942166137478113390}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9e0f8b73792a870488a4ac48608eafcc, type: 2}
+  m_Controller: {fileID: 9100000, guid: 92da066e9c61cef4394e735b36b9c5b9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -297,12 +298,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e3eb0aa4a5e9b948ae0f58f18940d2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movingSpeed: 5
   _isGrounded: 0
+  _movingSpeed: 5
   _gizmoColor: {r: 0.066037714, g: 0.066037714, b: 0.066037714, a: 1}
-  sightRange: 10
+  uTurnClip: {fileID: 7400000, guid: 33904171736a1634aba8401008503fab, type: 2}
+  idleClip: {fileID: 7400000, guid: bac4e09a1f09d5e45a7cb277b78df00c, type: 2}
+  surprisedClip: {fileID: 7400000, guid: f383ff2e036b8f249b615a9bfefade51, type: 2}
+  sightRange: 15
   surprisedMark: {fileID: 114126727675654133, guid: b9ab3022a49ba0d4fa84f807553444f4, type: 3}
   surprisedPos: {fileID: 1283372598996737737}
   playerMask:
     serializedVersion: 2
     m_Bits: 64
+  wonderRange: 3
+--- !u!114 &3072912941559313003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5942166137478113390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e4c81c291abf146a7472287813e289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
