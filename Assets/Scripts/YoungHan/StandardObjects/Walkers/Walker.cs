@@ -8,8 +8,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 
-public class Walker : MonoBehaviour, ITransformable, IMovable
+public class Walker : MonoBehaviour, IMovable
 {
+    //왼쪽 방향 오일러 벡터
+    protected static readonly Vector2 LeftRotation = new Vector2(0, 180);
+    //오른쪽 방향 오일러 벡터
+    protected static readonly Vector2 RightRotation = new Vector2(0, 0);
+
     private bool _hasTransform = false;
 
     private Transform _transform = null;
@@ -68,15 +73,18 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
 
     private List<Collision2D> _rightCollision2D = new List<Collision2D>();
 
+#if UNITY_EDITOR
     //땅에 착륙했는지 유무를 판단하는 프로퍼티
     [SerializeField]
     private bool _isGrounded = false;
+#endif
 
+    //땅에 닿아있는지를 반환하는 프로퍼티
     public bool isGrounded
     {
         get
         {
-            return _isGrounded;
+            return _groundCollision2D != null;
         }
     }
 
@@ -84,39 +92,12 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
     [SerializeField, Header("이동 속도"), Range(0, float.MaxValue)]
     protected float _movingSpeed = 10;
 
-    //객체의 위치값을 설정 하거나 반환하는 프로퍼티
-    public Vector2 position {
-        get
-        {
-            return getTransform.position;
-        }
-        set
-        {
-            getTransform.position = value;
-        }
-    }
-
-    //객체의 회전값을 설정 하거나 반환하는 프로퍼티
-    public Quaternion rotation {
-        get
-        {
-            return getTransform.rotation;
-        }
-        set
-        {
-            getTransform.rotation = value;
-        }
-    }
-
 #if UNITY_EDITOR
 
     //기즈모 표시 색깔
     [SerializeField, Header("기즈모 표시 색깔")]
     private Color _gizmoColor = Color.black;
 
-    /// <summary>
-    /// 유니티 에디터에서 바닥 충돌로 간주하는 범위를 선으로 그어준다.
-    /// </summary>
     protected virtual void OnDrawGizmos()
     {
         Bounds bounds = getCollider2D.bounds;
@@ -128,6 +109,14 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
         Debug.DrawLine(new Vector2(minX, centerY), new Vector2(minX, bounds.min.y), _gizmoColor);
         Debug.DrawLine(new Vector2(maxX, centerY), new Vector2(maxX, bounds.min.y), _gizmoColor);
         Debug.DrawLine(new Vector2(minX, bounds.min.y), new Vector2(maxX, bounds.min.y), _gizmoColor);
+    }
+
+    protected virtual void OnValidate()
+    {
+        if(_isGrounded == false && _groundCollision2D != null)
+        {
+            _groundCollision2D = null;
+        }
     }
 #endif
 
@@ -147,7 +136,9 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
             Vector2 point = collision.contacts[i].point;
             if (point.x > minX && point.x < maxX && point.y < centerY)
             {
+#if UNITY_EDITOR
                 _isGrounded = true;
+#endif
                 _groundCollision2D = collision;
                 break;
             }
@@ -181,62 +172,29 @@ public class Walker : MonoBehaviour, ITransformable, IMovable
             }
             else if (point.x > minX && point.x < maxX)
             {
+#if UNITY_EDITOR
                 _isGrounded = true;
+#endif
+                _groundCollision2D = collision;
             }
-        }
-        if (_isGrounded == false)
-        {
-            SearchGround(minX, maxX, centerY);
         }
     }
 
     /// <summary>
-    /// 낙하나 양쪽 충돌체와 떨어졌는지 확인하는 메서드
+    /// 지면 충돌체나 양쪽 충돌체와 떨어졌는지 확인하는 메서드
     /// </summary>
     /// <param name="collision"></param>
     protected virtual void OnCollisionExit2D(Collision2D collision)
     {
-        //if (getRigidbody2D.velocity.y < IMovable.MinimumDropVelocity && _isGrounded == true)
-        //{
-        //    _isGrounded = false;
-        //}
         _leftCollision2D.Remove(collision);
         _rightCollision2D.Remove(collision);
-        Bounds bounds = getCollider2D.bounds;
-        float radius = bounds.size.x * 0.5f;
-        float minX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.75f));
-        float maxX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.25f));
-        float centerY = bounds.min.y + radius + (radius * Mathf.Sin(Mathf.PI * -0.25f));
-        SearchGround(minX, maxX, centerY);
-    }
-
-    private void SearchGround(float minX, float maxX, float centerY)
-    {
-        foreach (Collision2D collision2D in _leftCollision2D)
+        if(_groundCollision2D == collision)
         {
-            for (int i = 0; i < collision2D.contactCount; i++)
-            {
-                Vector2 point = collision2D.contacts[i].point;
-                if (point.x > minX && point.x < maxX && point.y < centerY)
-                {
-                    _isGrounded = true;
-                    return;
-                }
-            }
+#if UNITY_EDITOR
+            _isGrounded = false;
+#endif
+            _groundCollision2D = null;
         }
-        foreach (Collision2D collision2D in _rightCollision2D)
-        {
-            for (int i = 0; i < collision2D.contactCount; i++)
-            {
-                Vector2 point = collision2D.contacts[i].point;
-                if (point.x > minX && point.x < maxX && point.y < centerY)
-                {
-                    _isGrounded = true;
-                    return;
-                }
-            }
-        }
-        _isGrounded = false;
     }
 
     /// <summary>
