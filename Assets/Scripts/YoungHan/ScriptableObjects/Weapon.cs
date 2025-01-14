@@ -2,18 +2,20 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = nameof(Weapon), order = 0)]
-public class Weapon : ScriptableObject
+public abstract class Weapon : ScriptableObject
 {
     [SerializeField]
-    private Skill.Action action1;
+    private Skill.Action defaultAction;
 
-
-
-
-
-
-    public bool TryUse(Animator animator,Transform user, IHittable target, Action<Strike, Strike.Area, GameObject> strikeAction, Action<GameObject, Vector2, Transform> effectAction, Func<Projectile, Projectile> function)
+    public enum Style: byte
     {
-        return action1.TryUse(animator, user, target, strikeAction, effectAction, function);
+        Default,
+    }
+
+
+    public bool TryUse(Player player, Style style, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func)
+    {
+
+        return false;
     }
 }

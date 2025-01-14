@@ -23,4 +23,5 @@ public static partial class ExtensionMethod
             animator?.SetTrigger(key);
         }
     }
+
 }

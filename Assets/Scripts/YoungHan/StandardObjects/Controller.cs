@@ -101,21 +101,21 @@ public class Controller : MonoBehaviour
             {
                 _player.MoveUp();
             }
-            if (_attack1Input.isPressed == true)
-            {
-                _player.Attack1();
-            }
-            if (_attack2Input.isPressed == true)
-            {
-                _player.Attack2();
-            }
-            if (_attack3Input.isPressed == true)
-            {
-                _player.Attack3();
-            }
+            //if (_attack2Input.isPressed == true)
+            //{
+            //    _player.Attack1();
+            //}
+            //if (_attack3Input.isPressed == true)
+            //{
+            //    _player.Attack2();
+            //}
             if(_attackWideInput.isPressed == true)
             {
                 _player.AttackWide();
+            }
+            else
+            {
+                _player.AttackBasic(_attack1Input.isPressed);
             }
             //มกวม
             if (GetKey(_jumpKeyCodes) == true)
