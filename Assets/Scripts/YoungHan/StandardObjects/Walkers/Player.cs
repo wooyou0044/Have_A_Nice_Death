@@ -5,6 +5,7 @@ using UnityEngine;
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
 [RequireComponent(typeof(AnimatorPlayer))]
+[RequireComponent(typeof(WeaponHandler))]
 public sealed class Player : Runner, IHittable
 {
     private static readonly float MinimumDropVelocity = -0.49f;
@@ -23,6 +24,31 @@ public sealed class Player : Runner, IHittable
                 _animatorPlayer = GetComponent<AnimatorPlayer>();
             }
             return _animatorPlayer;
+        }
+    }
+
+    public Animator animator
+    {
+        get
+        {
+            return getAnimatorPlayer.animator;
+        }
+    }
+
+    private bool _hasWeaponHandler = false;
+
+    private WeaponHandler _weaponHandler = null;
+
+    private WeaponHandler getWeaponHandler
+    {
+        get
+        {
+            if(_hasWeaponHandler == false)
+            {
+                _hasWeaponHandler = true;
+                _weaponHandler = GetComponent<WeaponHandler>();
+            }
+            return _weaponHandler;
         }
     }
 
@@ -102,6 +128,7 @@ public sealed class Player : Runner, IHittable
             return _remainMana;
         }
     }
+
     //최대치의 마력을 의미한다.
     [SerializeField, Range(0, byte.MaxValue)]
     private byte _maxMana;
@@ -113,21 +140,11 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    private float _chargingTime = 0;
-
-    [SerializeField]
-    private Weapon _weapon1;
-
     private Action<IHittable, int> _hitAction = null;
-
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
-
     private Action<GameObject, Vector2, Transform> _effectAction = null;
-
     private Func<bool, bool> _boundingFunction = null;
-
     private Func<Projectile, Projectile> _projectileFunction = null;
-
 
     private void PlayMove(bool straight)
     {
@@ -309,22 +326,11 @@ public sealed class Player : Runner, IHittable
 
     }
 
-    public void AttackBasic(bool pressed)
+    public void AttackScythe(bool pressed)
     {
-        if(_weapon1 != null)
+        if(getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _projectileFunction) == true)
         {
-            if(pressed == true)
-            {
 
-            }
-            else
-            {
-
-            }
-        }
-        if(pressed == false)
-        {
-            _chargingTime = 0;
         }
     }
 

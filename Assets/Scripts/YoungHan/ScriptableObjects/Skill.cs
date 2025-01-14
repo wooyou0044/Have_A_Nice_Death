@@ -157,19 +157,19 @@ public class Skill : ScriptableObject
             }
         }
 
-        public bool TryUse(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, AnimatorPlayer animatorPlayer)
+        public bool TryUse(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
         {
             int count = essentialClips != null ? essentialClips.Count : 0;
-            if (animatorPlayer != null)
+            if (animator != null)
             {
                 if (count > 0)
                 {
-                    AnimatorStateInfo stateInfo = animatorPlayer.animator.GetCurrentAnimatorStateInfo(0);
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
                     for (int i = 0; i < count; i++)
                     {
-                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && stateInfo.normalizedTime >= 1.0f)
+                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true)
                         {
-                            animatorHandler?.Play(animatorPlayer.animator);
+                            animatorHandler?.Play(animator);
                             skill?.Use(user, target, tags, action1, action2, func);
                             return true;
                         }
@@ -177,7 +177,7 @@ public class Skill : ScriptableObject
                 }
                 else
                 {
-                    animatorHandler?.Play(animatorPlayer.animator);
+                    animatorHandler?.Play(animator);
                     skill?.Use(user, target, tags, action1, action2, func);
                     return true;
                 }

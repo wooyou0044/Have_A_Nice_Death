@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 /// <summary>
 /// 원하는 애니메이션을 동작시킬 수 있는 클래스
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
+[DisallowMultipleComponent]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
 public sealed class AnimatorPlayer : MonoBehaviour
 {
     private bool _hasSpriteRenderer = false;
@@ -79,42 +81,38 @@ public sealed class AnimatorPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// 애니메이터 Trigger를 재생시키는 함수
+    /// 특정 애니메이션 핸들러로 재생 시키는 함수
     /// </summary>
-    /// <param name="key"></param>
-    public void Play(string key)
+    /// <param name="animatorHandler"></param>
+    public void Play(AnimatorHandler animatorHandler)
     {
-        animator.SetTrigger(key);
-    }
-
-    /// <summary>
-    /// 애니메이터 Bool을 재생시키는 함수
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    public void Play(string key, bool value)
-    {
-        animator.SetBool(key, value);
-    }
-
-    /// <summary>
-    /// 애니메이터 Int를 재생시키는 함수
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    public void Play(string key, int value)
-    {
-        animator.SetInteger(key, value);
-    }
-
-    /// <summary>
-    /// 애니메이터 Float을 재생시키는 함수
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    public void Play(string key, float value)
-    {
-        animator.SetFloat(key, value);
+        if (enabled == false || Application.isPlaying == false)
+        {
+            return;
+        }
+        if (animatorHandler != null)
+        {
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
+            animatorHandler.Play(animator);
+            _coroutine = DoPlay();
+            StartCoroutine(_coroutine);
+            IEnumerator DoPlay()
+            {
+                AnimationClip animationClip = GetCurrentClips();
+                string name = animationClip != null ? animationClip.name : null;
+                yield return null;
+                Func<bool> func = () =>
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(name) == true;
+                };
+                yield return new WaitWhile(func);
+                _coroutine = null;
+            }
+        }
     }
 
     /// <summary>
@@ -136,7 +134,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if (enabled == false && Application.isPlaying == true)
+        if (enabled == false || Application.isPlaying == false)
         {
             return;
         }
