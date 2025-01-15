@@ -328,10 +328,10 @@ public sealed class Player : Runner, IHittable
 
     public void AttackScythe(bool pressed)
     {
-        if(getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _projectileFunction) == true)
-        {
+        //if(getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _projectileFunction) == true)
+        //{
 
-        }
+        //}
     }
 
     public void Attack1()
