@@ -6,7 +6,4 @@ public class surpriseImote : MonoBehaviour
 {
     public bool stop;
     
-    void Start()
-    { 
-    }
 }

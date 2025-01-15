@@ -92,14 +92,14 @@ public class Enemy_Book_AI : Walker
         if (isFind == true)
         {
             Debug.Log("³î¶÷");
-            BookAnimatorPlayer.Play(findClip,idleClip);
+            BookAnimatorPlayer.Play(findClip, idleClip, false);
             isFind = false;
         }
 
         if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
         {
             Debug.Log("°ø°Ý");
-            BookAnimatorPlayer.Play(attackClip, idleClip);
+            BookAnimatorPlayer.Play(attackClip, idleClip, false);
 
             //if(detectplayerErea == null)
             //{
