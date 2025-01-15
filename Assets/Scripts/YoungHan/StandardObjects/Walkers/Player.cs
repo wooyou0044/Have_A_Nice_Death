@@ -225,7 +225,7 @@ public sealed class Player : Runner, IHittable
     {
         if(getAnimatorPlayer.IsPlaying(_zipUpClip) == true)
         {
-            getAnimatorPlayer.Play(_jumpFallingClip, false);
+            getAnimatorPlayer.Play(_jumpFallingClip);
         }
     }
 
@@ -303,18 +303,14 @@ public sealed class Player : Runner, IHittable
                 PlayMove(RightRotation);
             }
             base.Dash(direction);
-            //RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            //if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
+            _escapeAction?.Invoke();
+            if (isGrounded == true)
             {
-                _escapeAction?.Invoke();
-                if (isGrounded == true)
-                {
-                    getAnimatorPlayer.Play(_dashClip, _idleClip, false);
-                }
-                else
-                {
-                    getAnimatorPlayer.Play(_dashClip, _jumpFallingClip, false);
-                }
+                getAnimatorPlayer.Play(_dashClip, _idleClip, false);
+            }
+            else
+            {
+                getAnimatorPlayer.Play(_dashClip, _jumpFallingClip, false);
             }
         }
     }
@@ -355,7 +351,7 @@ public sealed class Player : Runner, IHittable
     {
         if (pressed == true)
         {
-            //getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _fu);
+
         }
         else
         {
