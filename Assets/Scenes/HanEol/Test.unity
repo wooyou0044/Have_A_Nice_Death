@@ -295,13 +295,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc587e75d0aa0d641a2c957892738e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movingSpeed: 10
   _isGrounded: 0
+  _movingSpeed: 10
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
   _jumpValue: 10
   _jumpLimit: 1
   _jumpCount: 1
   _dashValue: 50
+  _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
   _levitationDelay: 0.1
@@ -375,6 +376,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  playerWalker: {fileID: 0}
   moveUpSpeed: 25
   delay: 0.05
 --- !u!61 &155085053
@@ -521,6 +523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  playerWalker: {fileID: 0}
   moveUpSpeed: 25
   delay: 0.05
 --- !u!61 &505010451
@@ -667,6 +670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  playerWalker: {fileID: 0}
   moveUpSpeed: 25
   delay: 0.05
 --- !u!61 &761909466
@@ -1100,6 +1104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  playerWalker: {fileID: 0}
   moveUpSpeed: 25
   delay: 0.05
 --- !u!61 &2043767746
