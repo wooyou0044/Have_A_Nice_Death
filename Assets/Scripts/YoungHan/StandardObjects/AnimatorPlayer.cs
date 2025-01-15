@@ -63,6 +63,11 @@ public sealed class AnimatorPlayer : MonoBehaviour
         Stop();
     }
 
+    private void OnDestroy()
+    {
+        Stop();
+    }
+
     private void OnApplicationQuit()
     {
         Stop();
@@ -99,7 +104,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if (enabled == false || Application.isPlaying == false)
+        if (gameObject.activeSelf == false|| enabled == false || Application.isPlaying == false)
         {
             return;
         }
