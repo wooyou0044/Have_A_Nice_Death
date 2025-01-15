@@ -118,6 +118,16 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <summary>
     /// 특정 애니메이션 두 개를 순차적으로 재생 시키는 함수
     /// </summary>
+    /// <param name="first"></param>
+    /// <param name="second"></param>
+    public void Play(AnimationClip first, AnimationClip second)
+    {
+        Play(first, second, false, true);
+    }
+
+    /// <summary>
+    /// 특정 애니메이션 두 개를 순차적으로 재생 시키는 함수
+    /// </summary>
     /// <param name="first">재생할 첫 번째 애니메이션 클립</param>
     /// <param name="second">재생할 두 번째 애니메이션 클립</param>
     /// <param name="flip">스프라이트 렌더러를 일시적으로 반전 시켰다가 원래대로 되돌림</param>
