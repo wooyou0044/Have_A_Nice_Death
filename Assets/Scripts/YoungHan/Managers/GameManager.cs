@@ -48,7 +48,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(Report, ShowEffect, Use, TryUseLadder, GetProjectile);
+        getController._player?.Initialize(EscapeLadder, Report, ShowEffect, Use, TryUseLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -63,19 +63,38 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private bool TryUseLadder(bool bounding)
+    private void EscapeLadder()
     {
-        foreach(Ladder ladder in ladderList)
+        foreach (Ladder ladder in ladderList)
         {
-            //if (bounding == true)
-            //{
-            //    ladder.MoveUp();
-            //    return true;
-            //}
-            //else
-            //{
-            //    ladder.MoveStop();
-            //}
+            if (ladder.MoveStop() == true)
+            {
+                break;
+            }
+        }
+    }
+
+    private bool TryUseLadder(bool rising)
+    {
+        if (rising == true)
+        {
+            foreach (Ladder ladder in ladderList)
+            {
+                if (ladder.MoveUp() == true)
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (Ladder ladder in ladderList)
+            {
+                if (ladder.MoveDown() == true)
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
