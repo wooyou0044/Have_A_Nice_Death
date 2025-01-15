@@ -21,15 +21,16 @@ public class Projectile : MonoBehaviour
 
     [SerializeField, Header("발사체 접착성")]
     private bool _adhesion = false;
-    [SerializeField, Header("발사체 관통력")]
-    private bool _penetration = false;
-
     [SerializeField, Header("발사 지연 시간"),Range(0, byte.MaxValue)]
     private float _dealyTime = 0;
     [SerializeField, Header("날아가는 시간"), Range(0, byte.MaxValue)]
     private float _flyingTime = 1;
     [SerializeField, Header("날아가는 속도"), Range(0, byte.MaxValue)]
     private float _flyingSpeed = 1;
+    [SerializeField, Header("타격 대상 태그")]
+    private string[] _tags;
+    [SerializeField, Header("타격 세기")]
+    private Strike _strike;
     [SerializeField, Header("폭발 모양")]
     private Shape _shape = null;
     [SerializeField, Header("맞는 대상 모두에게 나타날 효과 오브젝트")]
@@ -37,7 +38,9 @@ public class Projectile : MonoBehaviour
     [SerializeField, Header("해당 객체가 소멸하면서 나타날 효과 오브젝트")]
     private GameObject _explosionObject = null;
 
-    private IEnumerator _coroutine = null;
+    private bool ignition = false;
+    private Action<GameObject, Vector2, Transform> _action2 = null;
+    private Action<Strike, Strike.Area, GameObject> _action1 = null;
 
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]
@@ -56,16 +59,7 @@ public class Projectile : MonoBehaviour
             area.Show(_gizmoColor);
         }
     }
-
 #endif
-
-    [SerializeField]
-    private Strike _strike;
-    [SerializeField]
-    private string[] _tags;
-
-    private Action<Strike, Strike.Area, GameObject> _action1 = null;
-    private Action<GameObject, Vector2, Transform> _action2 = null;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -75,6 +69,20 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Explode();
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(1);
+                gameObject.SetActive(true);
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
     }
 
     private void Explode()
@@ -120,10 +128,7 @@ public class Projectile : MonoBehaviour
     {
         if (user != null)
         {
-            if (gameObject.activeInHierarchy == false)
-            {
-                gameObject.SetActive(true);
-            }
+            gameObject.SetActive(true);
             if (_adhesion == true)
             {
                 getTransform.parent = user;
@@ -139,17 +144,14 @@ public class Projectile : MonoBehaviour
         }
         else if (target != null)
         {
-            if (gameObject.activeInHierarchy == false)
-            {
-                gameObject.SetActive(true);
-            }
+            gameObject.SetActive(true);
             if (_adhesion == true)
             {
                 getTransform.parent = target.transform;
             }
             Shot(target.transform.position, target.transform.rotation, action1, action2);
         }
-        else if(gameObject.activeInHierarchy == true)
+        else
         {
             gameObject.SetActive(false);
         }

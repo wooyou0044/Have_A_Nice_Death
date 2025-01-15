@@ -237,7 +237,7 @@ public sealed class Player : Runner, IHittable
               rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
         {
             AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
-            if(animationClip == _jumpFallingClip && rigidbodyConstraints2D != RigidbodyConstraints2D.FreezeRotation)
+            if (animationClip == _jumpFallingClip && rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation))
             {
                 return false;
             }
@@ -290,13 +290,21 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public override void Dash()
+    public override void Dash(Vector2 direction)
     {
-        if (isAlive == true)
+        if (isAlive == true && CanDash() == true)
         {
-            base.Dash();
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
+            if(direction.normalized.x < 0)
+            {
+                PlayMove(LeftRotation);
+            }
+            else
+            {
+                PlayMove(RightRotation);
+            }
+            base.Dash(direction);
+            //RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            //if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
             {
                 _escapeAction?.Invoke();
                 if (isGrounded == true)
