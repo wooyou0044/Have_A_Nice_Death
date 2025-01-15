@@ -118,6 +118,7 @@ public class Projectile : MonoBehaviour
 
     public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
+        return;
         if (user != null)
         {
             if (gameObject.activeInHierarchy == false)
