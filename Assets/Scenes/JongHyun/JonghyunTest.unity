@@ -193,6 +193,24 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   offsetCamera: {x: 0, y: 2, z: -10}
   followSpeed: 5
+--- !u!1 &457753829 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3027715491671830132, guid: e8f1893fa437c45428272e1948258db0, type: 3}
+  m_PrefabInstance: {fileID: 1773839717}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &457753831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457753829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ee368a1d1de204b88d4933d64e4940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stop: 0
 --- !u!1001 &778104121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -214,8 +232,16 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6219897535074757962, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}
+      propertyPath: _dashDelay
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219897535074757962, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}
+      propertyPath: _dashValue
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6219897535074757962, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}
       propertyPath: _jumpCount
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6219897535074757962, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}
       propertyPath: _jumpLimit
@@ -797,7 +823,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3027715491671830132, guid: e8f1893fa437c45428272e1948258db0, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 457753831}
   m_SourcePrefab: {fileID: 100100000, guid: e8f1893fa437c45428272e1948258db0, type: 3}
 --- !u!1 &1897558000
 GameObject:
@@ -1000,8 +1029,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isGrounded: 0
-  _movingSpeed: 1.2
+  _movingSpeed: 2
   _gizmoColor: {r: 0.41568628, g: 0.34117648, b: 0.34117648, a: 1}
+  getSurprisedImote: {fileID: 457753831}
   surprisedAnimator: {fileID: 168943469}
   animatorPlayer: {fileID: 8225936346275742996}
   idleClip: {fileID: 7400000, guid: d4b1def310bfa31459b64f9b04fd28ee, type: 2}

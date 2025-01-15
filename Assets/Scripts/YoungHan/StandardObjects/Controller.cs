@@ -115,7 +115,7 @@ public class Controller : MonoBehaviour
             }
             else
             {
-                _player.AttackBasic(_attack1Input.isPressed);
+                _player.AttackScythe(_attack1Input.isPressed);
             }
             //มกวม
             if (GetKey(_jumpKeyCodes) == true)
