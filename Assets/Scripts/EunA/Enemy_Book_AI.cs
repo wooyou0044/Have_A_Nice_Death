@@ -11,32 +11,35 @@ public class Enemy_Book_AI : Walker
     float detectTime;
     int enemyHealth;
     Animator EnemyBookAnimator;
-    
-    public GameObject PaperPlaneMuzzle;
+
+    #region 애니메이션 클립
     public AnimationClip idleClip;
     public AnimationClip uturnClip;
     public AnimationClip findClip;
     public AnimationClip hitClip;
     public AnimationClip attackClip;
     public AnimationClip dieClip;
+    #endregion
 
     float BookSightRange;
     float BookAttackRange;
-
-    bool isAttacking = false;
-
-    float moveElapsedTime;
-    float moveTime = 4.0f;
-    bool isFacingRight;
-    bool isUturn;
-
-    
+    bool isFacingRight = true;
+    bool isUturn = true;
+    bool isFind = true;
+    bool isAttack = false;
     int facingRight;
+
+    float BookFindCooltime;
+    float BookFindElapsedtime;
+
+
     Rigidbody2D enemyRigid;
-    Collider2D Detectplayer;
+    Collider2D detectplayerErea;
+    Collider2D attackplayerErea;
     Vector2 leftEnemyLocation;
     Vector2 nowEnemyLocation;
     Vector2 rightEnemyLocation;
+    Transform target;
 
     [SerializeField]
     AnimatorPlayer BookAnimatorPlayer;
@@ -44,7 +47,6 @@ public class Enemy_Book_AI : Walker
     float moveDistance;
     [SerializeField]
     LayerMask playerLayerMask;
-    
 
 
     void Start()
@@ -52,12 +54,12 @@ public class Enemy_Book_AI : Walker
         enemyHealth = 15;
         EnemyBookAnimator = GetComponent<Animator>();
         BookSightRange = 5;
-        BookAttackRange = 3;
+        BookAttackRange = 4;
         moveDistance = 4.0f;
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
         BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
-        isFacingRight = true;
-        isUturn = true;
+        BookFindCooltime = 4.0f;
+        BookFindElapsedtime = 4.0f;
     }
 
     void Update()
@@ -66,26 +68,53 @@ public class Enemy_Book_AI : Walker
     }
 
     void DetectPlayer()
-    {        
-        Detectplayer = Physics2D.OverlapCircle(transform.position, BookSightRange, playerLayerMask);
+    {
+        detectplayerErea = Physics2D.OverlapCircle(transform.position, BookSightRange, playerLayerMask);
 
-        if (Detectplayer != null)
+        if (detectplayerErea != null)
         {
-            
+            FindPlayer();
         }
 
-        else
+        else if(BookAnimatorPlayer.isEndofFrame || detectplayerErea == null)
         {
             BookWander();
+            isFind = true;
+            BookFindElapsedtime = 4.0f;
         }
     }
 
     void FindPlayer()
     {
+        MoveStop();
+        BookFindElapsedtime += Time.deltaTime;
 
+        if (isFind == true)
+        {
+            Debug.Log("놀람");
+            BookAnimatorPlayer.Play(findClip,idleClip);
+            isFind = false;
+        }
+
+        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
+        {
+            Debug.Log("공격");
+            BookAnimatorPlayer.Play(attackClip, idleClip);
+
+            //if(detectplayerErea == null)
+            //{
+            //    BookAnimatorPlayer.Play(idleClip);
+            //}
+
+            BookFindElapsedtime = 0;
+        }
+
+        else if(BookAnimatorPlayer.isEndofFrame)
+        {
+            BookAnimatorPlayer.Play(idleClip);
+        }
+        
     }
-
-
 
     void BookWander()
     {
@@ -189,7 +218,6 @@ public class Enemy_Book_AI : Walker
                 BookAnimatorPlayer.Play(idleClip);
             }
             Invoke("Turn", 0.36f);
-            Debug.Log(isUturn);
 
             if (gameObject.transform.rotation == Quaternion.Euler(0, 0, 0))
             {
