@@ -304,7 +304,7 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
+    public void Initialize(Action<IHittable, int> hit, Action<GameObject, Vector2, Transform> effect, Action<Strike, Strike.Area, GameObject> strike, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
     {
         _hitAction = hit;
         _strikeAction = strike;
@@ -328,10 +328,14 @@ public sealed class Player : Runner, IHittable
 
     public void AttackScythe(bool pressed)
     {
-        //if(getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _projectileFunction) == true)
-        //{
+        if (pressed == true)
+        {
+            //getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _fu);
+        }
+        else
+        {
 
-        //}
+        }
     }
 
     public void Attack1()

@@ -48,7 +48,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(Report, Report, ShowEffect, TryUseLadder, GetProjectile);
+        getController._player?.Initialize(Report, ShowEffect, Use, TryUseLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -116,7 +116,7 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="strike"></param>
     /// <param name="area"></param>
     /// <param name="effect"></param>
-    public static void Report(Strike strike, Strike.Area area, GameObject effect)
+    public static void Use(Strike strike, Strike.Area area, GameObject effect)
     {
         if (area == null)
         {
