@@ -206,6 +206,14 @@ public class Runner : Walker
 
     public bool CanDash()
     {
-        return _dashCoroutine == null && _isDashed == false;
+        if(_dashCoroutine == null && _isDashed == false)
+        {
+            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

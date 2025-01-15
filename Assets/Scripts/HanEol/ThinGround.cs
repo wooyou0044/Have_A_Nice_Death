@@ -93,6 +93,7 @@ public class ThinGround : MonoBehaviour
                 
                 if(gonnaUp == true)
                 {
+                    playerRb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
                     playerRb.velocity = uping;
                     topCollider.isTrigger = true;
                     gonnaUp = false;
@@ -113,10 +114,12 @@ public class ThinGround : MonoBehaviour
             {
                 if (player != null)
                 {
+                    playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
                     playerRb = null;
                     player = null;
                     gonnaUp = true;
                     topCollider.isTrigger = true;
+                    
                 }
             }
             //올라가는 상황일 때 실행

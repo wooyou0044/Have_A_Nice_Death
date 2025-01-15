@@ -93,7 +93,6 @@ public class Ladder : MonoBehaviour
         //점프하면 사다리에서 안나가도 이렇게 됨
         if (playerRb.gravityScale != originalGravity)
         {
-            playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
             playerRb.gravityScale = originalGravity;
         }
         //어느 시점까지는 코루틴 실행을 막는다 <-- 타이머로 시간을 재서 
@@ -156,7 +155,7 @@ public class Ladder : MonoBehaviour
         //땅바닥에 닿으면 초기화
         if(playerWalker.isGrounded == true)
         {
-            playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+
             playerRb.gravityScale = originalGravity;
         }
         currentCoroutine = null;
@@ -174,7 +173,6 @@ public class Ladder : MonoBehaviour
         {
             
             playerRb.gravityScale = 0.001f;
-            playerRb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         }
         //위치를 중간으로 이동
         if (player.transform.position != targetPos)
@@ -247,7 +245,7 @@ public class Ladder : MonoBehaviour
             //사다리에서 벗어나면 다시 움직일 수 있게 함
             if (playerRb.gravityScale != originalGravity)
             {
-                playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+
                 playerRb.gravityScale = originalGravity;
 
             }
