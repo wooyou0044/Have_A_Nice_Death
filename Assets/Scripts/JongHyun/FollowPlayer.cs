@@ -16,13 +16,13 @@ public class FollowPlayer : MonoBehaviour
             cameraTransform = Camera.main.transform;
         }
     }
-
-    void Update()
+    
+    void FixedUpdate()
     {
         Vector3 targetPosition = transform.position + offsetCamera;
 
         float dx = targetPosition.x - cameraTransform.position.x;
-        float dy = targetPosition.y - cameraTransform.position.y;
+        float dy = targetPosition.y - cameraTransform.position.y-1;
         float dz = targetPosition.z - cameraTransform.position.z;
 
         float stepX = dx * followSpeed * Time.deltaTime;
@@ -35,5 +35,19 @@ public class FollowPlayer : MonoBehaviour
             cameraTransform.position.y + stepY,
             cameraTransform.position.z + stepZ );
 
+        MaximumDistanceCamera();
+
+    }
+    void MaximumDistanceCamera()
+    {
+        if(cameraTransform.position.x < -5.0f)
+        {
+            cameraTransform.position = new Vector3(-5.0f,cameraTransform.position.y, cameraTransform.position.z);
+        }
+        //반대쪽 x대입
+        //else if(cameraTransform.position.x > 30f)
+        //{
+        //    cameraTransform.position = new Vector3(30f, cameraTransform.position.y, cameraTransform.position.z);
+        //}
     }
 }

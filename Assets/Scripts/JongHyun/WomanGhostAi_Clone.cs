@@ -122,8 +122,9 @@ public class WomanGhostAi_Clone : Walker
             if(target == null)
             {
                 animatorPlayer.Play(spotteddClip, true);
-                animatorPlayer.animator.SetBool("isAttack",true);                
+                animatorPlayer.animator.SetBool("isAttack",true);
                 getSurprisedImote.stop = true;
+
                 attackPlayer = player.GetComponent<IHittable>();
                 StartCoroutine(DoFire(1.3f));
             }
@@ -144,7 +145,7 @@ public class WomanGhostAi_Clone : Walker
     void FireShot()
     {
         Projectile projectile = GameManager.GetProjectile(womanFire);
-        //projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);
+        projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);
     }
     void SpottedPlayer()
     {        
