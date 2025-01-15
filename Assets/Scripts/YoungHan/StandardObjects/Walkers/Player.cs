@@ -140,6 +140,7 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    private Action _escapeAction = null;
     private Action<IHittable, int> _hitAction = null;
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
     private Action<GameObject, Vector2, Transform> _effectAction = null;
@@ -207,6 +208,7 @@ public sealed class Player : Runner, IHittable
         if (isGrounded != this.isGrounded)
         {
             getAnimatorPlayer.Play(_jumpLandingClip, _idleClip, false);
+            _escapeAction?.Invoke();
         }
     }
 
@@ -227,33 +229,38 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    private bool CanMoveState()
+    {
+        RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+        if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
+        {
+            AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
+            if(animationClip == _jumpFallingClip && rigidbodyConstraints2D != RigidbodyConstraints2D.FreezeRotation)
+            {
+                return false;
+            }
+            return animationClip != _dashClip && animationClip != _zipUpClip;
+        }
+        return false;
+    }
+
     public override void MoveLeft()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
-            {
-                base.MoveLeft();
-                PlayMove(LeftRotation);
-            }
+            base.MoveLeft();
+            PlayMove(LeftRotation);
         }
     }
 
     public override void MoveRight()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
-            {
-                base.MoveRight();
-                PlayMove(RightRotation);
-            }
+            base.MoveRight();
+            PlayMove(RightRotation);
         }
     }
 
@@ -273,11 +280,11 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            _boundingFunction?.Invoke(false);
             float velocity = getRigidbody2D.velocity.y;
             base.Jump();
-            if(velocity != getRigidbody2D.velocity.y)
+            if(velocity != getRigidbody2D.velocity.y || getAnimatorPlayer.IsPlaying(_zipUpClip) == true)
             {
+                _escapeAction?.Invoke();
                 getAnimatorPlayer.Play(_jumpStartClip, _jumpFallingClip , false);
             }
         }
@@ -291,7 +298,7 @@ public sealed class Player : Runner, IHittable
             RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
             if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
             {
-                _boundingFunction?.Invoke(false);
+                _escapeAction?.Invoke();
                 if (isGrounded == true)
                 {
                     getAnimatorPlayer.Play(_dashClip, _idleClip, false);
@@ -304,8 +311,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
+    public void Initialize(Action escape, Action<IHittable, int> hit, Action<GameObject, Vector2, Transform> effect, Action<Strike, Strike.Area, GameObject> strike, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
     {
+        _escapeAction = escape;
         _hitAction = hit;
         _strikeAction = strike;
         _effectAction = effect;
@@ -315,23 +323,36 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        if (_boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        AnimationClip clip = getAnimatorPlayer.GetCurrentClips();
+        if (clip != _zipUpClip && clip != _dashClip && _boundingFunction != null && _boundingFunction.Invoke(true) == true)
         {
             getAnimatorPlayer.Play(_zipUpClip);
+            RecoverJumpCount();
         }
     }
     
     public void MoveDown()
     {
+        if(getAnimatorPlayer.IsPlaying(_zipUpClip) == false)
+        {
 
+        }
+        else if (_boundingFunction != null && _boundingFunction.Invoke(false) == true)
+        {
+            getAnimatorPlayer.Play(_jumpFallingClip);
+        }
     }
 
     public void AttackScythe(bool pressed)
     {
-        //if(getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _projectileFunction) == true)
-        //{
+        if (pressed == true)
+        {
+            //getWeaponHandler.TryScythe(this, Weapon.Attack.Stand, _effectAction, _strikeAction, _fu);
+        }
+        else
+        {
 
-        //}
+        }
     }
 
     public void Attack1()

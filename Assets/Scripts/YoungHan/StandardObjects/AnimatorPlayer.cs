@@ -63,6 +63,11 @@ public sealed class AnimatorPlayer : MonoBehaviour
         Stop();
     }
 
+    private void OnDestroy()
+    {
+        Stop();
+    }
+
     private void OnApplicationQuit()
     {
         Stop();
@@ -81,41 +86,6 @@ public sealed class AnimatorPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// 특정 애니메이션 핸들러로 재생 시키는 함수
-    /// </summary>
-    /// <param name="animatorHandler"></param>
-    public void Play(AnimatorHandler animatorHandler)
-    {
-        if (enabled == false || Application.isPlaying == false)
-        {
-            return;
-        }
-        if (animatorHandler != null)
-        {
-            if (_coroutine != null)
-            {
-                StopCoroutine(_coroutine);
-            }
-            animatorHandler.Play(animator);
-            _coroutine = DoPlay();
-            StartCoroutine(_coroutine);
-            IEnumerator DoPlay()
-            {
-                AnimationClip animationClip = GetCurrentClips();
-                string name = animationClip != null ? animationClip.name : null;
-                yield return null;
-                Func<bool> func = () =>
-                {
-                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(name) == true;
-                };
-                yield return new WaitWhile(func);
-                _coroutine = null;
-            }
-        }
-    }
-
-    /// <summary>
     /// 특정 애니메이션을 재생 시키는 함수
     /// </summary>
     /// <param name="animationClip">재생할 애니메이션 클립</param>
@@ -128,13 +98,13 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <summary>
     /// 특정 애니메이션 두 개를 순차적으로 재생 시키는 함수
     /// </summary>
-    /// <param name="first">재생할 첫 번째 애니메이션</param>
-    /// <param name="second">재생할 두 번째 애니메이션</param>
+    /// <param name="first">재생할 첫 번째 애니메이션 클립</param>
+    /// <param name="second">재생할 두 번째 애니메이션 클립</param>
     /// <param name="flip">스프라이트 렌더러를 일시적으로 반전 시켰다가 원래대로 되돌림</param>
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if (enabled == false || Application.isPlaying == false)
+        if (gameObject.activeSelf == false|| enabled == false || Application.isPlaying == false)
         {
             return;
         }
@@ -160,12 +130,13 @@ public sealed class AnimatorPlayer : MonoBehaviour
                 {
                     getSpriteRenderer.flipX = true;
                 }
-                animator.Play(first.name, 0, 0f);
+                string name = first.name;
+                animator.Play(name, 0, 0f);
                 yield return null;
                 Func<bool> func = () =>
                 {
                     AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(first.name) == true;
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(name) == true;
                 };
                 yield return new WaitWhile(func);
             }
@@ -175,12 +146,48 @@ public sealed class AnimatorPlayer : MonoBehaviour
                 {
                     getSpriteRenderer.flipX = false;
                 }
-                animator.Play(second.name, 0, 0f);
+                string name = second.name;
+                animator.Play(name, 0, 0f);
                 yield return null;
                 Func<bool> func = () =>
                 {
                     AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(second.name) == true;
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(name) == true;
+                };
+                yield return new WaitWhile(func);
+            }
+            _coroutine = null;
+        }
+    }
+
+    /// <summary>
+    /// 시간을 기다리고 애니메이션 클립을 재생시키는 함수
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <param name="animationClip"></param>
+    public void Play(float delay, AnimationClip animationClip)
+    {
+        if (enabled == false || Application.isPlaying == false)
+        {
+            return;
+        }
+        if (_coroutine != null)
+        {
+            StopCoroutine(_coroutine);
+        }
+        _coroutine = DoPlay();
+        StartCoroutine(_coroutine);
+        IEnumerator DoPlay()
+        {
+            yield return new WaitForSeconds(delay);
+            if (animationClip != null)
+            {
+                animator.Play(animationClip.name, 0, 0f);
+                yield return null;
+                Func<bool> func = () =>
+                {
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(animationClip.name) == true;
                 };
                 yield return new WaitWhile(func);
             }

@@ -20,7 +20,6 @@ public class Scythe : Weapon
             case Attack.Stand:
                 if(standAction1.TryUse(player.transform, null, action1, action2, func, player.animator) == true)
                 {
-                    Debug.Log("1Ÿ");
                     return true;
                 }
                 //if (standAction2.TryUse(player.transform, null, action1, action2, func, player.animator) == true)

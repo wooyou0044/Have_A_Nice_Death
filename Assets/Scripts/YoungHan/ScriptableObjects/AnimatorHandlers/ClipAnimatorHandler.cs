@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = nameof(AnimatorHandler) + "/" + nameof(ClipAnimatorHandler))]
-public class ClipAnimatorHandler : AnimatorHandler
+public sealed class ClipAnimatorHandler : AnimatorHandler
 {
     [SerializeField]
     private AnimationClip animationClip;

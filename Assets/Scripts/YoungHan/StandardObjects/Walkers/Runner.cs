@@ -49,7 +49,7 @@ public class Runner : Walker
         base.OnValidate();
         if (isGrounded == true)
         {
-            _jumpCount = _jumpLimit;
+            RecoverJumpCount();
         }
         else
         {
@@ -72,7 +72,7 @@ public class Runner : Walker
                 StopCoroutine(_jumpCoroutine);
                 _jumpCoroutine = null;
             }
-            _jumpCount = _jumpLimit;
+            RecoverJumpCount();
         }
     }
 
@@ -149,6 +149,11 @@ public class Runner : Walker
             _levitationCoroutine = null;
             getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
         }
+    }
+
+    protected void RecoverJumpCount()
+    {
+        _jumpCount = _jumpLimit;
     }
 
     protected void Levitate(bool force)
