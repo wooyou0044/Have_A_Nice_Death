@@ -221,6 +221,18 @@ public class Spooksmen_AI : Walker
                 base.MoveLeft();
             }
         }
+        else
+        {
+            // 배회하는 범위가 0보다 크면 음수로 바꿔서 destination 수정
+            if(wonderRange > 0)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
     }
 
     // 공격
