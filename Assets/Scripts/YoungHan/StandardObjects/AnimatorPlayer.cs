@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 
 /// <summary>
 /// 원하는 애니메이션을 동작시킬 수 있는 클래스
@@ -86,6 +86,23 @@ public sealed class AnimatorPlayer : MonoBehaviour
     }
 
     /// <summary>
+    /// 스프라이트 렌더러를 반전 시켜주는 함수
+    /// </summary>
+    public void Flip()
+    {
+        getSpriteRenderer.flipX = !getSpriteRenderer.flipX;
+    }
+
+    /// <summary>
+    /// 스프라이트 렌더러를 인자값에 따라 뒤집어주는 함수
+    /// </summary>
+    /// <param name="flip"></param>
+    public void Flip(bool flip)
+    {
+        getSpriteRenderer.flipX = flip;
+    }
+
+    /// <summary>
     /// 특정 애니메이션을 재생 시키는 함수
     /// </summary>
     /// <param name="animationClip">재생할 애니메이션 클립</param>
@@ -104,7 +121,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if (gameObject.activeSelf == false|| enabled == false || Application.isPlaying == false)
+        if(Application.isPlaying == false)
         {
             return;
         }
@@ -114,6 +131,10 @@ public sealed class AnimatorPlayer : MonoBehaviour
             {
                 return;
             }
+            //else if(_coroutineList.Count > 0)
+            //{
+            //    _coroutineList.Clear();
+            //}
             StopCoroutine(_coroutine);
         }
         _coroutine = DoPlay();
@@ -122,13 +143,13 @@ public sealed class AnimatorPlayer : MonoBehaviour
         {
             if(flip == false)
             {
-                getSpriteRenderer.flipX = false;
+                Flip(false);
             }
             if (first != null)
             {
                 if (flip == true)
                 {
-                    getSpriteRenderer.flipX = true;
+                    Flip(true);
                 }
                 string name = first.name;
                 animator.Play(name, 0, 0f);
@@ -144,7 +165,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
             {
                 if (flip == true)
                 {
-                    getSpriteRenderer.flipX = false;
+                    Flip(false);
                 }
                 string name = second.name;
                 animator.Play(name, 0, 0f);
@@ -161,38 +182,28 @@ public sealed class AnimatorPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// 시간을 기다리고 애니메이션 클립을 재생시키는 함수
+    /// 
     /// </summary>
-    /// <param name="delay"></param>
     /// <param name="animationClip"></param>
-    public void Play(float delay, AnimationClip animationClip)
+    public void Reserve(AnimationClip animationClip)
     {
-        if (enabled == false || Application.isPlaying == false)
+        if(_coroutine == null)
         {
-            return;
+            Play(animationClip);
         }
-        if (_coroutine != null)
+        else
         {
-            StopCoroutine(_coroutine);
+
         }
-        _coroutine = DoPlay();
-        StartCoroutine(_coroutine);
-        IEnumerator DoPlay()
-        {
-            yield return new WaitForSeconds(delay);
-            if (animationClip != null)
-            {
-                animator.Play(animationClip.name, 0, 0f);
-                yield return null;
-                Func<bool> func = () =>
-                {
-                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(animationClip.name) == true;
-                };
-                yield return new WaitWhile(func);
-            }
-            _coroutine = null;
-        }
+    }
+
+    /// <summary>
+    /// 현재 이미지가 뒤집어졌는지 아닌지 확인하는 함수
+    /// </summary>
+    /// <returns></returns>
+    public bool IsFlip()
+    {
+        return getSpriteRenderer.flipX;
     }
 
     /// <summary>

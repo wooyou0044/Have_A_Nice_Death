@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -18,7 +19,8 @@ public class Ladder : MonoBehaviour
     private bool isLadder = false; //사다리 안에 들어오면 true, 나가거나 아니면 false
     [SerializeField]float originalGravity; //복구해줄 원본 중력 값
     private bool movingUp = false;//올라가는지 아닌지 구분하는 변수
-
+    float time = 0f;
+    [SerializeField] float enteryTime = 0.5f;
     public bool MovingUp//만약 애니메이션 제어 값으로 조건문을 걸어서 실행 가능하면
         //이거 필요 없어짐 
     {
@@ -27,21 +29,13 @@ public class Ladder : MonoBehaviour
 
     private void Update()
     {
-        if(player != null)
+       if(time > 0f)
         {
-            if(Input.GetKey(KeyCode.UpArrow) == true)
+            time -= Time.deltaTime;
+            if(time < 0f)
             {
-                MoveUp();
+                time = 0;
             }
-            if(Input.GetKey(KeyCode.Space) == true)
-            {
-                MoveStop();
-            }
-            if(Input.GetKey(KeyCode.DownArrow) == true)
-            {
-                MoveDown();
-            }
-    
         }
     }
     /// <summary>
@@ -49,6 +43,10 @@ public class Ladder : MonoBehaviour
     /// </summary>
     public bool MoveUp()
     {
+        if(time > 0f)
+        {
+            return false;
+        }
         if (player == null)
         {
             isLadder = false;
@@ -95,8 +93,13 @@ public class Ladder : MonoBehaviour
         //점프하면 사다리에서 안나가도 이렇게 됨
         if (playerRb.gravityScale != originalGravity)
         {
-            playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
             playerRb.gravityScale = originalGravity;
+        }
+        //어느 시점까지는 코루틴 실행을 막는다 <-- 타이머로 시간을 재서 
+        //시간이 지나면 그 뒤에 코루틴을 받고/ 멈춘 동안은
+        if(isLadder == true)
+        {
+            time = enteryTime;
         }
         return isLadder;
     }
@@ -104,6 +107,10 @@ public class Ladder : MonoBehaviour
 
     public bool MoveDown()
     {
+        if(time > 0f)
+        {
+            return false;
+        }
         if (player == null)
         {
             isLadder = false;
@@ -148,7 +155,7 @@ public class Ladder : MonoBehaviour
         //땅바닥에 닿으면 초기화
         if(playerWalker.isGrounded == true)
         {
-            playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+
             playerRb.gravityScale = originalGravity;
         }
         currentCoroutine = null;
@@ -166,7 +173,6 @@ public class Ladder : MonoBehaviour
         {
             
             playerRb.gravityScale = 0.001f;
-            playerRb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         }
         //위치를 중간으로 이동
         if (player.transform.position != targetPos)
@@ -239,7 +245,7 @@ public class Ladder : MonoBehaviour
             //사다리에서 벗어나면 다시 움직일 수 있게 함
             if (playerRb.gravityScale != originalGravity)
             {
-                playerRb.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+
                 playerRb.gravityScale = originalGravity;
 
             }

@@ -125,7 +125,22 @@ public class Controller : MonoBehaviour
             //대쉬
             if(GetKey(_dashKeyCodes) == true)
             {
-                _player.Dash();
+                if (_rightInput.isPressed != _leftInput.isPressed)
+                {
+                    switch (_rightInput.isPressed)
+                    {
+                        case IncreasingDirection:
+                            _player.DashRight();
+                            break;
+                        case DecreasingDirection:
+                            _player.DashLeft();
+                            break;
+                    }
+                }
+                else
+                {
+                    _player.Dash(new Vector2(_player.transform.forward.normalized.z, 0));
+                }
             }
             //상호작용
             if (GetKey(_interactionKeyCodes) == true)
