@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -130,6 +131,10 @@ public sealed class AnimatorPlayer : MonoBehaviour
             {
                 return;
             }
+            //else if(_coroutineList.Count > 0)
+            //{
+            //    _coroutineList.Clear();
+            //}
             StopCoroutine(_coroutine);
         }
         _coroutine = DoPlay();
@@ -177,37 +182,18 @@ public sealed class AnimatorPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// 시간을 기다리고 애니메이션 클립을 재생시키는 함수
+    /// 
     /// </summary>
-    /// <param name="delay"></param>
     /// <param name="animationClip"></param>
-    public void Play(float delay, AnimationClip animationClip)
+    public void Reserve(AnimationClip animationClip)
     {
-        if (Application.isPlaying == false)
+        if(_coroutine == null)
         {
-            return;
+            Play(animationClip);
         }
-        if (_coroutine != null)
+        else
         {
-            StopCoroutine(_coroutine);
-        }
-        _coroutine = DoPlay();
-        StartCoroutine(_coroutine);
-        IEnumerator DoPlay()
-        {
-            yield return new WaitForSeconds(delay);
-            if (animationClip != null)
-            {
-                animator.Play(animationClip.name, 0, 0f);
-                yield return null;
-                Func<bool> func = () =>
-                {
-                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    return stateInfo.normalizedTime < 1.0f && stateInfo.IsName(animationClip.name) == true;
-                };
-                yield return new WaitWhile(func);
-            }
-            _coroutine = null;
+
         }
     }
 
