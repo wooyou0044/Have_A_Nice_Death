@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class WomanGhostAi_Clone : Walker
 {
+    [SerializeField]
+    Projectile womanFire;
+    [SerializeField]
+    Transform Launcher;
+
     //자식오브젝트
     [SerializeField,Header("자식스크립트")]
     surpriseImote getSurprisedImote;
@@ -31,11 +36,17 @@ public class WomanGhostAi_Clone : Walker
     [SerializeField, Header("공격범위")] float ghostSightRange;
     Transform target;
 
+
+    [SerializeField, Header("이동거리")] 
+    float moveDistance = 1f;
+
+    IHittable attackPlayer;
+
+
     private bool movingRight = true;
     private Vector2 startPos;
-    [SerializeField, Header("이동거리")] float moveDistance = 1f;
-    
-    
+
+
     private void Start()
     {
         startPos = transform.position;
@@ -50,7 +61,7 @@ public class WomanGhostAi_Clone : Walker
         DetectPlayer();
 
         //만약 내 하위 오브젝트 불값이 false라면?
-        if(getSurprisedImote.stop == false)
+        if (getSurprisedImote.stop == false)
         {
             //하위 오브젝트 꺼라
             surprisedAnimator.gameObject.SetActive(false);
@@ -93,6 +104,15 @@ public class WomanGhostAi_Clone : Walker
         }              
     }
 
+    IEnumerator DoFire(float delay)
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(delay);
+            FireShot();
+        }
+    }
+
     void DetectPlayer()
     {
         Collider2D player;
@@ -102,9 +122,10 @@ public class WomanGhostAi_Clone : Walker
             if(target == null)
             {
                 animatorPlayer.Play(spotteddClip, true);
-                animatorPlayer.animator.SetBool("isAttack",true);
-                // skill 넣을곳
+                animatorPlayer.animator.SetBool("isAttack",true);                
                 getSurprisedImote.stop = true;
+                attackPlayer = player.GetComponent<IHittable>();
+                StartCoroutine(DoFire(1.3f));
             }
             target = player.transform;
 
@@ -115,8 +136,15 @@ public class WomanGhostAi_Clone : Walker
         {
             animatorPlayer.Play(idleClip, true);
             animatorPlayer.animator.SetBool("isAttack", false);
+            attackPlayer = target.GetComponent<IHittable>();
             target = null;
+            StopAllCoroutines();
         }
+    }
+    void FireShot()
+    {
+        Projectile projectile = GameManager.GetProjectile(womanFire);
+        //projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);
     }
     void SpottedPlayer()
     {        

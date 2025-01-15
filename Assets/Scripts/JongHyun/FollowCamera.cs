@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowCamera : MonoBehaviour
 {
-    public Transform cameraTransform;
+    Transform cameraTransform;
     [SerializeField]
     float backgroundSpeed;
     private Vector3 offset; // 배경과 카메라 사이의 초기 거리
