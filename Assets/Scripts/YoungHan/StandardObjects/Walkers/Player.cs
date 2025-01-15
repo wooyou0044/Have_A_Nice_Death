@@ -1,12 +1,13 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
 [RequireComponent(typeof(AnimatorPlayer))]
-[RequireComponent(typeof(WeaponHandler))]
-public sealed class Player : Runner, IHittable
+[RequireComponent(typeof(WeaponSet))]
+public sealed partial class Player : Runner, IHittable
 {
     private static readonly float MinimumDropVelocity = -0.49f;
 
@@ -27,28 +28,20 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public Animator animator
+    private bool _hasWeaponSet = false;
+
+    private WeaponSet _weaponSet = null;
+
+    private WeaponSet getWeaponSet
     {
         get
         {
-            return getAnimatorPlayer.animator;
-        }
-    }
-
-    private bool _hasWeaponHandler = false;
-
-    private WeaponHandler _weaponHandler = null;
-
-    private WeaponHandler getWeaponHandler
-    {
-        get
-        {
-            if(_hasWeaponHandler == false)
+            if(_hasWeaponSet == false)
             {
-                _hasWeaponHandler = true;
-                _weaponHandler = GetComponent<WeaponHandler>();
+                _hasWeaponSet = true;
+                _weaponSet = GetComponent<WeaponSet>();
             }
-            return _weaponHandler;
+            return _weaponSet;
         }
     }
 
@@ -75,6 +68,16 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _dashClip = null;
     [SerializeField]
     private AnimationClip _zipUpClip = null;
+
+    public enum Direction
+    {
+        Center,
+        Up,
+        Down
+    }
+
+    [SerializeField]
+    private Direction _direction = Direction.Center;
 
     [Space(10f), Header("체력")]
     //활성 체력'으로, 남아있는 체력을 의미한다.
@@ -139,6 +142,12 @@ public sealed class Player : Runner, IHittable
             return _maxMana;
         }
     }
+
+    [SerializeField]
+    private float _levitateTime = 0.5f;
+
+
+    private IEnumerator _coroutine = null;
 
     private Action _escapeAction = null;
     private Action<IHittable, int> _hitAction = null;
@@ -266,6 +275,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveStop()
     {
+        _direction = Direction.Center;
         if (isAlive == true)
         {
             if(getAnimatorPlayer.IsPlaying(_runClip) == true)
@@ -327,36 +337,57 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        AnimationClip clip = getAnimatorPlayer.GetCurrentClips();
-        if (clip != _zipUpClip && clip != _dashClip && _boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        if (isAlive == true)
         {
-            getAnimatorPlayer.Play(_zipUpClip);
-            RecoverJumpCount();
+            _direction = Direction.Up;
+            AnimationClip clip = getAnimatorPlayer.GetCurrentClips();
+            if (clip != _zipUpClip && clip != _dashClip && _boundingFunction != null && _boundingFunction.Invoke(true) == true)
+            {
+                getAnimatorPlayer.Play(_zipUpClip);
+                RecoverJumpCount();
+            }
         }
     }
     
     public void MoveDown()
     {
-        if(getAnimatorPlayer.IsPlaying(_zipUpClip) == false)
+        if (isAlive == true)
         {
-
-        }
-        else if (_boundingFunction != null && _boundingFunction.Invoke(false) == true)
-        {
-            getAnimatorPlayer.Play(_jumpFallingClip);
+            _direction = Direction.Down;
+            if (getAnimatorPlayer.IsPlaying(_zipUpClip) == true && _boundingFunction != null && _boundingFunction.Invoke(false) == true)
+            {
+                getAnimatorPlayer.Play(_jumpFallingClip);
+            }
         }
     }
 
     public void AttackScythe(bool pressed)
     {
-        if (pressed == true)
+        if(isAlive == true && getWeaponSet.TryScythe(pressed, _direction, _effectAction, _strikeAction, _projectileFunction, getAnimatorPlayer.animator) == true)
         {
-
+            if(_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+            }
+            _coroutine = DoPlay();
+            StartCoroutine(_coroutine);
+            IEnumerator DoPlay()
+            {
+                getAnimatorPlayer.Stop();
+                Levitate(true, _levitateTime);
+                yield return new WaitForSeconds(_levitateTime);
+                if (isGrounded == true)
+                {
+                    getAnimatorPlayer.Play(_idleClip);
+                }
+                else
+                {
+                    getAnimatorPlayer.Play(_jumpFallingClip);
+                }
+                _coroutine = null;
+            }
         }
-        else
-        {
-
-        }
+        getWeaponSet.Recharge(pressed);
     }
 
     public void Attack1()

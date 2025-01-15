@@ -10,7 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51b3682f435d5f249af3a23cd41047ec, type: 3}
-  m_Name: Player_Combo_Move_1 3
+  m_Name: Player_Combo_Move_2
   m_EditorClassIdentifier: 
-  firstClip: {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
-  secondClip: {fileID: 7400000, guid: bac4e09a1f09d5e45a7cb277b78df00c, type: 2}
+  animationClip: {fileID: 7400000, guid: 8fcce7e6c798a86459b2820ed6e0ec71, type: 2}

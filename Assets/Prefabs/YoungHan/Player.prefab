@@ -209,6 +209,7 @@ MonoBehaviour:
   _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
   _zipUpClip: {fileID: 7400000, guid: e3dad2b7c84bfb94db965db18e2d0c9b, type: 2}
+  _direction: 0
   _remainLife: 65
   _lossLife: 0
   _maxLife: 65
@@ -238,7 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8891d06b99e6b14b86d26f1de9186ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scythe: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
+  _attackTransform: {fileID: 7339798286695344316}
+  _scytheInfo: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0

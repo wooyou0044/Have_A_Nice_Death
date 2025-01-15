@@ -167,8 +167,9 @@ public class Skill : ScriptableObject
                     AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
                     for (int i = 0; i < count; i++)
                     {
-                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true)
+                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true )
                         {
+                            Debug.Log(essentialClips[i].name);
                             animatorHandler?.Play(animator);
                             skill?.Use(user, target, tags, action1, action2, func);
                             return true;
