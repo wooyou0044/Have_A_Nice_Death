@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PlayerOut : MonoBehaviour
 {
-    public bool _playerOut;
+    public bool _playerOut=true;
 }

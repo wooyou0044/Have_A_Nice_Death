@@ -8,17 +8,31 @@ public class FollowPlayer : MonoBehaviour
     public Vector3 offsetCamera = new Vector3(0, 2, -10);
     [SerializeField] 
     float followSpeed = 5f; // 따라가는 속도 (높을수록 빠르게 따라감)
+    
+    Player player;
+
+    [SerializeField]
+    PlayerOut playerOut;
+
 
     void Start()
     {
+        player = GetComponent<Player>();
+        
         if (cameraTransform == null)
         {
             cameraTransform = Camera.main.transform;
         }
+        //if (playerOut._playerOut == false)
+        //{
+        //    player.gameObject.SetActive(true);
+        //}
     }
-    
+
     void FixedUpdate()
     {
+        
+
         Vector3 targetPosition = transform.position + offsetCamera;
 
         float dx = targetPosition.x - cameraTransform.position.x;
@@ -35,8 +49,7 @@ public class FollowPlayer : MonoBehaviour
             cameraTransform.position.y + stepY,
             cameraTransform.position.z + stepZ );
 
-        MaximumDistanceCamera();
-
+        MaximumDistanceCamera();        
     }
     void MaximumDistanceCamera()
     {
