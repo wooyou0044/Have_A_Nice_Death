@@ -17,7 +17,6 @@ public class Ladder : MonoBehaviour
     [SerializeField] private float moveUpSpeed = 25f; //속도
     private bool isLadder = false; //사다리 안에 들어오면 true, 나가거나 아니면 false
     [SerializeField]float originalGravity; //복구해줄 원본 중력 값
-    [SerializeField] float delay = 0.05f; //딜레이
     private bool movingUp = false;//올라가는지 아닌지 구분하는 변수
 
     public bool MovingUp//만약 애니메이션 제어 값으로 조건문을 걸어서 실행 가능하면
@@ -26,25 +25,25 @@ public class Ladder : MonoBehaviour
         get { return movingUp; }
     }
 
-    //private void Update()
-    //{
-    //    if(player != null)
-    //    {
-    //        if(Input.GetKey(KeyCode.UpArrow) == true)
-    //        {
-    //            MoveUp();
-    //        }
-    //        if(Input.GetKey(KeyCode.Space) == true)
-    //        {
-    //            MoveStop();
-    //        }
-    //        if(Input.GetKey(KeyCode.DownArrow) == true)
-    //        {
-    //            MoveDown();
-    //        }
-    //
-    //    }
-    //}
+    private void Update()
+    {
+        if(player != null)
+        {
+            if(Input.GetKey(KeyCode.UpArrow) == true)
+            {
+                MoveUp();
+            }
+            if(Input.GetKey(KeyCode.Space) == true)
+            {
+                MoveStop();
+            }
+            if(Input.GetKey(KeyCode.DownArrow) == true)
+            {
+                MoveDown();
+            }
+    
+        }
+    }
     /// <summary>
     /// 사다리에서 올라갈 때 쓰는 함수
     /// </summary>
@@ -62,10 +61,16 @@ public class Ladder : MonoBehaviour
             if(currentCoroutine != null)
             {
                 StopCoroutine(currentCoroutine);
+                currentCoroutine = null;
             }
-            currentCoroutine = GettingUp();
-            StartCoroutine(currentCoroutine);
-            movingUp = true;
+
+            if(currentCoroutine == null)
+            {
+                currentCoroutine = GettingUp();
+                StartCoroutine(currentCoroutine);
+            }
+            
+            
         }
         return isLadder;
 
@@ -107,11 +112,21 @@ public class Ladder : MonoBehaviour
        
         if (movingUp == true)
         {
-            Debug.Log("멈춰라!");
-            StopCoroutine(currentCoroutine);
-            currentCoroutine = GettingDown();
-            StartCoroutine(currentCoroutine);
-            movingUp = false;
+            
+            if(currentCoroutine != null)
+            {
+                Debug.Log("멈춰라!");
+                StopCoroutine(currentCoroutine);
+                currentCoroutine = null;
+            }
+            
+            if(currentCoroutine == null)
+            {
+                currentCoroutine = GettingDown();
+                StartCoroutine(currentCoroutine);
+            }
+            
+            
         }
         return isLadder;
     }
@@ -123,6 +138,10 @@ public class Ladder : MonoBehaviour
     {
         while (isLadder == true && playerWalker.isGrounded == false)
         {
+            if(movingUp != false)
+            {
+                movingUp = false;
+            }
             playerRb.velocity = gettingDownLadder;
             yield return null;
         }
@@ -145,21 +164,24 @@ public class Ladder : MonoBehaviour
         //최초 실행시 중력 제거, X 정지
         if (playerRb.gravityScale != 0.001f)
         {
+            
             playerRb.gravityScale = 0.001f;
-            playerRb.constraints = RigidbodyConstraints2D.FreezePositionX;
+            playerRb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         }
         //위치를 중간으로 이동
         if (player.transform.position != targetPos)
         {
             player.transform.position = targetPos;
         }
-        playerRb.velocity = Vector3.zero;
-        yield return new WaitForSecondsRealtime(delay);//잠깐 멈추고
+      
 
 
         while (isLadder == true)
         {
-
+            if(movingUp != true)
+            {
+                movingUp = true;
+            }
             playerRb.velocity = getLadder;
             yield return null;//안쓰면 Boom
         }
