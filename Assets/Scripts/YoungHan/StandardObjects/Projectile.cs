@@ -98,22 +98,22 @@ public class Projectile : MonoBehaviour
         getTransform.rotation = rotation;
         _action1 = action2;
         _action2 = action1;
-        StopAllCoroutines();
-        StartCoroutine(DoProject());
-        IEnumerator DoProject()
-        {
-            yield return new WaitForSeconds(_dealyTime);
-            float duration = _flyingTime;
-            while (duration >= 0 || _flyingTime == 0)
-            {
-                float deltaTime = Time.deltaTime;
-                Vector2 direction = getTransform.right.normalized;
-                getTransform.Translate(direction * _flyingSpeed * deltaTime, Space.World);
-                duration -= deltaTime;
-                yield return null;
-            }
-            Explode();
-        }
+        //StopAllCoroutines();
+        //StartCoroutine(DoProject());
+        //IEnumerator DoProject()
+        //{
+        //    yield return new WaitForSeconds(_dealyTime);
+        //    float duration = _flyingTime;
+        //    while (duration >= 0 || _flyingTime == 0)
+        //    {
+        //        float deltaTime = Time.deltaTime;
+        //        Vector2 direction = getTransform.right.normalized;
+        //        getTransform.Translate(direction * _flyingSpeed * deltaTime, Space.World);
+        //        duration -= deltaTime;
+        //        yield return null;
+        //    }
+        //    Explode();
+        //}
     }
 
     public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)

@@ -208,6 +208,7 @@ public sealed class Player : Runner, IHittable
         if (isGrounded != this.isGrounded)
         {
             getAnimatorPlayer.Play(_jumpLandingClip, _idleClip, false);
+            _escapeAction?.Invoke();
         }
     }
 
@@ -228,35 +229,38 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    private bool CanMoveState()
+    {
+        RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+        if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
+        {
+            AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
+            if(animationClip == _jumpFallingClip && rigidbodyConstraints2D != RigidbodyConstraints2D.FreezeRotation)
+            {
+                return false;
+            }
+            return animationClip != _dashClip && animationClip != _zipUpClip;
+        }
+        return false;
+    }
+
     public override void MoveLeft()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition && 
-                getAnimatorPlayer.IsPlaying(_dashClip) == false)
-            {
-                base.MoveLeft();
-                PlayMove(LeftRotation);
-            }
+            base.MoveLeft();
+            PlayMove(LeftRotation);
         }
     }
 
     public override void MoveRight()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition &&
-                getAnimatorPlayer.IsPlaying(_dashClip) == false)
-            {
-                base.MoveRight();
-                PlayMove(RightRotation);
-            }
+            base.MoveRight();
+            PlayMove(RightRotation);
         }
     }
 
@@ -290,8 +294,6 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            
-
             base.Dash();
             RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
             if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
@@ -325,6 +327,7 @@ public sealed class Player : Runner, IHittable
         if (clip != _zipUpClip && clip != _dashClip && _boundingFunction != null && _boundingFunction.Invoke(true) == true)
         {
             getAnimatorPlayer.Play(_zipUpClip);
+            RecoverJumpCount();
         }
     }
     
