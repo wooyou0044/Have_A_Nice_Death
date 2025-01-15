@@ -5,6 +5,7 @@ using UnityEngine;
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
 [RequireComponent(typeof(AnimatorPlayer))]
+[RequireComponent(typeof(WeaponHandler))]
 public sealed class Player : Runner, IHittable
 {
     private static readonly float MinimumDropVelocity = -0.49f;
@@ -23,6 +24,31 @@ public sealed class Player : Runner, IHittable
                 _animatorPlayer = GetComponent<AnimatorPlayer>();
             }
             return _animatorPlayer;
+        }
+    }
+
+    public Animator animator
+    {
+        get
+        {
+            return getAnimatorPlayer.animator;
+        }
+    }
+
+    private bool _hasWeaponHandler = false;
+
+    private WeaponHandler _weaponHandler = null;
+
+    private WeaponHandler getWeaponHandler
+    {
+        get
+        {
+            if(_hasWeaponHandler == false)
+            {
+                _hasWeaponHandler = true;
+                _weaponHandler = GetComponent<WeaponHandler>();
+            }
+            return _weaponHandler;
         }
     }
 
@@ -102,6 +128,7 @@ public sealed class Player : Runner, IHittable
             return _remainMana;
         }
     }
+
     //최대치의 마력을 의미한다.
     [SerializeField, Range(0, byte.MaxValue)]
     private byte _maxMana;
@@ -113,21 +140,12 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    private float _chargingTime = 0;
-
-    [SerializeField]
-    private Weapon _weapon1;
-
+    private Action _escapeAction = null;
     private Action<IHittable, int> _hitAction = null;
-
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
-
     private Action<GameObject, Vector2, Transform> _effectAction = null;
-
     private Func<bool, bool> _boundingFunction = null;
-
     private Func<Projectile, Projectile> _projectileFunction = null;
-
 
     private void PlayMove(bool straight)
     {
@@ -190,6 +208,7 @@ public sealed class Player : Runner, IHittable
         if (isGrounded != this.isGrounded)
         {
             getAnimatorPlayer.Play(_jumpLandingClip, _idleClip, false);
+            _escapeAction?.Invoke();
         }
     }
 
@@ -206,37 +225,42 @@ public sealed class Player : Runner, IHittable
     {
         if(getAnimatorPlayer.IsPlaying(_zipUpClip) == true)
         {
-            getAnimatorPlayer.Play(_jumpFallingClip, false);
+            getAnimatorPlayer.Play(_jumpFallingClip);
         }
+    }
+
+    private bool CanMoveState()
+    {
+        RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
+        if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
+              rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
+        {
+            AnimationClip animationClip = getAnimatorPlayer.GetCurrentClips();
+            if (animationClip == _jumpFallingClip && rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation))
+            {
+                return false;
+            }
+            return animationClip != _dashClip && animationClip != _zipUpClip;
+        }
+        return false;
     }
 
     public override void MoveLeft()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
-            {
-                base.MoveLeft();
-                PlayMove(LeftRotation);
-            }
+            base.MoveLeft();
+            PlayMove(LeftRotation);
         }
     }
 
     public override void MoveRight()
     {
-        if (isAlive == true)
+        if (isAlive == true && CanMoveState() == true)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionX &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePositionY &&
-                rigidbodyConstraints2D != RigidbodyConstraints2D.FreezePosition)
-            {
-                base.MoveRight();
-                PlayMove(RightRotation);
-            }
+            base.MoveRight();
+            PlayMove(RightRotation);
         }
     }
 
@@ -256,39 +280,44 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            _boundingFunction?.Invoke(false);
             float velocity = getRigidbody2D.velocity.y;
             base.Jump();
-            if(velocity != getRigidbody2D.velocity.y)
+            if(velocity != getRigidbody2D.velocity.y || getAnimatorPlayer.IsPlaying(_zipUpClip) == true)
             {
+                _escapeAction?.Invoke();
                 getAnimatorPlayer.Play(_jumpStartClip, _jumpFallingClip , false);
             }
         }
     }
 
-    public override void Dash()
+    public override void Dash(Vector2 direction)
     {
-        if (isAlive == true)
+        if (isAlive == true && CanDash() == true)
         {
-            base.Dash();
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation))
+            if(direction.normalized.x < 0)
             {
-                _boundingFunction?.Invoke(false);
-                if (isGrounded == true)
-                {
-                    getAnimatorPlayer.Play(_dashClip, _idleClip, false);
-                }
-                else
-                {
-                    getAnimatorPlayer.Play(_dashClip, _jumpFallingClip, false);
-                }
+                PlayMove(LeftRotation);
+            }
+            else
+            {
+                PlayMove(RightRotation);
+            }
+            base.Dash(direction);
+            _escapeAction?.Invoke();
+            if (isGrounded == true)
+            {
+                getAnimatorPlayer.Play(_dashClip, _idleClip, false);
+            }
+            else
+            {
+                getAnimatorPlayer.Play(_dashClip, _jumpFallingClip, false);
             }
         }
     }
 
-    public void Initialize(Action<IHittable, int> hit, Action<Strike, Strike.Area, GameObject> strike, Action<GameObject, Vector2, Transform> effect, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
+    public void Initialize(Action escape, Action<IHittable, int> hit, Action<GameObject, Vector2, Transform> effect, Action<Strike, Strike.Area, GameObject> strike, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
     {
+        _escapeAction = escape;
         _hitAction = hit;
         _strikeAction = strike;
         _effectAction = effect;
@@ -298,33 +327,35 @@ public sealed class Player : Runner, IHittable
 
     public void MoveUp()
     {
-        if (_boundingFunction != null && _boundingFunction.Invoke(true) == true)
+        AnimationClip clip = getAnimatorPlayer.GetCurrentClips();
+        if (clip != _zipUpClip && clip != _dashClip && _boundingFunction != null && _boundingFunction.Invoke(true) == true)
         {
             getAnimatorPlayer.Play(_zipUpClip);
+            RecoverJumpCount();
         }
     }
     
     public void MoveDown()
     {
+        if(getAnimatorPlayer.IsPlaying(_zipUpClip) == false)
+        {
 
+        }
+        else if (_boundingFunction != null && _boundingFunction.Invoke(false) == true)
+        {
+            getAnimatorPlayer.Play(_jumpFallingClip);
+        }
     }
 
-    public void AttackBasic(bool pressed)
+    public void AttackScythe(bool pressed)
     {
-        if(_weapon1 != null)
+        if (pressed == true)
         {
-            if(pressed == true)
-            {
 
-            }
-            else
-            {
-
-            }
         }
-        if(pressed == false)
+        else
         {
-            _chargingTime = 0;
+
         }
     }
 

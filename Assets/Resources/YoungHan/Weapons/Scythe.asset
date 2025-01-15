@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a175b49d8fe4b849be11191a2a712ef, type: 3}
+  m_Name: Scythe
+  m_EditorClassIdentifier: 
+  standAction1:
+    skill: {fileID: 11400000, guid: 8d03f79c3d830b3449e3c67872c3e860, type: 2}
+    tags:
+    - 
+    animatorHandler: {fileID: 11400000, guid: 97c068b302368f24d98f72f8de0df9cc, type: 2}
+    essentialClips:
+    - {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
+  standAction2:
+    skill: {fileID: 11400000, guid: be9d7eb3baf6563448b01e852edbf2b9, type: 2}
+    tags: []
+    animatorHandler: {fileID: 0}
+    essentialClips: []
+  standAction3:
+    skill: {fileID: 11400000, guid: 87565e9eedba1f54e806eeb8709d45bc, type: 2}
+    tags: []
+    animatorHandler: {fileID: 0}
+    essentialClips: []
+  standAction4:
+    skill: {fileID: 11400000, guid: 95f3f58632e61c94784680cfec7611e1, type: 2}
+    tags: []
+    animatorHandler: {fileID: 0}
+    essentialClips: []

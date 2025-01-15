@@ -15,7 +15,7 @@ MonoBehaviour:
   strike:
     power: -10
     extension: 10
-  shape: {fileID: 11400000, guid: ebee20ef544a2d54c9216cac084d1c2c, type: 2}
+  shape: {fileID: 11400000, guid: c1296c39fa27bcd4db42856e7db365a3, type: 2}
   shotObject: {fileID: 0}
   splashObject: {fileID: 0}
   hitObject: {fileID: 0}

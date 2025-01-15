@@ -7,9 +7,9 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     //오른쪽 이동 방향
-    private const bool RightDirection = true;
+    private const bool IncreasingDirection = true;
     //왼쪽 이동 방향
-    private const bool LeftDirection = false;
+    private const bool DecreasingDirection = false;
 
     //조종할 대상 플레이어
     public Player _player;
@@ -85,10 +85,10 @@ public class Controller : MonoBehaviour
             {
                 switch (_rightInput.isPressed)
                 {
-                    case RightDirection:
+                    case IncreasingDirection:
                         _player.MoveRight();
                         break;
-                    case LeftDirection:
+                    case DecreasingDirection:
                         _player.MoveLeft();
                         break;
                 }
@@ -97,42 +97,50 @@ public class Controller : MonoBehaviour
             {
                 _player.MoveStop();
             }
-            if (_upInput.isPressed == true && _downInput.isPressed == false)
+            if (_upInput.isPressed != _downInput.isPressed)
             {
-                _player.MoveUp();
+                switch(_upInput.isPressed)
+                {
+                    case IncreasingDirection:
+                        _player.MoveUp();
+                        break;
+                    case DecreasingDirection:
+                        _player.MoveDown();
+                        break;
+                }
             }
-            //if (_attack2Input.isPressed == true)
-            //{
-            //    _player.Attack1();
-            //}
-            //if (_attack3Input.isPressed == true)
-            //{
-            //    _player.Attack2();
-            //}
             if(_attackWideInput.isPressed == true)
             {
                 _player.AttackWide();
             }
             else
             {
-                _player.AttackBasic(_attack1Input.isPressed);
+                _player.AttackScythe(_attack1Input.isPressed);
             }
             //점프
             if (GetKey(_jumpKeyCodes) == true)
             {
-                if (_downInput.isPressed == true && _upInput.isPressed == false)
-                {
-                    _player.MoveDown();
-                }
-                else
-                {
-                    _player.Jump();
-                }
+                _player.Jump();
             }
             //대쉬
             if(GetKey(_dashKeyCodes) == true)
             {
-                _player.Dash();
+                if (_rightInput.isPressed != _leftInput.isPressed)
+                {
+                    switch (_rightInput.isPressed)
+                    {
+                        case IncreasingDirection:
+                            _player.DashRight();
+                            break;
+                        case DecreasingDirection:
+                            _player.DashLeft();
+                            break;
+                    }
+                }
+                else
+                {
+                    _player.Dash(new Vector2(_player.transform.forward.normalized.z, 0));
+                }
             }
             //상호작용
             if (GetKey(_interactionKeyCodes) == true)
