@@ -169,7 +169,6 @@ public class Skill : ScriptableObject
                     {
                         if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true )
                         {
-                            Debug.Log(essentialClips[i].name);
                             animatorHandler?.Play(animator);
                             skill?.Use(user, target, tags, action1, action2, func);
                             return true;
