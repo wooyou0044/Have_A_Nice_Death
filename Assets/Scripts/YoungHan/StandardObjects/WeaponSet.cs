@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class WeaponSet : MonoBehaviour
 {
-    [SerializeField]
-    private Transform _attackTransform;
+
 
     [SerializeField]
     private Scythe _scytheInfo = null;
@@ -13,13 +12,17 @@ public class WeaponSet : MonoBehaviour
 
     private float _attackSpeed = 0;
 
-    public void Recharge(bool pressed)
+    public bool isPlaying
     {
-        if(pressed == true)
+        get
         {
-            _attackSpeed += Time.deltaTime;
+            return _attackSpeed > 0;
         }
-        else if(_attackSpeed > 0)
+    }
+
+    public void Release()
+    {
+        if(_attackSpeed > 0)
         {
             _attackSpeed = 0;
         }
@@ -31,26 +34,34 @@ public class WeaponSet : MonoBehaviour
         {
             if (pressed == true)
             {
-                switch (direction)
+                if (isPlaying == false)
                 {
-                    case Player.Direction.Center:
-                        if (_scytheInfo.TryUse(_attackTransform, Weapon.Attack.Stand, action1, action2, func, animator) == true)
-                        {
-                            return true;
-                        }
-                        break;
-                    case Player.Direction.Up:
-                        if (_scytheInfo.TryUse(_attackTransform, Weapon.Attack.Stand_Up, action1, action2, func, animator) == true)
-                        {
-                        }
-                        break;
-                    case Player.Direction.Down:
-                        break;
+                    switch (direction)
+                    {
+                        case Player.Direction.Center:
+                            if (_scytheInfo.TryUse(transform, Weapon.Attack.Stand, action1, action2, func, animator) == true)
+                            {
+                                _attackSpeed = _scytheSpeed;
+                                return true;
+                            }
+                            break;
+                        case Player.Direction.Up:
+                            if (_scytheInfo.TryUse(transform, Weapon.Attack.Stand_Up, action1, action2, func, animator) == true)
+                            {
+                            }
+                            break;
+                        case Player.Direction.Down:
+                            break;
+                    }
+                }
+                else
+                {
+                    //기 모으기
                 }
             }
-            else
+            else if(_attackSpeed > 0)
             {
-
+                _attackSpeed = 0;
             }
         }
         return false;

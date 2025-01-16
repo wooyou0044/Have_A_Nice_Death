@@ -206,22 +206,7 @@ public struct Strike
 
         public override bool CanStrike(IHittable hittable)
         {
-            if (base.CanStrike(hittable) == true)
-            {
-                Collider2D collider2D = hittable.GetCollider2D();
-                if(collider2D != null)
-                {
-                    int length = vertices != null ? vertices.Length : 0;
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (collider2D.OverlapPoint(vertices[i]) == true)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return base.CanStrike(hittable) == true && Shape.IsCollision(vertices, hittable.GetCollider2D()) == true;
         }
     }
 }

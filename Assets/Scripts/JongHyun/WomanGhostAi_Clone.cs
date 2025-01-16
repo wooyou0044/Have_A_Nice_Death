@@ -1,20 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 
-public class WomanGhostAi_Clone : Walker
+public class WomanGhostAi_Clone : Walker,IHittable
 {
+    bool isHit = false;
+    [SerializeField]
+    int womanGhostHP = 50;
     [SerializeField]
     Projectile womanFire;
+
     [SerializeField]
     Transform Launcher;
 
     //자식오브젝트
-    [SerializeField,Header("자식스크립트")]
+    [SerializeField, Header("자식스크립트")]
+    StunEnemy stunEnemyImote;
+    [SerializeField]
     surpriseImote getSurprisedImote;
-    [SerializeField,Header("자식애니메이션")]
+    [SerializeField, Header("자식애니메이션")]    
     private Animator surprisedAnimator;
 
     //애니메이션 클립들
@@ -24,6 +31,8 @@ public class WomanGhostAi_Clone : Walker
     private AnimationClip idleClip;
     [SerializeField]
     private AnimationClip spotteddClip;
+    [SerializeField]
+    private AnimationClip hitClip;
     [SerializeField]
     private AnimationClip attackClip;
     [SerializeField]
@@ -46,20 +55,24 @@ public class WomanGhostAi_Clone : Walker
     private bool movingRight = true;
     private Vector2 startPos;
 
+    public bool isAlive { get { return true; } }
 
     private void Start()
     {
         startPos = transform.position;
         animatorPlayer = GetComponent<AnimatorPlayer>();
+        stunEnemyImote.stun = true;
         surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();
         getSurprisedImote.stop = true;
     }
 
     private void Update()
     {
-        Move();
+        Move();        
         DetectPlayer();
-
+       
+        
+        
         //만약 내 하위 오브젝트 불값이 false라면?
         if (getSurprisedImote.stop == false)
         {
@@ -127,6 +140,7 @@ public class WomanGhostAi_Clone : Walker
 
                 attackPlayer = player.GetComponent<IHittable>();
                 StartCoroutine(DoFire(1.3f));
+                
             }
             target = player.transform;
 
@@ -167,20 +181,31 @@ public class WomanGhostAi_Clone : Walker
             surprisedAnimator.gameObject.SetActive(true);
         }
     }
+
+    public void Hit(Strike strike)
+    {
+        Debug.Log("hit");
+        //animatorPlayer.Play(spotteddClip, true);
+    }
+
+    public Collider2D GetCollider2D()
+    {
+        return getCollider2D;
+    }
     //void HideExclamationMark()
     //{
-        //if(surprisedAnimator != null)
-        //{
-        //    surprisedAnimator.gameObject.SetActive(false);
-        //}
-
-        //timer += Time.deltaTime;
-        //if (timer > 2)
-        //{            
-        //    surprisedAnimator.gameObject.SetActive(false);
-        //    timer = 0;
-        //}
+    //if(surprisedAnimator != null)
+    //{
+    //    surprisedAnimator.gameObject.SetActive(false);
     //}
-    
-    
+
+    //timer += Time.deltaTime;
+    //if (timer > 2)
+    //{            
+    //    surprisedAnimator.gameObject.SetActive(false);
+    //    timer = 0;
+    //}
+    //}
+
+
 }
