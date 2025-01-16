@@ -28,6 +28,7 @@ public class Enemy_Book_AI : Walker, IHittable
     bool isUturn = true;
     bool isFind = true;
     bool isAttack = false;
+    bool AttackAnimationIsOver = true;
     int facingRight;
 
     float BookFindCooltime;
@@ -69,8 +70,10 @@ public class Enemy_Book_AI : Walker, IHittable
     }
 
     void Update()
-    {
-        DetectPlayer();
+    {      
+        
+            DetectPlayer();
+                   
     }
 
     void DetectPlayer()
@@ -79,16 +82,16 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (detectplayerErea != null)
         {
-
             FindPlayer();
         }
 
-        else if(BookAnimatorPlayer.isEndofFrame || detectplayerErea == null )
+        else if((BookAnimatorPlayer.IsPlaying(findClip) != true && BookAnimatorPlayer.IsPlaying(attackClip)) 
+            != true && detectplayerErea == null)
         {
+            Debug.Log("방황 시작");
             BookWander();
             isFind = true;
             BookFindElapsedtime = 4.0f;
-
         }
     }
 
@@ -100,14 +103,16 @@ public class Enemy_Book_AI : Walker, IHittable
         if (isFind == true)
         {
             BookAnimatorPlayer.Play(findClip, idleClip);
-            isFind = false;     
+
+            if (BookAnimatorPlayer.IsPlaying(findClip) != true)
+            {
+                isFind = false;
+            }                 
         }
 
-        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
+        if (BookAnimatorPlayer.IsPlaying(findClip) != true && BookFindElapsedtime >= BookFindCooltime) 
         {
             BookAnimatorPlayer.Play(attackClip, idleClip);
-
-
             BookFindElapsedtime = 0;
         }
 
