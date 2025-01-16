@@ -35,14 +35,6 @@ public class Runner : Walker
 
     private IEnumerator _dashCoroutine = null;
 
-    [SerializeField, Header("공중부양 시간"), Range(0.1f, 10)]
-    protected float _levitationDelay = 0.1f;
-
-    [SerializeField, Header("공중부양 쿨타임"), Range(0, 5)]
-    protected float _levitationCoolTime = 0.3f;
-
-    private IEnumerator _levitationCoroutine = null;
-
 #if UNITY_EDITOR
     protected override void OnValidate()
     {
@@ -76,6 +68,16 @@ public class Runner : Walker
         }
     }
 
+    protected override void OnCollisionStay2D(Collision2D collision)
+    {
+        bool isGrounded = this.isGrounded;
+        base.OnCollisionStay2D(collision);
+        if(isGrounded != this.isGrounded)
+        {
+            RecoverJumpCount();
+        }
+    }
+
     public override void MoveLeft()
     {
         if (_dashCoroutine == null)
@@ -105,7 +107,7 @@ public class Runner : Walker
     {
         if (_jumpCount > 0 && _jumpCoroutine == null && getRigidbody2D.gravityScale > 0)
         {
-            StopLevitate();
+            //StopLevitate();
             _jumpCoroutine = DoJumpAndDelay();
             StartCoroutine(_jumpCoroutine);
             IEnumerator DoJumpAndDelay()
@@ -118,38 +120,9 @@ public class Runner : Walker
         }
     }
 
-    //대쉬를 하게 만드는 메서드
     public virtual void Dash(Vector2 direction)
     {
-        if (_dashCoroutine != null)
-        {
-            StopCoroutine(_dashCoroutine);
-        }
-        StopLevitate();
-        _dashCoroutine = DoDashAndDelay();
-        StartCoroutine(_dashCoroutine);
-        IEnumerator DoDashAndDelay()
-        {
-            _isDashed = true;
-            getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-            getRigidbody2D.velocity = direction * _dashValue;
-            yield return new WaitForSeconds(_dashDelay);
-            getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
-            getRigidbody2D.velocity += Vector2.down;
-            _dashCoroutine = null;
-            yield return new WaitForSeconds(_dashCoolTime);
-            _isDashed = false;
-        }
-    }
-
-    private void StopLevitate()
-    {
-        if (_levitationCoroutine != null)
-        {
-            StopCoroutine(_levitationCoroutine);
-            _levitationCoroutine = null;
-            getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
-        }
+        Dash(direction, _dashDelay);
     }
 
     protected void RecoverJumpCount()
@@ -157,35 +130,42 @@ public class Runner : Walker
         _jumpCount = _jumpLimit;
     }
 
-    protected void Levitate(bool force)
+    public void Levitate(float value)
     {
-        Levitate(force, _levitationDelay);
+        Dash(Vector2.zero, value);
     }
 
-    protected void Levitate(bool force, float duration)
+    //대쉬를 하게 만드는 메서드
+    public void Dash(Vector2 direction, float value)
     {
-        if(force == true)
+        if (_dashCoroutine != null)
         {
-            if(_levitationCoroutine != null)
+            StopCoroutine(_dashCoroutine);
+        }
+        _dashCoroutine = DoDashAndDelay();
+        StartCoroutine(_dashCoroutine);
+        IEnumerator DoDashAndDelay()
+        {
+            _isDashed = true;
+            if(direction == Vector2.zero)
             {
-                StopCoroutine(_levitationCoroutine);
+                getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
             }
-            _levitationCoroutine = DoLevitateAndDelay();
-            StartCoroutine(_levitationCoroutine);
-        }
-        else if(_levitationCoroutine == null)
-        {
-            _levitationCoroutine = DoLevitateAndDelay();
-            StartCoroutine(_levitationCoroutine);
-        }
-        IEnumerator DoLevitateAndDelay()
-        {
-            getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
-            yield return new WaitForSeconds(duration);
+            else if(direction == Vector2.up || direction == Vector2.down)
+            {
+                getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            }
+            else if (direction == Vector2.left || direction == Vector2.right)
+            {
+                getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+            }
+            getRigidbody2D.velocity = direction * _dashValue;
+            yield return new WaitForSeconds(value);
             getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
             getRigidbody2D.velocity += Vector2.down;
-            yield return new WaitForSeconds(_levitationCoolTime);
-            _levitationCoroutine = null;
+            _dashCoroutine = null;
+            yield return new WaitForSeconds(_dashCoolTime);
+            _isDashed = false;
         }
     }
 
@@ -197,11 +177,6 @@ public class Runner : Walker
     public void DashRight()
     {
         Dash(new Vector2(+1, 0));
-    }
-
-    public bool IsLevitate()
-    {
-        return _levitationCoroutine != null;
     }
 
     public bool CanDash()

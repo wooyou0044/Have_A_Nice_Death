@@ -159,38 +159,36 @@ public class Skill : ScriptableObject
             }
         }
 
-        public bool TryUse(Transform user, IHittable target, float duration, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
+        public bool TryUse(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
         {
-            if (coolTime <= duration)
+            int count = essentialClips != null ? essentialClips.Count : 0;
+            if (animator != null)
             {
-                int count = essentialClips != null ? essentialClips.Count : 0;
-                if (animator != null)
+                if (count > 0)
                 {
-                    if (count > 0)
+                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                    float playTime = stateInfo.length * stateInfo.normalizedTime;
+                    for (int i = 0; i < count; i++)
                     {
-                        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                        for (int i = 0; i < count; i++)
+                        if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true && coolTime <= playTime)
                         {
-                            if (essentialClips[i] != null && stateInfo.IsName(essentialClips[i].name) == true)
-                            {
-                                animatorHandler?.Play(animator);
-                                skill?.Use(user, target, tags, action1, action2, func);
-                                return true;
-                            }
+                            animatorHandler?.Play(animator);
+                            skill?.Use(user, target, tags, action1, action2, func);
+                            return true;
                         }
                     }
-                    else
-                    {
-                        animatorHandler?.Play(animator);
-                        skill?.Use(user, target, tags, action1, action2, func);
-                        return true;
-                    }
                 }
-                else if (count == 0)
+                else
                 {
+                    animatorHandler?.Play(animator);
                     skill?.Use(user, target, tags, action1, action2, func);
                     return true;
                 }
+            }
+            else if (count == 0 && coolTime == 0)
+            {
+                skill?.Use(user, target, tags, action1, action2, func);
+                return true;
             }
             return false;
         }

@@ -120,8 +120,6 @@ MonoBehaviour:
   _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
-  _levitationDelay: 0.5
-  _levitationCoolTime: 0.2
   _idleClip: {fileID: 7400000, guid: 495f31976f46bb040b10a7a11ac4ead8, type: 2}
   _idleToRunClip: {fileID: 7400000, guid: 7c86be6876b9568499db638a76676fd4, type: 2}
   _idleUturnClip: {fileID: 7400000, guid: 2e6ca9feb81217c40a9539b5e46fb3d9, type: 2}
@@ -140,7 +138,6 @@ MonoBehaviour:
   _maxLife: 65
   _remainMana: 0
   _maxMana: 50
-  _levitateTime: 0.5
 --- !u!114 &6128502948254598311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,7 +151,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scytheInfo: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
-  _scytheSpeed: 1
+  _comboState: 0
+  _combo1Delay: 0.4
+  _combo2Delay: 0.4
+  _combo3Delay: 0.4
+  _combo4Delay: 1.3
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,25 +4,29 @@ using UnityEngine;
 
 public class WeaponSet : MonoBehaviour
 {
-
-    [SerializeField, Header("³´ Á¤º¸")]
-    private Scythe _scytheInfo = null;
-
-    private float _concentrationTime = 0;
-
-    private enum Combo
+    private enum Combo: byte
     {
         None,
         Combo1,
         Combo2,
         Combo3,
-        Combo4
+        Combo4,
     }
 
+    [SerializeField, Header("³´ Á¤º¸")]
+    private Scythe _scytheInfo = null;
+    [SerializeField, Header("ÄÞº¸ È½¼ö")]
+    private Combo _comboState;
+    [SerializeField, Range(0, 5)]
+    private float _comboDelay = 0.4f;
     [SerializeField]
-    private Combo _combo;
+    private float _recoverDelay = 1.0f;
+
+    private float _concentrationTime = 0;
 
     private IEnumerator _coroutine = null;
+
+
 
     public bool TryScythe(Player player, bool pressed, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func)
     {
@@ -32,59 +36,72 @@ public class WeaponSet : MonoBehaviour
             {
                 if (pressed == true)
                 {
-                    AnimatorPlayer animatorPlayer = player.animatorPlayer;
-                    Animator animator = animatorPlayer != null ? animatorPlayer.animator : null;
-                    if (animator != null)
+                    if (_concentrationTime == 0)
                     {
-                        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                        switch (player.direction)
+                        AnimatorPlayer animatorPlayer = player.animatorPlayer;
+                        bool hasAnimatorPlayer = animatorPlayer != null;
+                        Animator animator = hasAnimatorPlayer == true ? animatorPlayer.animator : null;
+                        if (animator != null)
                         {
-                            case Player.Direction.Center:
-                                if (_combo < Combo.Combo4 && _scytheInfo.TryUse(transform, Weapon.Attack.Stand, stateInfo.length * stateInfo.normalizedTime, action1, action2, func, animator) == true)
-                                {
-                                    _combo++;
-                                    Debug.Log(_combo);
-                                    if(_coroutine != null)
+                            switch (player.direction)
+                            {
+                                case Player.Direction.Center:
+                                    if (_comboState < Combo.Combo4 && _scytheInfo.TryUse(transform, Weapon.Attack.Stand, action1, action2, func, animator) == true)
                                     {
-                                        StopCoroutine(_coroutine);
-                                    }
-                                    _coroutine = DoPlay();
-                                    StartCoroutine(_coroutine);
-                                    IEnumerator DoPlay()
-                                    {
-                                        switch(_combo)
+                                        _comboState++;
+                                        if (hasAnimatorPlayer == true)
                                         {
-                                            case Combo.Combo1:
-                                                yield return new WaitForSeconds(0.4f);
-                                                break;
-                                            case Combo.Combo2:
-                                                yield return new WaitForSeconds(0.4f);
-                                                break;
-                                            case Combo.Combo3:
-                                                yield return new WaitForSeconds(0.4f);
-                                                break;
-                                            case Combo.Combo4:
-                                                yield return new WaitForSeconds(2f);
-                                                break;
+                                            animatorPlayer.Flip(false);
+                                            animatorPlayer.Stop();
                                         }
-                                        _combo = Combo.None;
-                                        _coroutine = null;
+                                        if (_coroutine != null)
+                                        {
+                                            StopCoroutine(_coroutine);
+                                        }
+                                        _coroutine = DoPlay();
+                                        StartCoroutine(_coroutine);
+                                        IEnumerator DoPlay()
+                                        {
+                                            switch (_comboState)
+                                            {
+                                                case Combo.Combo1:
+                                                case Combo.Combo2:
+                                                case Combo.Combo3:
+                                                    player.Levitate(_comboDelay);
+                                                    yield return new WaitForSeconds(_comboDelay);
+                                                    break;
+                                                case Combo.Combo4:
+                                                    player.Levitate(_comboDelay);
+                                                    yield return new WaitForSeconds(_comboDelay);
+                                                    player.Dash(Vector2.down, _recoverDelay);
+                                                    yield return new WaitForSeconds(_recoverDelay);
+                                                    break;
+                                            }
+                                            player?.Recover();
+                                            _comboState = Combo.None;
+                                            _coroutine = null;
+                                        }
                                     }
-                                }
-                                break;
-                            case Player.Direction.Up:
-                                if (_scytheInfo.TryUse(transform, Weapon.Attack.Stand_Up, 0, action1, action2, func, animator) == true)
-                                {
-                                }
-                                break;
-                            case Player.Direction.Down:
-                                break;
+                                    break;
+                                case Player.Direction.Up:
+                                    if (_scytheInfo.TryUse(transform, Weapon.Attack.Stand_Up, action1, action2, func, animator) == true)
+                                    {
+                                    }
+                                    break;
+                                case Player.Direction.Down:
+                                    break;
+                            }
                         }
+                        _concentrationTime += Time.deltaTime;
+                    }
+                    else if(_coroutine == null && player.isGrounded == true)
+                    {
+                        _concentrationTime += Time.deltaTime;
                     }
                 }
                 else
                 {
-
+                    _concentrationTime = 0;
                 }
             }
         }
@@ -92,42 +109,6 @@ public class WeaponSet : MonoBehaviour
         {
             _concentrationTime = 0;
         }
-        //Animator animator = _animatorPlayer != null ? _animatorPlayer.animator : null;
-        //if (getWeaponSet.TryScythe(pressed, _direction, _effectAction, _strikeAction, _projectileFunction, animator) == true)
-        //{
-        //    if (_coroutine != null)
-        //    {
-        //        StopCoroutine(_coroutine);
-        //    }
-        //    _coroutine = DoPlay();
-        //    StartCoroutine(_coroutine);
-        //    IEnumerator DoPlay()
-        //    {
-        //        if (pressed == true)
-        //        {
-        //            if (_animatorPlayer != null)
-        //            {
-        //                _animatorPlayer.Flip(false);
-        //                _animatorPlayer.Stop();
-        //            }
-        //            Levitate(true, _levitateTime);
-        //            yield return new WaitForSeconds(_levitateTime);
-        //            if (isGrounded == true)
-        //            {
-        //                _animatorPlayer?.Play(_idleClip);
-        //            }
-        //            else
-        //            {
-        //                _animatorPlayer?.Play(_jumpFallingClip);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            //ÇÏ°­ °ø°Ý
-        //        }
-        //        _coroutine = null;
-        //    }
-        //}
-        return _combo > Combo.None;
+        return _coroutine != null || _concentrationTime > 0;
     }
 }

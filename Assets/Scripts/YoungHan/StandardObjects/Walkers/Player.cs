@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -213,7 +212,7 @@ public sealed class Player : Runner, IHittable
     {
         bool isGrounded = this.isGrounded;
         base.OnCollisionEnter2D(collision);
-        if (isGrounded != this.isGrounded)
+        if (isGrounded != this.isGrounded && _stopping == false)
         {
             _animatorPlayer?.Play(_jumpLandingClip, _idleClip, false);
             _escapeAction?.Invoke();
@@ -223,7 +222,7 @@ public sealed class Player : Runner, IHittable
     protected override void OnCollisionExit2D(Collision2D collision)
     {
         base.OnCollisionExit2D(collision);
-        if (isGrounded == false && getRigidbody2D.velocity.y < MinimumDropVelocity)
+        if (isGrounded == false && getRigidbody2D.velocity.y < MinimumDropVelocity && _stopping == false)
         {
             _animatorPlayer?.Play(_jumpFallingClip);
         }
@@ -384,6 +383,21 @@ public sealed class Player : Runner, IHittable
     public void Interact()
     {
 
+    }
+
+    public void Recover()
+    {
+        if(isAlive == true)
+        {
+            if(isGrounded == true)
+            {
+                _animatorPlayer?.Play(_idleClip);
+            }
+            else
+            {
+                _animatorPlayer?.Play(_jumpFallingClip);
+            }
+        }
     }
 
     public void Heal(bool anima = false)
