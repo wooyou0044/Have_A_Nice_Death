@@ -99,23 +99,14 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (isFind == true)
         {
-<<<<<<< HEAD
-=======
-            Debug.Log("³î¶÷");
             BookAnimatorPlayer.Play(findClip, idleClip);
->>>>>>> 3aea3e5fe9d98c5132ac2ea92cc66aab47c7973f
-            isFind = false;
-            BookAnimatorPlayer.Play(findClip, idleClip, false);           
+            isFind = false;     
         }
 
         if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
         {
-<<<<<<< HEAD
-            BookAnimatorPlayer.Play(attackClip, idleClip, false);
-=======
-            Debug.Log("°ø°Ý");
             BookAnimatorPlayer.Play(attackClip, idleClip);
->>>>>>> 3aea3e5fe9d98c5132ac2ea92cc66aab47c7973f
+
 
             BookFindElapsedtime = 0;
         }
