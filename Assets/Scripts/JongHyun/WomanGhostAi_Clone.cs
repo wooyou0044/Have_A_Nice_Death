@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Animations;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class WomanGhostAi_Clone : Walker,IHittable
@@ -71,10 +72,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
         Move();        
         DetectPlayer();
         
-        //if(stunEnemyImote.stun == false)
-        //{
-        //    stunEnemyImote.gameObject.SetActive(false);
-        //}
+        
         //만약 내 하위 오브젝트 불값이 false라면?
         if (getSurprisedImote.stop == false)
         {
@@ -192,17 +190,16 @@ public class WomanGhostAi_Clone : Walker,IHittable
             MoveStop();
             animatorPlayer.Play(hitClip, true);
         }
-        else if(isDeath)
-        {
-            gameObject.SetActive(false);
-        }
         else
         {
             animatorPlayer.Play(deathClip, true);
-            isDeath = true;
-        }
-        
-                
+            StartCoroutine(DoHide());
+            IEnumerator DoHide()
+            {
+                yield return new WaitForSeconds(1);
+                gameObject.SetActive(false);
+            }
+        }        
     }
 
     public Collider2D GetCollider2D()
