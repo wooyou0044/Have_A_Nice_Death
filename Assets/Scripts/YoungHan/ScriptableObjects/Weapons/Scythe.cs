@@ -13,24 +13,24 @@ public class Scythe : Weapon
     [SerializeField]
     private Skill.Action standAction4;
 
-    public override bool TryUse(Transform transform, Attack attack, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
+    public override bool TryUse(Transform transform, Attack attack, float duration, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
     {
         switch (attack)
         {
             case Attack.Stand:
-                if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (standAction4.TryUse(transform, null, duration, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
-                if (standAction3.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (standAction3.TryUse(transform, null, duration, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
-                if (standAction2.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (standAction2.TryUse(transform, null, duration, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
-                if (standAction1.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (standAction1.TryUse(transform, null, duration, action1, action2, func, animator) == true)
                 {
                     return true;
                 }

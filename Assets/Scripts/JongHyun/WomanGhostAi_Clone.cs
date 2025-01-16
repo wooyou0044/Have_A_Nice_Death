@@ -6,8 +6,8 @@ using UnityEditor.Animations;
 using UnityEngine;
 
 public class WomanGhostAi_Clone : Walker,IHittable
-{
-    bool isHit = false;
+{    
+    bool isDeath = false;
     [SerializeField]
     int womanGhostHP = 50;
     [SerializeField]
@@ -17,18 +17,19 @@ public class WomanGhostAi_Clone : Walker,IHittable
     Transform Launcher;
 
     //자식오브젝트
-    [SerializeField, Header("자식스크립트")]
-    StunEnemy stunEnemyImote;
-    [SerializeField]
+    [SerializeField, Header("자식스크립트")]   
     surpriseImote getSurprisedImote;
     [SerializeField, Header("자식애니메이션")]    
     private Animator surprisedAnimator;
+    
 
     //애니메이션 클립들
     [SerializeField, Header("애니메이션 클립")]
     private AnimatorPlayer animatorPlayer;
     [SerializeField]
     private AnimationClip idleClip;
+    [SerializeField]
+    private AnimationClip deathClip;
     [SerializeField]
     private AnimationClip spotteddClip;
     [SerializeField]
@@ -60,8 +61,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
     private void Start()
     {
         startPos = transform.position;
-        animatorPlayer = GetComponent<AnimatorPlayer>();
-        stunEnemyImote.stun = true;
+        animatorPlayer = GetComponent<AnimatorPlayer>();        
         surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();
         getSurprisedImote.stop = true;
     }
@@ -70,9 +70,11 @@ public class WomanGhostAi_Clone : Walker,IHittable
     {
         Move();        
         DetectPlayer();
-       
         
-        
+        //if(stunEnemyImote.stun == false)
+        //{
+        //    stunEnemyImote.gameObject.SetActive(false);
+        //}
         //만약 내 하위 오브젝트 불값이 false라면?
         if (getSurprisedImote.stop == false)
         {
@@ -139,8 +141,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
                 getSurprisedImote.stop = true;
 
                 attackPlayer = player.GetComponent<IHittable>();
-                StartCoroutine(DoFire(1.3f));
-                
+                StartCoroutine(DoFire(1.3f));                
             }
             target = player.transform;
 
@@ -172,7 +173,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
         {
             transform.rotation = Quaternion.Euler(0, 0, 0);            
         }
-    }    
+    }
     void ShowExclamationMark()
     {
         if (surprisedAnimator != null)
@@ -184,28 +185,28 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     public void Hit(Strike strike)
     {
-        Debug.Log("hit");
-        //animatorPlayer.Play(spotteddClip, true);
+        womanGhostHP += strike.result;
+
+        if(womanGhostHP>0)
+        {
+            MoveStop();
+            animatorPlayer.Play(hitClip, true);
+        }
+        else if(isDeath)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            animatorPlayer.Play(deathClip, true);
+            isDeath = true;
+        }
+        
+                
     }
 
     public Collider2D GetCollider2D()
     {
         return getCollider2D;
     }
-    //void HideExclamationMark()
-    //{
-    //if(surprisedAnimator != null)
-    //{
-    //    surprisedAnimator.gameObject.SetActive(false);
-    //}
-
-    //timer += Time.deltaTime;
-    //if (timer > 2)
-    //{            
-    //    surprisedAnimator.gameObject.SetActive(false);
-    //    timer = 0;
-    //}
-    //}
-
-
 }
