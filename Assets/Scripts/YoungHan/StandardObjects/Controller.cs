@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 키보드 입력을 이용하여 플레이어를 조종할 수 있는 클래스

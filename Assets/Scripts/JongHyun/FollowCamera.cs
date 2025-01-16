@@ -16,7 +16,7 @@ public class FollowCamera : MonoBehaviour
             cameraTransform = Camera.main.transform; // 메인 카메라를 기본으로 설정
         }
 
-        offset = transform.position - cameraTransform.position;
+        offset = transform.position;
     }
 
     void Update()

@@ -5,14 +5,4 @@ using UnityEngine;
 public class WomanFireSkill : MonoBehaviour
 {
 
-    void Start()
-    {
-        
-    }
-
-
-    void Update()
-    {
-        
-    }
 }

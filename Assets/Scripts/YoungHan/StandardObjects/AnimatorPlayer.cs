@@ -47,6 +47,8 @@ public sealed class AnimatorPlayer : MonoBehaviour
 
     private IEnumerator _coroutine = null;
 
+    private List<AnimationClip> _animationClips = new List<AnimationClip>();
+
     /// <summary>
     /// 애니메이션 진행이 다 끝났는지 확인하는 프로퍼티
     /// </summary>
@@ -83,6 +85,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
             StopCoroutine(_coroutine);
             _coroutine = null;
         }
+        _animationClips.Clear();
     }
 
     /// <summary>
@@ -115,6 +118,16 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <summary>
     /// 특정 애니메이션 두 개를 순차적으로 재생 시키는 함수
     /// </summary>
+    /// <param name="first"></param>
+    /// <param name="second"></param>
+    public void Play(AnimationClip first, AnimationClip second)
+    {
+        Play(first, second, false, true);
+    }
+
+    /// <summary>
+    /// 특정 애니메이션 두 개를 순차적으로 재생 시키는 함수
+    /// </summary>
     /// <param name="first">재생할 첫 번째 애니메이션 클립</param>
     /// <param name="second">재생할 두 번째 애니메이션 클립</param>
     /// <param name="flip">스프라이트 렌더러를 일시적으로 반전 시켰다가 원래대로 되돌림</param>
@@ -131,10 +144,10 @@ public sealed class AnimatorPlayer : MonoBehaviour
             {
                 return;
             }
-            //else if(_coroutineList.Count > 0)
-            //{
-            //    _coroutineList.Clear();
-            //}
+            else if (_animationClips.Count > 0)
+            {
+                _animationClips.Clear();
+            }
             StopCoroutine(_coroutine);
         }
         _coroutine = DoPlay();
@@ -178,22 +191,28 @@ public sealed class AnimatorPlayer : MonoBehaviour
                 yield return new WaitWhile(func);
             }
             _coroutine = null;
+            if (_animationClips.Count > 0)
+            {
+                AnimationClip animationClip = _animationClips[0];
+                _animationClips.RemoveAt(0);
+                Play(animationClip, false);
+            }
         }
     }
 
     /// <summary>
-    /// 
+    /// 애니메이션 플레이를 예약한다.
     /// </summary>
     /// <param name="animationClip"></param>
     public void Reserve(AnimationClip animationClip)
     {
-        if(_coroutine == null)
+        if (_coroutine == null)
         {
             Play(animationClip);
         }
         else
         {
-
+            _animationClips.Add(animationClip);
         }
     }
 

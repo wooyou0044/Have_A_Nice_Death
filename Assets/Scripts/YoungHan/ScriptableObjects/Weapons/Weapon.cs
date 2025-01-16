@@ -16,5 +16,5 @@ public abstract class Weapon : ScriptableObject
         Fury            //분노 공격
     }
 
-    public abstract bool TryUse(Player player, Attack attack, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func);
+    public abstract bool TryUse(Transform transform, Attack attack, float duration, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator);
 }

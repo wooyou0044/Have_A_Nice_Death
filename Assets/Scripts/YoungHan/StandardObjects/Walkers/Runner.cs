@@ -208,11 +208,7 @@ public class Runner : Walker
     {
         if(_dashCoroutine == null && _isDashed == false)
         {
-            RigidbodyConstraints2D rigidbodyConstraints2D = getRigidbody2D.constraints;
-            if (rigidbodyConstraints2D == (RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation))
-            {
-                return true;
-            }
+            return true;
         }
         return false;
     }

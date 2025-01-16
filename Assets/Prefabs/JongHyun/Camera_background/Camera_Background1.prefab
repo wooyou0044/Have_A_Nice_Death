@@ -927,7 +927,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6862411739371992925}
-  - component: {fileID: 1907167513738707886}
   m_Layer: 0
   m_Name: Camera_Background1
   m_TagString: Untagged
@@ -952,20 +951,6 @@ Transform:
   - {fileID: 389111713334327949}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1907167513738707886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5325530542761742597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b514c30c1441294dac52bedd4ae7a3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 0}
-  backgroundSpeed: 0.6
 --- !u!1 &6280737844651548340
 GameObject:
   m_ObjectHideFlags: 0
