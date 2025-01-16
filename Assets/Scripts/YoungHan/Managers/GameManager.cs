@@ -61,9 +61,6 @@ public sealed class GameManager : Manager<GameManager>
                 ladderList.Add(ladder);
             }
         }
-        Collider2D col = null;
-        BoxCollider2D boxCollider2D = col as BoxCollider2D;
-        Debug.Log(boxCollider2D);
     }
 
     private void EscapeLadder()

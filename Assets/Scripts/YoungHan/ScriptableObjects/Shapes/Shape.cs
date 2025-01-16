@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class Shape : ScriptableObject
@@ -16,17 +17,20 @@ public abstract class Shape : ScriptableObject
     private static bool IsIntersection(Vector2 p1, Vector2 p2, Vector2 q1, Vector2 q2)
     {
         // 벡터 계산
-        Vector2 d1 = q1 - p1; // 선분 1의 방향 벡터
-        Vector2 d2 = q2 - p2; // 선분 2의 방향 벡터
+        Vector2 d1 = p2 - p1; // 선분 1의 방향 벡터
+        Vector2 d2 = q2 - q1; // 선분 2의 방향 벡터
+
         // 교차 여부 계산
         float denominator = d1.x * d2.y - d1.y * d2.x; // 두 벡터의 외적 (z 성분)
         if (Mathf.Approximately(denominator, 0))
         {
             return false; // 평행 또는 공선 상태에서는 교차하지 않음
         }
+
         // 교차 지점의 파라미터 계산
-        float t = ((p2.x - p1.x) * d2.y - (p2.y - p1.y) * d2.x) / denominator;
-        float u = ((p2.x - p1.x) * d1.y - (p2.y - p1.y) * d1.x) / denominator;
+        float t = ((q1.x - p1.x) * d2.y - (q1.y - p1.y) * d2.x) / denominator;
+        float u = ((q1.x - p1.x) * d1.y - (q1.y - p1.y) * d1.x) / denominator;
+
         // t와 u가 [0, 1] 범위에 있을 경우 교차
         return t >= 0 && t <= 1 && u >= 0 && u <= 1;
     }
@@ -80,7 +84,7 @@ public abstract class Shape : ScriptableObject
                         return true;
                     }
                 }
-                if(IsIntersection(vertices, BoxShape.GetVertices(collider2D as BoxCollider2D)) == true)
+                if (IsIntersection(vertices, BoxShape.GetVertices(collider2D as BoxCollider2D)) == true)
                 {
                     return true;
                 }
