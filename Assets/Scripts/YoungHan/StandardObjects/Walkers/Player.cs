@@ -370,7 +370,11 @@ public sealed class Player : Runner, IHittable
                 StartCoroutine(_coroutine);
                 IEnumerator DoPlay()
                 {
-                    _animatorPlayer?.Stop();
+                    if(_animatorPlayer != null)
+                    {
+                        _animatorPlayer.Flip(false);
+                        _animatorPlayer.Stop();
+                    }
                     Levitate(true, _levitateTime);
                     yield return new WaitForSeconds(_levitateTime);
                     if (isGrounded == true)
