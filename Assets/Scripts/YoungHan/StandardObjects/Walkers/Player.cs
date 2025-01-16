@@ -6,7 +6,7 @@ using UnityEngine;
 /// 유저가 조종하는 플레이어 클래스
 /// </summary>
 [RequireComponent(typeof(WeaponSet))]
-public sealed partial class Player : Runner, IHittable
+public sealed class Player : Runner, IHittable
 {
     private static readonly float MinimumDropVelocity = -0.49f;
 
