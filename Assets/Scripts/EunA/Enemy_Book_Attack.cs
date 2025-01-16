@@ -12,6 +12,9 @@ public class Enemy_Book_Attack : MonoBehaviour
     float PlaneCoolTime;
     float PlaneElapsedTime;
 
+    [SerializeField]
+    private Projectile Projectile;
+
     void Start()
     {
         PlaneCoolTime = 1.0f;
@@ -25,7 +28,10 @@ public class Enemy_Book_Attack : MonoBehaviour
         PlaneElapsedTime += Time.deltaTime;
         if (isEnabled == true && isAttack == true&& PlaneElapsedTime >= PlaneCoolTime)
         {
-            Instantiate(PaperPlane, PaperPlaneMuzzle.transform.position, PaperPlaneMuzzle.transform.rotation);
+            Projectile projectile = GameManager.GetProjectile(Projectile);
+            IHittable hittable = GameObject.FindWithTag("Player").GetComponent<IHittable>();
+            projectile.Shot(PaperPlaneMuzzle.transform, hittable, GameManager.ShowEffect, GameManager.Use);
+            //Instantiate(PaperPlane, PaperPlaneMuzzle.transform.position, PaperPlaneMuzzle.transform.rotation);
             PlaneElapsedTime = 0;
         }
     }
