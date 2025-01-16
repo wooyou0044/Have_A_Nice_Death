@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerOut : MonoBehaviour
+public class StunEnemy : MonoBehaviour
 {
-    public bool _playerOut=true;
+    public bool stun;
 }
