@@ -28,14 +28,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1671469481644130997}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7339798286695344316}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!70 &5485927661889974639
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   _movingSpeed: 10
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
   _jumpValue: 15
-  _jumpLimit: 1
+  _jumpLimit: 3
   _jumpCount: 0
   _dashValue: 50
   _dashDelay: 0.2
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scytheInfo: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
-  _scytheSpeed: 0.6
+  _scytheSpeed: 1
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +250,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: d65aa75959f0b0548a9e0fbac93510a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

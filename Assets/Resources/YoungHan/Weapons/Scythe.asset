@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standAction1:
     skill: {fileID: 11400000, guid: 8d03f79c3d830b3449e3c67872c3e860, type: 2}
+    coolTime: 0
     tags:
     - Enemy
     animatorHandler: {fileID: 11400000, guid: 97c068b302368f24d98f72f8de0df9cc, type: 2}
@@ -29,6 +30,7 @@ MonoBehaviour:
     - {fileID: 7400000, guid: 1086ebed10acb9a41863729a0404011f, type: 2}
   standAction2:
     skill: {fileID: 11400000, guid: be9d7eb3baf6563448b01e852edbf2b9, type: 2}
+    coolTime: 0.4
     tags:
     - Enemy
     animatorHandler: {fileID: 11400000, guid: e4277ce6afc742e4a803a230da30f045, type: 2}
@@ -36,6 +38,7 @@ MonoBehaviour:
     - {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
   standAction3:
     skill: {fileID: 11400000, guid: 87565e9eedba1f54e806eeb8709d45bc, type: 2}
+    coolTime: 0.3
     tags:
     - Enemy
     animatorHandler: {fileID: 11400000, guid: 9443a4b997d426b49863497c67d8f718, type: 2}
@@ -43,6 +46,7 @@ MonoBehaviour:
     - {fileID: 7400000, guid: 8fcce7e6c798a86459b2820ed6e0ec71, type: 2}
   standAction4:
     skill: {fileID: 11400000, guid: 95f3f58632e61c94784680cfec7611e1, type: 2}
+    coolTime: 0.4
     tags:
     - Enemy
     animatorHandler: {fileID: 11400000, guid: fe93ca68412fe754dad52b86f0a73a51, type: 2}
