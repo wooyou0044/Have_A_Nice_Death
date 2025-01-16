@@ -137,26 +137,14 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="effect"></param>
     public static void Use(Strike strike, Strike.Area area, GameObject effect)
     {
-        if (area == null)
-        {
-            foreach (IHittable hittable in instance._hittableList)
-            {
-                if (hittable != null)
-                {
-                    instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
-                    hittable.Hit(strike);
-                }
-            }
-        }
-        else
+        if (area != null)
         {
 #if UNITY_EDITOR
             if(area is Strike.PolygonArea polygonArea)
             {
-                polygonArea.Show(Color.red, 3);
+                polygonArea.Show(Color.red, 1);
             }
 #endif
-
             foreach (IHittable hittable in instance._hittableList)
             {
                 if (area.CanStrike(hittable) == true)
@@ -166,6 +154,17 @@ public sealed class GameManager : Manager<GameManager>
                 }
             }
         }
+        //else
+        //{
+        //    foreach (IHittable hittable in instance._hittableList)
+        //    {
+        //        if (hittable != null)
+        //        {
+        //            instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
+        //            hittable.Hit(strike);
+        //        }
+        //    }
+        //}
     }
 
     /// <summary>
