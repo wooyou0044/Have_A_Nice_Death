@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34fd9d9b5151ddd4e93ea9a222d0cfde, type: 3}
   m_Name: 2Square
   m_EditorClassIdentifier: 
-  size: {x: 2, y: 2}
-  offset: {x: 0, y: 0}
+  size: {x: 8.5, y: 2}
+  offset: {x: 4.3, y: 0}
