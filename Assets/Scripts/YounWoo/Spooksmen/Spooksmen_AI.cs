@@ -27,6 +27,8 @@ public class Spooksmen_AI : Walker
     [SerializeField] float attackRange;
     [SerializeField] float attackCoolTime;
     [SerializeField] GameObject bangMark;
+    [SerializeField] Skill skill2;
+    [SerializeField] Skill skill3;
 
     Animator myAnimator;
     AnimatorPlayer myPlayer;
@@ -36,6 +38,7 @@ public class Spooksmen_AI : Walker
     CircleCollider2D circleCollider;
 
     Collider2D player;
+    Collider2D attackPlayer;
 
     Transform targetPos;
     // 공격하기 위해 플레이어가 있는 위치 담을 변수
@@ -54,8 +57,20 @@ public class Spooksmen_AI : Walker
     int attackNum;
 
     bool isHome;
-    bool isOverturn;
     bool isAttacking;
+    bool isDetect;
+    bool isFrontAttack;
+
+    enum AttackState
+    {
+        Default,
+        FrontAttack_Jab,
+        FrontAttack_UpperCut,
+        FrontAttack_Slam,
+        BackAttack,
+        UpAttack,
+    }
+    AttackState state;
 
     private void Awake()
     {
@@ -86,22 +101,39 @@ public class Spooksmen_AI : Walker
 
         isHome = true;
         isAttacking = false;
+        isDetect = false;
+        attackElapsedTime = attackCoolTime;
+        state = AttackState.Default;
     }
 
     void Update()
     {
-        attackElapsedTime += Time.deltaTime;
-        if(isAttacking && attackCoolTime < attackElapsedTime)
+        attackPlayer = Physics2D.OverlapCircle(transform.position, attackRange, playerMask);
+        if (attackPlayer != null)
         {
-            //AttackPlayer();
-            //attackElapsedTime = 0;
-            attackPos = player.transform;
-            AttackPlayer();
+            isAttacking = true;
         }
-
-        if(isAttacking == false)
+        else
         {
+            isAttacking = false;
             DetectPlayer();
+        }
+        if(isAttacking)
+        {
+            bang.SetActive(true);
+            MovePosition(attackPlayer.transform.position.x);
+            attackElapsedTime += Time.deltaTime;
+            // 0.5초 지나면 느낌표 끄기
+            if(0.5f <= attackElapsedTime)
+            {
+                bang.SetActive(false);
+            }
+        }
+        if (isAttacking && attackCoolTime <= attackElapsedTime)
+        {
+            AttackPlayer();
+            attackElapsedTime = 0;
+            isAttacking = false;
         }
     }
 
@@ -111,58 +143,28 @@ public class Spooksmen_AI : Walker
         player = Physics2D.OverlapCircle(transform.position, sightRange, playerMask);
         if (player != null)
         {
-            if(Physics2D.OverlapCircle(transform.position, attackRange, playerMask) != null)
-            {
-                isAttacking = true;
-            }
-            else
-            {
-                isAttacking = false;
-            }
-
+            isDetect = true;
             targetPos = player.transform;
             if (isHome)
             {
-                // 플레이어와 내가 같은 방향으로 있으면
-                if (transform.rotation.eulerAngles.y == targetPos.rotation.eulerAngles.y)
-                {
-                    // 플레이어와 반대로 돌아보게 함
-                    transform.rotation = Quaternion.Euler(0, Mathf.Abs(targetPos.rotation.eulerAngles.y - 180), 0);
-                    isOverturn = true;
-                }
-                // 플레이어와 내가 같은 방향을 보고 있지 않으면
-                else
-                {
-                    isOverturn = false;
-                }
+                // 공격 타입 결정
+                isFrontAttack = AttackType(targetPos.rotation.eulerAngles.y, transform.rotation.eulerAngles.y);
 
-                // 같은 방향으로 있으면
-                if (isOverturn)
-                {
-                    // Sprite Renderer을 flip.X를 해서 플레이어를 바라보지 않고 놀라는 애니메이션 실행시켜야 함
-                    myPlayer.Play(surprisedClip, idleClip, true, false);
-                }
-                // 같은 방향으로 있지 않으면
-                else
-                {
-                    // Sprite Renderer을 flip.X를 하지 않고 놀라는 애니메이션 실행시켜야 함
-                    // flip.X를 true로 하면 뒤돌아서 놀라고 원위치로 다시 돌게 됨
-                    myPlayer.Play(surprisedClip, idleClip, false, false);
-                }
-
+                myPlayer.Play(surprisedClip, idleClip, false, false);
                 surprised.SetActive(true);
                 isHome = false;
             }
             if(myPlayer.isEndofFrame)
             {
                 surprised.SetActive(false);
+                attackPos = targetPos;
                 // 플레이어 따라다니는 동작 실행
                 MovePosition(targetPos.position.x);
             }
-
         }
         else
         {
+            isDetect = false;
             // 내 자리가 아니면 다시 돌아가기
             if(createdPos.x != transform.position.x && isHome == false)
             {
@@ -261,6 +263,18 @@ public class Spooksmen_AI : Walker
         }
     }
 
+    bool AttackType(float targetRotation, float myRotation)
+    {
+        if (targetRotation == myRotation)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     // 공격
     void AttackPlayer()
     {
@@ -273,27 +287,28 @@ public class Spooksmen_AI : Walker
         // 공격 범위 안에 들어왔을 때 플레이어가 앞에 있으면 전방 공격을 하고
         //                          플레이어가 뒤에 있으면 후방 공격을 하고
         //                          플레이어가 위에 있으면 상향 공격을 함
-        // 쿨타임 넣어야 함
 
-        targetPos = player.transform;
-        MovePosition(targetPos.position.x);
+        if(isDetect== false)
+        {
+            attackPos = attackPlayer.transform;
+
+            isFrontAttack = AttackType(attackPos.rotation.eulerAngles.y, transform.rotation.eulerAngles.y);
+        }
 
         if (attackPos.position.y > transform.position.y)
         {
-            //UpAttack();
+            UpAttack();
             Debug.Log("상향 공격");
         }
-        // 플레이어와 내가 같은 방향인데
-        else if (attackPos.rotation.eulerAngles.y == targetPos.rotation.eulerAngles.y)
+        else if(isFrontAttack)
         {
-            //BackAttack();
-            Debug.Log("후방 공격");
-        }
-
-        else if (attackPos.rotation.eulerAngles.y != targetPos.rotation.eulerAngles.y)
-        {
-            //FrontAttack();
+            FrontAttack();
             Debug.Log("전방 공격");
+        }
+        else
+        {
+            BackAttack();
+            Debug.Log("후방 공격");
         }
     }
 
@@ -301,8 +316,7 @@ public class Spooksmen_AI : Walker
     {
         //myAnimator.SetInteger("AttackNum", 1);
         // 피해량 추가 필요
-
-        Debug.Log("전방 공격");
+        
     }
 
     void BackAttack()
@@ -310,10 +324,13 @@ public class Spooksmen_AI : Walker
         myAnimator.SetBool("isBackAttack", true);
         // 피해량 추가 필요
 
+        boxCollider.offset = new Vector2(0, 0.2581731f);
+        boxCollider.size = new Vector2(5.85f, 1.372605f);
+
         // 박스 Collider enabled 켜기
         boxCollider.enabled = true;
 
-        Debug.Log("후방 공격");
+        state = AttackState.BackAttack;
         // 공격 끝나면 박스 Collider enabled 끄기
     }
 
@@ -323,10 +340,30 @@ public class Spooksmen_AI : Walker
         // 피해량 추가 필요
 
         // 캡슐 Collider Offset, Size 수정 필요
-        damageCollider.offset = new Vector2(-0.11f, 0.34f);
-        damageCollider.size = new Vector2(3.34f, 4.4f);
+        damageCollider.offset = new Vector2(-0.11f, 0.09f);
+        damageCollider.size = new Vector2(3.34f, 4.1f);
 
-        Debug.Log("상향 공격");
+        state = AttackState.UpAttack;
         // 공격 끝나면 원래 캡슐 Collider Offset, Size로 돌아오기
+    }
+
+    public void ResetAttack()
+    {
+        switch(state)
+        {
+            case AttackState.FrontAttack_UpperCut:
+                break;
+            case AttackState.UpAttack:
+                damageCollider.offset = new Vector2(0.0899694f, 0);
+                damageCollider.size = new Vector2(1.239239f, 2.87f);
+                myAnimator.SetBool("isUpAttack", false);
+                state = AttackState.Default;
+                break;
+            case AttackState.BackAttack:
+                boxCollider.enabled = false;
+                myAnimator.SetBool("isBackAttack", false);
+                state = AttackState.Default;
+                break;
+        }
     }
 }
