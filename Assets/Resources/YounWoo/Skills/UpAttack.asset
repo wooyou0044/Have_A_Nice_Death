@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d7e119abe292cc4a910f587c1cadaad, type: 3}
-  m_Name: Combo2
+  m_Name: UpAttack
   m_EditorClassIdentifier: 
   strike:
-    power: 0
-    extension: 0
-  shape: {fileID: 0}
+    power: -1
+    extension: 10
+  shape: {fileID: 11400000, guid: 3b60ed4195c71e246a0a766bb95fa7a9, type: 2}
   shotObject: {fileID: 0}
   splashObject: {fileID: 0}
   hitObject: {fileID: 0}

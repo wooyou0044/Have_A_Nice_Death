@@ -75,13 +75,11 @@ GameObject:
   - component: {fileID: 5568514879662371186}
   - component: {fileID: 1629861197426246571}
   - component: {fileID: 8667258227407508517}
-  - component: {fileID: 8164909506301244467}
-  - component: {fileID: 1093075537261705675}
   - component: {fileID: 1987722185614619135}
   - component: {fileID: 3072912941559313003}
   m_Layer: 0
   m_Name: Spooksmen
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -238,86 +236,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0.0899694, y: 0}
   m_Size: {x: 1.239239, y: 2.87}
   m_Direction: 0
---- !u!61 &8164909506301244467
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5942166137478113390}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.2581731}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.56, y: 2.87}
-    newSize: {x: 1.56, y: 2.87}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 5.85, y: 1.372605}
-  m_EdgeRadius: 0
---- !u!58 &1093075537261705675
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5942166137478113390}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.08, y: 0}
-  serializedVersion: 2
-  m_Radius: 2.04
 --- !u!114 &1987722185614619135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,6 +254,9 @@ MonoBehaviour:
   uTurnClip: {fileID: 7400000, guid: 33904171736a1634aba8401008503fab, type: 2}
   idleClip: {fileID: 7400000, guid: bac4e09a1f09d5e45a7cb277b78df00c, type: 2}
   surprisedClip: {fileID: 7400000, guid: f383ff2e036b8f249b615a9bfefade51, type: 2}
+  hitClip: {fileID: 7400000, guid: f82ea533f7b46f8409cce003cb488dc2, type: 2}
+  stunClip: {fileID: 7400000, guid: b22b5e7060c5e2a41a23f46f7e62a06b, type: 2}
+  hp: 200
   sightRange: 15
   surprisedMark: {fileID: 114126727675654133, guid: b9ab3022a49ba0d4fa84f807553444f4, type: 3}
   surprisedPos: {fileID: 1283372598996737737}
@@ -344,7 +265,16 @@ MonoBehaviour:
     m_Bits: 64
   wonderRange: 5
   attackRange: 5
+  attackCoolTime: 3
   bangMark: {fileID: 8155302115414528479, guid: 20540e6a8e9f5264282d0f1992e67865, type: 3}
+  frontAttack:
+  - {fileID: 11400000, guid: e5dee6fc901c75644a88fa0c39278a1c, type: 2}
+  - {fileID: 11400000, guid: 23dd21280c14b9e4bbb52db1d62c4eb5, type: 2}
+  - {fileID: 11400000, guid: de77da85adf0e2b40862c98339a699cd, type: 2}
+  backAttack: {fileID: 11400000, guid: 053874260eead444588562bd83727ffb, type: 2}
+  upAttack: {fileID: 11400000, guid: 23dd21280c14b9e4bbb52db1d62c4eb5, type: 2}
+  stunMark: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
+  stunPos: {fileID: 1113382817480003504}
 --- !u!114 &3072912941559313003
 MonoBehaviour:
   m_ObjectHideFlags: 0
