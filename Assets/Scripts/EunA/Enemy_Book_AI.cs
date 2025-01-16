@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class Enemy_Book_AI : Walker
+public class Enemy_Book_AI : Walker, IHittable
 {
-    float detectTime;
-    int enemyHealth;
+    int MaxEnemyHealth;
+    int NowEnemyHealth;
     Animator EnemyBookAnimator;
 
     #region 애니메이션 클립
@@ -21,21 +22,21 @@ public class Enemy_Book_AI : Walker
     public AnimationClip dieClip;
     #endregion
 
+    float detectTime;
     float BookSightRange;
-    float BookAttackRange;
     bool isFacingRight = true;
     bool isUturn = true;
     bool isFind = true;
     bool isAttack = false;
+    bool AttackAnimationIsOver = true;
     int facingRight;
 
     float BookFindCooltime;
     float BookFindElapsedtime;
 
-
     Rigidbody2D enemyRigid;
+    Collider2D enemyCollider;
     Collider2D detectplayerErea;
-    Collider2D attackplayerErea;
     Vector2 leftEnemyLocation;
     Vector2 nowEnemyLocation;
     Vector2 rightEnemyLocation;
@@ -48,13 +49,19 @@ public class Enemy_Book_AI : Walker
     [SerializeField]
     LayerMask playerLayerMask;
 
+    bool IHittable.isAlive => MaxEnemyHealth > 0;
+
+    string IHittable.tag { get; set; }
+
+    Transform IHittable.transform => transform;
 
     void Start()
     {
-        enemyHealth = 15;
+        MaxEnemyHealth = 15;
+        NowEnemyHealth = 15;
         EnemyBookAnimator = GetComponent<Animator>();
+        enemyCollider = GetComponent<Collider2D>();
         BookSightRange = 5;
-        BookAttackRange = 4;
         moveDistance = 4.0f;
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
         BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
@@ -63,8 +70,10 @@ public class Enemy_Book_AI : Walker
     }
 
     void Update()
-    {
-        DetectPlayer();
+    {      
+        
+            DetectPlayer();
+                   
     }
 
     void DetectPlayer()
@@ -76,8 +85,10 @@ public class Enemy_Book_AI : Walker
             FindPlayer();
         }
 
-        else if(BookAnimatorPlayer.isEndofFrame || detectplayerErea == null)
+        else if((BookAnimatorPlayer.IsPlaying(findClip) != true && BookAnimatorPlayer.IsPlaying(attackClip)) 
+            != true && detectplayerErea == null)
         {
+            Debug.Log("방황 시작");
             BookWander();
             isFind = true;
             BookFindElapsedtime = 4.0f;
@@ -91,21 +102,17 @@ public class Enemy_Book_AI : Walker
 
         if (isFind == true)
         {
-            Debug.Log("놀람");
             BookAnimatorPlayer.Play(findClip, idleClip);
-            isFind = false;
+
+            if (BookAnimatorPlayer.IsPlaying(findClip) != true)
+            {
+                isFind = false;
+            }                 
         }
 
-        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
+        if (BookAnimatorPlayer.IsPlaying(findClip) != true && BookFindElapsedtime >= BookFindCooltime) 
         {
-            Debug.Log("공격");
             BookAnimatorPlayer.Play(attackClip, idleClip);
-
-            //if(detectplayerErea == null)
-            //{
-            //    BookAnimatorPlayer.Play(idleClip);
-            //}
-
             BookFindElapsedtime = 0;
         }
 
@@ -190,6 +197,7 @@ public class Enemy_Book_AI : Walker
             {
                 BookAnimatorPlayer.Play(idleClip);
             }
+
             Invoke("Turn", 0.36f);
 
             if (gameObject.transform.rotation == Quaternion.Euler(0, 180, 0))
@@ -244,9 +252,19 @@ public class Enemy_Book_AI : Walker
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(this.transform.position, BookSightRange);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(this.transform.position, BookAttackRange);
     }
 
+    void IHittable.Hit(Strike strike)
+    {
+        if(NowEnemyHealth < MaxEnemyHealth/2)
+        {
+            MoveStop();
+            BookAnimatorPlayer.Play(hitClip);
+        }
+    }
+
+    Collider2D IHittable.GetCollider2D()
+    {
+        return enemyCollider;
+    }
 }

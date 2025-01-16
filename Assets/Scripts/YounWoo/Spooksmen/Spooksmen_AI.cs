@@ -1,16 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
+using TMPro;
 using UnityEngine;
 
-public class Spooksmen_AI : Walker
+public class Spooksmen_AI : Walker, IHittable
 {
     LayerMask playerLayer;
 
     [SerializeField] AnimationClip uTurnClip;
     [SerializeField] AnimationClip idleClip;
     [SerializeField] AnimationClip surprisedClip;
+    [SerializeField] AnimationClip hitClip;
+    [SerializeField] AnimationClip stunClip;
+
+    [Header("나의 정보")]
+    [SerializeField] float hp = 200.0f;
 
     [Header("플레이어 감지")]
     // 감지하는 범위
@@ -27,18 +34,20 @@ public class Spooksmen_AI : Walker
     [SerializeField] float attackRange;
     [SerializeField] float attackCoolTime;
     [SerializeField] GameObject bangMark;
-    [SerializeField] Skill skill2;
-    [SerializeField] Skill skill3;
+    [SerializeField] Skill[] frontAttack;
+    [SerializeField] Skill backAttack;
+    [SerializeField] Skill upAttack;
+
+    [Header("데미지")]
+    [SerializeField] GameObject stunMark;
+    [SerializeField] Transform stunPos;
 
     Animator myAnimator;
     AnimatorPlayer myPlayer;
 
-    BoxCollider2D boxCollider;
-    CapsuleCollider2D damageCollider;
-    CircleCollider2D circleCollider;
-
     Collider2D player;
     Collider2D attackPlayer;
+    Collider2D damageCollider;
 
     Transform targetPos;
     // 공격하기 위해 플레이어가 있는 위치 담을 변수
@@ -50,6 +59,7 @@ public class Spooksmen_AI : Walker
 
     GameObject surprised;
     GameObject bang;
+    GameObject stun;
 
     float homeDistance;
     float attackElapsedTime;
@@ -72,27 +82,32 @@ public class Spooksmen_AI : Walker
     }
     AttackState state;
 
+    public bool isAlive
+    {
+        get
+        {
+            return (hp > 0) ? true : false;
+        }
+    }
+
     private void Awake()
     {
         myAnimator = GetComponent<Animator>();
         myPlayer = GetComponent<AnimatorPlayer>();
-
-        boxCollider = GetComponent<BoxCollider2D>();
-        damageCollider = GetComponent<CapsuleCollider2D>();
-        circleCollider = GetComponent<CircleCollider2D>();
+        damageCollider = GetComponent<Collider2D>();
     }
 
     void Start()
     {
-        boxCollider.enabled = false;
-        circleCollider.enabled = false;
-
         // 놀란 이펙트 생성
         surprised = Instantiate(surprisedMark, surprisedPos);
         surprised.SetActive(false);
 
         bang = Instantiate(bangMark, surprisedPos);
         bang.SetActive(false);
+
+        stun = Instantiate(stunMark, stunPos);
+        stun.SetActive(false);
 
         createdPos = transform.position;
         homeDistance = 0.5f;
@@ -115,6 +130,7 @@ public class Spooksmen_AI : Walker
         }
         else
         {
+            bangMark.SetActive(false);
             isAttacking = false;
             DetectPlayer();
         }
@@ -263,12 +279,14 @@ public class Spooksmen_AI : Walker
         }
     }
 
-    bool AttackType(float targetRotation, float myRotation)
+    bool AttackType(float targetRot, float myRot)
     {
-        if (targetRotation == myRotation)
+        // 나와 플레이어가 같은 방향을 바라보고 있는 경우
+        if (targetRot == myRot)
         {
             return false;
         }
+        // 나와 플레이어가 다른 방향을 바라보고 있는 경우
         else
         {
             return true;
@@ -310,6 +328,8 @@ public class Spooksmen_AI : Walker
             BackAttack();
             Debug.Log("후방 공격");
         }
+
+        isDetect = false;
     }
 
     void FrontAttack()
@@ -317,21 +337,20 @@ public class Spooksmen_AI : Walker
         //myAnimator.SetInteger("AttackNum", 1);
         // 피해량 추가 필요
         
+
     }
 
     void BackAttack()
     {
         myAnimator.SetBool("isBackAttack", true);
-        // 피해량 추가 필요
 
-        boxCollider.offset = new Vector2(0, 0.2581731f);
-        boxCollider.size = new Vector2(5.85f, 1.372605f);
-
-        // 박스 Collider enabled 켜기
-        boxCollider.enabled = true;
-
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            yield return new WaitForSeconds(0.5f);
+            backAttack.Use(transform, null, new string[] {"Player"}, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
+        }
         state = AttackState.BackAttack;
-        // 공격 끝나면 박스 Collider enabled 끄기
     }
 
     void UpAttack()
@@ -339,12 +358,14 @@ public class Spooksmen_AI : Walker
         myAnimator.SetBool("isUpAttack", true);
         // 피해량 추가 필요
 
-        // 캡슐 Collider Offset, Size 수정 필요
-        damageCollider.offset = new Vector2(-0.11f, 0.09f);
-        damageCollider.size = new Vector2(3.34f, 4.1f);
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            yield return new WaitForSeconds(0.5f);
+            upAttack.Use(transform, null, new string[] { "Player" }, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
+        }
 
         state = AttackState.UpAttack;
-        // 공격 끝나면 원래 캡슐 Collider Offset, Size로 돌아오기
     }
 
     public void ResetAttack()
@@ -354,16 +375,35 @@ public class Spooksmen_AI : Walker
             case AttackState.FrontAttack_UpperCut:
                 break;
             case AttackState.UpAttack:
-                damageCollider.offset = new Vector2(0.0899694f, 0);
-                damageCollider.size = new Vector2(1.239239f, 2.87f);
                 myAnimator.SetBool("isUpAttack", false);
                 state = AttackState.Default;
                 break;
             case AttackState.BackAttack:
-                boxCollider.enabled = false;
                 myAnimator.SetBool("isBackAttack", false);
                 state = AttackState.Default;
                 break;
         }
+        bang.SetActive(false);
+    }
+
+    public void Hit(Strike strike)
+    {
+        // 맞는 애니메이션 쓰고
+        hp += strike.result;
+
+        if(hp > 0)
+        {
+            myPlayer.Play(hitClip, idleClip, false);
+            Debug.Log("myHp : " + hp);
+        }
+        else
+        {
+            // 죽는 모션
+        }
+    }
+
+    public Collider2D GetCollider2D()
+    {
+        return damageCollider;
     }
 }

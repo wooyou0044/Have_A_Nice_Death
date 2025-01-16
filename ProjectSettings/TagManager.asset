@@ -43,3 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: pillar
+    uniqueID: 4122427765
+    locked: 0

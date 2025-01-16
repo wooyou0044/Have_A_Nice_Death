@@ -10,7 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3356491018782216083}
   - component: {fileID: 3665569055379915338}
-  - component: {fileID: 1025966337332330929}
+  - component: {fileID: 7891408197972110252}
+  - component: {fileID: 8758651708557374439}
+  - component: {fileID: 7599239476316480796}
+  - component: {fileID: 8030082091612108102}
   m_Layer: 0
   m_Name: Paperplane
   m_TagString: Untagged
@@ -85,7 +88,130 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1025966337332330929
+--- !u!95 &7891408197972110252
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206412442746695548}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: eeed7637158af3242901a8ecc312e664, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!50 &8758651708557374439
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206412442746695548}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!60 &7599239476316480796
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206412442746695548}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.74, y: 0.62}
+    newSize: {x: 2.74, y: 0.62}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.37, y: -0.25}
+      - {x: 0.79999995, y: -0.22999999}
+      - {x: 1.1999999, y: -0.21}
+      - {x: 1.3350348, y: -0.19616725}
+      - {x: 1.3658711, y: -0.17574915}
+      - {x: 1.3597039, y: -0.15533108}
+      - {x: 1.3214464, y: -0.13874575}
+      - {x: 0.65, y: 0.02}
+      - {x: 0.26999998, y: 0.089999996}
+      - {x: -0.06, y: 0.16}
+      - {x: -0.52, y: 0.26}
+      - {x: -0.61, y: 0.29}
+      - {x: -0.64, y: 0.29}
+      - {x: -0.77, y: 0.26}
+      - {x: -0.9, y: 0.21}
+      - {x: -0.9310868, y: 0.1965215}
+      - {x: -1, y: 0.14}
+      - {x: -1.1, y: 0.12}
+      - {x: -1.3, y: 0.04}
+      - {x: -1.35, y: 0.01}
+      - {x: -1.3399999, y: -0.02}
+      - {x: -1.23, y: -0.03}
+      - {x: -0.8478263, y: -0.02173924}
+      - {x: -0.82586974, y: -0.2319562}
+      - {x: -0.8089132, y: -0.29217362}
+      - {x: -0.81, y: -0.29999998}
+      - {x: -0.53999996, y: -0.29999998}
+      - {x: -0.34, y: -0.28}
+      - {x: -0.13, y: -0.26999998}
+      - {x: 0.099999994, y: -0.26}
+  m_UseDelaunayMesh: 0
+--- !u!114 &8030082091612108102
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,6 +220,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1206412442746695548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ced3d07e720344f45bcc1e684c96acce, type: 3}
+  m_Script: {fileID: 11500000, guid: 826d63313c8025d4e8b95dbd7970b8b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _adhesion: 0
+  _dealyTime: 0
+  _flyingTime: 1
+  _flyingSpeed: 1
+  _tags: []
+  _strike:
+    power: 0
+    extension: 0
+  _shape: {fileID: 0}
+  _hitObject: {fileID: 0}
+  _explosionObject: {fileID: 0}
+  _gizmoDuration: 1
+  _gizmoColor: {r: 1, g: 0, b: 0, a: 1}

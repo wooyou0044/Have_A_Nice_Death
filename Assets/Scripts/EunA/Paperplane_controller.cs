@@ -4,14 +4,31 @@ using UnityEngine;
 
 public class Paperplane_controller : MonoBehaviour
 {
-    // Start is called before the first frame update
+    Rigidbody2D planeRigid;
+    Vector2 Destiantion;
+    GameObject playerInfo;
+    float planeSpeed;
+
     void Start()
     {
-        
+        playerInfo = GameObject.FindWithTag("Player");
+        planeSpeed = 5.0f;
     }
 
-    // Update is called once per frame
+
     void Update()
+    {
+        if(playerInfo != null)
+        {
+            Destiantion = (playerInfo.transform.position - transform.position);
+
+            Destiantion.Normalize();
+
+            planeRigid.AddForce(Destiantion * planeSpeed, ForceMode2D.Force);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         
     }
