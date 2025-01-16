@@ -34,6 +34,7 @@ public class Spooksmen_AI : Walker, IHittable
     [SerializeField] float attackRange;
     [SerializeField] float attackCoolTime;
     [SerializeField] GameObject bangMark;
+    [SerializeField] GameObject attackMark;
     [SerializeField] Skill[] frontAttack;
     [SerializeField] Skill backAttack;
     [SerializeField] Skill upAttack;
@@ -52,6 +53,8 @@ public class Spooksmen_AI : Walker, IHittable
     Transform targetPos;
     // 공격하기 위해 플레이어가 있는 위치 담을 변수
     Transform attackPos;
+    // attack할 때 나올 Effect 나올 위치 담을 변수
+    Transform attackMarkPos;
 
     // 만들어진 위치
     Vector2 createdPos;
@@ -60,11 +63,12 @@ public class Spooksmen_AI : Walker, IHittable
     GameObject surprised;
     GameObject bang;
     GameObject stun;
+    GameObject attack;
 
     float homeDistance;
     float attackElapsedTime;
 
-    int attackNum;
+    int frontAttackNum;
 
     bool isHome;
     bool isAttacking;
@@ -74,9 +78,7 @@ public class Spooksmen_AI : Walker, IHittable
     enum AttackState
     {
         Default,
-        FrontAttack_Jab,
-        FrontAttack_UpperCut,
-        FrontAttack_Slam,
+        FrontAttack,
         BackAttack,
         UpAttack,
     }
@@ -109,6 +111,10 @@ public class Spooksmen_AI : Walker, IHittable
         stun = Instantiate(stunMark, stunPos);
         stun.SetActive(false);
 
+        attackMarkPos = transform.GetChild(2).transform;
+        attack = Instantiate(attackMark, attackMarkPos);
+        attack.SetActive(false);
+
         createdPos = transform.position;
         homeDistance = 0.5f;
 
@@ -130,10 +136,15 @@ public class Spooksmen_AI : Walker, IHittable
         }
         else
         {
+            // 전방 공격할 때 플레이어가 범위 안에 없으면 리셋
+            frontAttackNum = 0;
+            myAnimator.SetInteger("AttackNum", frontAttackNum);
+
             bangMark.SetActive(false);
             isAttacking = false;
             DetectPlayer();
         }
+
         if(isAttacking)
         {
             bang.SetActive(true);
@@ -286,7 +297,7 @@ public class Spooksmen_AI : Walker, IHittable
         {
             return false;
         }
-        // 나와 플레이어가 다른 방향을 바라보고 있는 경우
+        // 나와 플레이어가 마주보고 있는 경우
         else
         {
             return true;
@@ -315,18 +326,18 @@ public class Spooksmen_AI : Walker, IHittable
 
         if (attackPos.position.y > transform.position.y)
         {
-            UpAttack();
             Debug.Log("상향 공격");
+            UpAttack();
         }
         else if(isFrontAttack)
         {
-            FrontAttack();
             Debug.Log("전방 공격");
+            FrontAttack();
         }
         else
         {
-            BackAttack();
             Debug.Log("후방 공격");
+            BackAttack();
         }
 
         isDetect = false;
@@ -336,13 +347,23 @@ public class Spooksmen_AI : Walker, IHittable
     {
         //myAnimator.SetInteger("AttackNum", 1);
         // 피해량 추가 필요
-        
-
+        frontAttackNum++;
+        myAnimator.SetInteger("AttackNum", frontAttackNum);
+        attack.SetActive(true);
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            yield return new WaitForSeconds(0.5f);
+            frontAttack[frontAttackNum - 1].Use(transform, null, new string[] { "Player" }, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
+        }
+        state = AttackState.FrontAttack;
     }
 
     void BackAttack()
     {
         myAnimator.SetBool("isBackAttack", true);
+
+        attack.SetActive(true);
 
         StartCoroutine(DoPlay());
         IEnumerator DoPlay()
@@ -358,6 +379,8 @@ public class Spooksmen_AI : Walker, IHittable
         myAnimator.SetBool("isUpAttack", true);
         // 피해량 추가 필요
 
+        attack.SetActive(true);
+
         StartCoroutine(DoPlay());
         IEnumerator DoPlay()
         {
@@ -372,7 +395,14 @@ public class Spooksmen_AI : Walker, IHittable
     {
         switch(state)
         {
-            case AttackState.FrontAttack_UpperCut:
+            // 밑에 꺼지는 것 작동하기 위해서 전방 공격 뒤에 붙여야 함
+            case AttackState.FrontAttack:
+                if(frontAttackNum >= 3)
+                {
+                    frontAttackNum = 0;
+                    myAnimator.SetInteger("AttackNum", frontAttackNum);
+                    state = AttackState.Default;
+                }
                 break;
             case AttackState.UpAttack:
                 myAnimator.SetBool("isUpAttack", false);
@@ -384,6 +414,7 @@ public class Spooksmen_AI : Walker, IHittable
                 break;
         }
         bang.SetActive(false);
+        attack.SetActive(false);
     }
 
     public void Hit(Strike strike)
@@ -395,11 +426,19 @@ public class Spooksmen_AI : Walker, IHittable
         {
             myPlayer.Play(hitClip, idleClip, false);
             Debug.Log("myHp : " + hp);
+
+            // 특정 공격 받을 때 스턴 걸림
         }
+
         else
         {
             // 죽는 모션
         }
+
+        //if(myPlayer.isEndofFrame)
+        //{
+            
+        //}
     }
 
     public Collider2D GetCollider2D()
