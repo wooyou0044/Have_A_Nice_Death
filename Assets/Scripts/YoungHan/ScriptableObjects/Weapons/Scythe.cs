@@ -19,8 +19,6 @@ public class Scythe : Weapon
     private Skill.Action standAction2;
     [SerializeField, Header("°øÁß ÄÞº¸3")]
     private Skill.Action standAction3;
-    [SerializeField, Header("°øÁß ÄÞº¸4")]
-    private Skill.Action standAction4;
 
     public override bool TryUse(Transform transform, Attack attack, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
     {
@@ -54,10 +52,6 @@ public class Scythe : Weapon
                     return true;
                 }
                 if (standAction3.TryUse(transform, null, action1, action2, func, animator) == true)
-                {
-                    return true;
-                }
-                if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
                 {
                     return true;
                 }

@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class WeaponSet : MonoBehaviour
 {
+    private bool _hasTransform = false;
+
+    private Transform _transform = null;
+
+    protected Transform getTransform
+    {
+        get
+        {
+            if (_hasTransform == false)
+            {
+                _hasTransform = true;
+                _transform = transform;
+            }
+            return _transform;
+        }
+    }
+
     private enum State: byte
     {
         None,
@@ -20,13 +37,28 @@ public class WeaponSet : MonoBehaviour
     [SerializeField, Range(0, 5)]
     private float _comboBaseDelay = 0.5f;
     [SerializeField, Range(0, 5)]
-    private float _comboLastDelay = 0.7f;
+    private float _comboDashDelay = 0.05f;
     [SerializeField, Range(0, 5)]
-    private float _comboRecoverDelay = 0.8f;
+    private float _comboLastDelay = 0.7f;
+    [SerializeField, Range(0, 1)]
+    private float _jumpStartDelay = 0.1f;
+    [SerializeField, Range(0, 1)]
+    private float _jumpFallingDelay = 0.3f;
+    [SerializeField, Range(0, 1)]
+    private float _jumpLandingDelay = 0.4f;
+
     [SerializeField]
     private float _concentrationTime = 0;
     [SerializeField]
-    private AnimationClip _concentrationClip;
+    private AnimationClip _concenteStartClip;
+    [SerializeField]
+    private AnimationClip _concenteLoopClip;
+    [SerializeField]
+    private AnimationClip _restAttackClip;
+    [SerializeField]
+    private Skill _restAttackSkill;
+    [SerializeField]
+    private string[] _restAttackTags;
 
     private IEnumerator _coroutine = null;
 
@@ -38,17 +70,18 @@ public class WeaponSet : MonoBehaviour
             {
                 if (pressed == true)
                 {
-                    if (_concentrationTime <= 0)
+                    AnimatorPlayer animatorPlayer = player.animatorPlayer;
+                    bool hasAnimatorPlayer = animatorPlayer != null;
+                    Animator animator = hasAnimatorPlayer == true ? animatorPlayer.animator : null;
+                    if (animator != null)
                     {
-                        AnimatorPlayer animatorPlayer = player.animatorPlayer;
-                        bool hasAnimatorPlayer = animatorPlayer != null;
-                        Animator animator = hasAnimatorPlayer == true ? animatorPlayer.animator : null;
-                        if (animator != null)
+                        if (_concentrationTime == 0)
                         {
                             switch (player.direction)
                             {
                                 case Player.Direction.Center:
-                                    if (_state < State.Combo4 && _scytheInfo.TryUse(transform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action1, action2, func, animator) == true)
+                                    if (_state < State.Combo4 && player.CompareConstraints(RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation) == false &&
+                                        _scytheInfo.TryUse(transform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action1, action2, func, animator) == true)
                                     {
                                         if (hasAnimatorPlayer == true)
                                         {
@@ -59,28 +92,29 @@ public class WeaponSet : MonoBehaviour
                                         {
                                             StopCoroutine(_coroutine);
                                         }
-                                        _state++;
-                                        if (player.isGrounded == true)
-                                        {
-                                            player.Dash(new Vector2(player.transform.forward.normalized.z, 0), _comboBaseDelay);
-                                        }
-
                                         _coroutine = DoPlay();
                                         StartCoroutine(_coroutine);
                                         IEnumerator DoPlay()
                                         {
+                                            _state++;
                                             switch (_state)
                                             {
                                                 case State.Combo1:
                                                 case State.Combo2:
                                                 case State.Combo3:
-                                                
-                                                    yield return new WaitForSeconds(_comboBaseDelay);
+                                                    if (player.isGrounded == false)
+                                                    {
+                                                        player.Dash(Vector2.zero, _comboBaseDelay);
+                                                        yield return new WaitUntil(() => player!= null && player.isGrounded == true);
+                                                    }
+                                                    else
+                                                    {
+                                                        player.Dash(_comboDashDelay);
+                                                        yield return new WaitForSeconds(_comboBaseDelay);
+                                                    }
                                                     break;
                                                 case State.Combo4:
-                                                    //player.Levitate(_comboLastDelay);
                                                     yield return new WaitForSeconds(_comboLastDelay);
-                                                    //player.Dash(Vector2.down, _comboRecoverDelay);
                                                     break;
                                             }
                                             player?.Recover();
@@ -89,26 +123,74 @@ public class WeaponSet : MonoBehaviour
                                         }
                                     }
                                     break;
-                                case Player.Direction.Up:
+                                case Player.Direction.Forward:
                                     if (_scytheInfo.TryUse(transform, Weapon.Attack.Move_Up, action1, action2, func, animator) == true)
                                     {
                                     }
                                     break;
-                                case Player.Direction.Down:
+                                case Player.Direction.Backward:
                                     break;
                             }
                         }
-                    }
-                    else if(player.isGrounded == true)
-                    {
-
+                        else if(_concentrationTime > _comboBaseDelay && player.isGrounded == true && _coroutine == null && _state == State.None)
+                        {
+                            _coroutine = DoPlay();
+                            StartCoroutine(_coroutine);
+                            IEnumerator DoPlay()
+                            {
+                                animatorPlayer.Play(_concenteStartClip, _concenteLoopClip);
+                                while(player != null && player.isGrounded == true)
+                                {
+                                    yield return null;
+                                }
+                                _coroutine = null;
+                            }
+                        }
                     }
                     _concentrationTime += Time.deltaTime;
                 }
                 else
                 {
-                   
-                    _concentrationTime = 0;
+                    if (_coroutine != null && _state == State.None)
+                    {
+                        AnimatorPlayer animatorPlayer = player.animatorPlayer;
+                        if (animatorPlayer != null)
+                        {
+                            AnimationClip animationClip = animatorPlayer.GetCurrentClips();
+                            if(animationClip == _concenteStartClip || animationClip == _concenteLoopClip)
+                            {
+                                StopCoroutine(_coroutine);
+                                _coroutine = DoPlay();
+                                StartCoroutine(_coroutine);
+                                IEnumerator DoPlay()
+                                {
+                                    animatorPlayer.Play(_restAttackClip);
+                                    player.Dash(Vector2.up, _jumpStartDelay);
+                                    yield return new WaitForSeconds(_jumpStartDelay);
+                                    player?.Dash(Vector2.zero, _jumpFallingDelay);
+                                    yield return new WaitForSeconds(_jumpFallingDelay);
+                                    player?.Dash(Vector2.down);
+                                    yield return new WaitUntil(() => (player != null && player.isGrounded == true));
+                                    _restAttackSkill?.Use(getTransform, null, _restAttackTags, action1, action2, func);
+                                    yield return new WaitForSeconds(_jumpLandingDelay);
+                                    player?.Recover();
+                                    _coroutine = null;
+                                    _concentrationTime = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            player.Recover();
+                            StopCoroutine(_coroutine);
+                            _coroutine = null;
+                            _concentrationTime = 0;
+                        }
+                    }
+                    else if(_concentrationTime > 0)
+                    {
+                        _concentrationTime = 0;
+                    }
                 }
             }
         }

@@ -120,19 +120,19 @@ public class Runner : Walker
         }
     }
 
-    public virtual void Dash(Vector2 direction)
+    public virtual void Dash(float value)
     {
-        Dash(direction, _dashDelay);
+        Dash(new Vector2(getTransform.forward.normalized.z, 0), value);
     }
-
+  
     protected void RecoverJumpCount()
     {
         _jumpCount = _jumpLimit;
     }
 
-    public void Levitate(float value)
+    public void Dash(Vector2 direction)
     {
-        Dash(Vector2.zero, value);
+        Dash(direction, _dashDelay);
     }
 
     //대쉬를 하게 만드는 메서드
@@ -169,16 +169,6 @@ public class Runner : Walker
         }
     }
 
-    public void DashLeft()
-    {
-        Dash(new Vector2(-1, 0));
-    }
-
-    public void DashRight()
-    {
-        Dash(new Vector2(+1, 0));
-    }
-
     public bool CanDash()
     {
         if(_dashCoroutine == null && _isDashed == false)
@@ -186,5 +176,10 @@ public class Runner : Walker
             return true;
         }
         return false;
+    }
+
+    public bool CompareConstraints(RigidbodyConstraints2D rigidbodyConstraints2D)
+    {
+        return getRigidbody2D.constraints == rigidbodyConstraints2D;
     }
 }

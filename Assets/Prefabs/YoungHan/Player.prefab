@@ -68,7 +68,7 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.05}
+  m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2.17}
   m_Direction: 0
 --- !u!50 &6554630391433859905
@@ -154,9 +154,16 @@ MonoBehaviour:
   _state: 0
   _comboBaseDelay: 0.5
   _comboLastDelay: 1
-  _comboRecoverDelay: 0.8
+  _jumpStartDelay: 0.1
+  _jumpFallingDelay: 0.3
+  _jumpLandingDelay: 1
   _concentrationTime: 0
-  _concentrationClip: {fileID: 0}
+  _concenteStartClip: {fileID: 7400000, guid: b078c678baaa9694593707ca34d425ba, type: 2}
+  _concenteLoopClip: {fileID: 7400000, guid: 9ecf70fa4a826c549aba255c760e6d4d, type: 2}
+  _restAttackClip: {fileID: 7400000, guid: 101703e9f518e0444903f0c78c618372, type: 2}
+  _restAttackSkill: {fileID: 11400000, guid: 97807a695b25f594db89b40da6fa6ce1, type: 2}
+  _restAttackTags:
+  - Enemy
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0

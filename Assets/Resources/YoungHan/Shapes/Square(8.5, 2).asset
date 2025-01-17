@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Square(8.5, 2)
   m_EditorClassIdentifier: 
   size: {x: 8.5, y: 2}
-  offset: {x: 4.3, y: 0}
+  offset: {x: 0.5, y: 0}

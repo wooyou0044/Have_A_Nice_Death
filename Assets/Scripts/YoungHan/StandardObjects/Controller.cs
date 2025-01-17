@@ -131,16 +131,16 @@ public class Controller : MonoBehaviour
                     switch (_rightInput.isPressed)
                     {
                         case IncreasingDirection:
-                            _player.DashRight();
+                            _player.Dash(Player.Direction.Forward);
                             break;
                         case DecreasingDirection:
-                            _player.DashLeft();
+                            _player.Dash(Player.Direction.Backward);
                             break;
                     }
                 }
                 else
                 {
-                    _player.Dash(new Vector2(_player.transform.forward.normalized.z, 0));
+                    _player.Dash(Player.Direction.Center);
                 }
             }
             //상호작용

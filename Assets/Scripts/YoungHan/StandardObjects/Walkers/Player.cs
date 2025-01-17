@@ -63,8 +63,8 @@ public sealed class Player : Runner, IHittable
     public enum Direction
     {
         Center,
-        Up,
-        Down
+        Forward,
+        Backward
     }
 
     [SerializeField]
@@ -298,28 +298,11 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public override void Dash(Vector2 direction)
+    public override void Dash(float value)
     {
-        if (isAlive == true && CanDash() == true && _stopping == false)
+        if (isAlive == true)
         {
-            if(direction.normalized.x < 0)
-            {
-                PlayMove(LeftRotation);
-            }
-            else
-            {
-                PlayMove(RightRotation);
-            }
-            base.Dash(direction);
-            _escapeAction?.Invoke();
-            if (isGrounded == true)
-            {
-                _animatorPlayer?.Play(_dashClip, _idleClip, false);
-            }
-            else
-            {
-                _animatorPlayer?.Play(_dashClip, _jumpFallingClip, false);
-            }
+            base.Dash(value);
         }
     }
 
@@ -337,7 +320,7 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            _direction = Direction.Up;
+            _direction = Direction.Forward;
             if (_stopping == false && _animatorPlayer != null)
             {
                 AnimationClip animationClip = _animatorPlayer.GetCurrentClips();
@@ -355,11 +338,41 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true)
         {
-            _direction = Direction.Down;
+            _direction = Direction.Backward;
             if (_stopping == false && _animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true && _ladderFunction != null && _ladderFunction.Invoke(false) == true)
             {
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
                 _animatorPlayer.Play(_jumpFallingClip);
+            }
+        }
+    }
+
+    public void Dash(Direction direction)
+    {
+        if (isAlive == true && CanDash() == true && _stopping == false)
+        {
+            switch(direction)
+            {
+                case Direction.Center:
+                    Dash(new Vector2(getTransform.forward.normalized.z, 0));
+                    break;
+                case Direction.Forward:
+                    PlayMove(RightRotation);
+                    Dash(new Vector2(1, 0));
+                    break;
+                case Direction.Backward:
+                    PlayMove(LeftRotation);
+                    Dash(new Vector2(-1, 0));
+                    break;
+            }
+            _escapeAction?.Invoke();
+            if (isGrounded == true)
+            {
+                _animatorPlayer?.Play(_dashClip, _idleClip, false);
+            }
+            else
+            {
+                _animatorPlayer?.Play(_dashClip, _jumpFallingClip, false);
             }
         }
     }
