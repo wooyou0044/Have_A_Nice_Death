@@ -9,9 +9,13 @@ using UnityEngine.UIElements;
 
 public class Enemy_Book_AI : Walker, IHittable
 {
-    int MaxEnemyHealth;
-    int NowEnemyHealth;
+    public int MaxEnemyHealth;
+    public int NowEnemyHealth;
+    public ParticleSystem StunEffect;
     Animator EnemyBookAnimator;
+
+    public GameObject FindEffect;
+    public GameObject AttackEffect;
 
     #region 애니메이션 클립
     public AnimationClip idleClip;
@@ -33,6 +37,8 @@ public class Enemy_Book_AI : Walker, IHittable
 
     float BookFindCooltime;
     float BookFindElapsedtime;
+    float moveCooltime;
+    float moveElapsedtime;
 
     Rigidbody2D enemyRigid;
     Collider2D enemyCollider;
@@ -49,9 +55,13 @@ public class Enemy_Book_AI : Walker, IHittable
     [SerializeField]
     LayerMask playerLayerMask;
 
-    bool IHittable.isAlive => MaxEnemyHealth > 0;
-
-    string IHittable.tag { get; set; }
+    public bool isAlive
+    {
+        get
+        {
+            return MaxEnemyHealth > 0;
+        }
+    }
 
     Transform IHittable.transform => transform;
 
@@ -59,14 +69,19 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MaxEnemyHealth = 15;
         NowEnemyHealth = 15;
-        EnemyBookAnimator = GetComponent<Animator>();
-        enemyCollider = GetComponent<Collider2D>();
         BookSightRange = 5;
-        moveDistance = 6.0f;
-        leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
-        BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
+        moveCooltime = 3.0f;
+        moveElapsedtime = 0;
         BookFindCooltime = 4.0f;
         BookFindElapsedtime = 4.0f;
+        moveDistance = 8.0f;
+        EnemyBookAnimator = GetComponent<Animator>();
+        enemyCollider = GetComponent<Collider2D>();       
+        leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
+        BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
+        StunEffect = GetComponent<ParticleSystem>();
+        //FindEffect = GameObject.Find("Find");
+        //AttackEffect = GameObject.Find("Attack_Effect");
     }
 
     void Update()
@@ -75,6 +90,14 @@ public class Enemy_Book_AI : Walker, IHittable
         {
             DetectPlayer();
         }
+
+        if (NowEnemyHealth <= 0)
+        {
+            MoveStop();
+            Die();
+        }
+        Debug.Log(isUturn);
+        //Debug.Log(moveElapsedtime);
     }
 
     void DetectPlayer()
@@ -103,20 +126,25 @@ public class Enemy_Book_AI : Walker, IHittable
         if (isFind == true)
         {
             Debug.Log("놀람");
+            FindEffect.SetActive(true);
             BookAnimatorPlayer.Play(findClip, idleClip);
             isFind = false;
         }
 
-        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
+        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime)
         {
             Debug.Log("공격");
+            AttackEffect.SetActive(true);
             BookAnimatorPlayer.Play(attackClip, idleClip);
+
             BookFindElapsedtime = 0;
         }
 
         else if (BookAnimatorPlayer.isEndofFrame)
         {
             BookAnimatorPlayer.Play(idleClip);
+            FindEffect.SetActive(false);
+            AttackEffect.SetActive(false);
         }
 
     }
@@ -141,69 +169,73 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         base.MoveRight();
 
-        if (nowEnemyLocation.x - leftEnemyLocation.x >= moveDistance)
+        if (nowEnemyLocation.x - leftEnemyLocation.x >= moveDistance) 
         {
             MoveStop();
-            rightEnemyLocation = new Vector2(transform.position.x, transform.position.y);
+            moveElapsedtime += Time.deltaTime;
 
-            if (isUturn == true && gameObject.transform.eulerAngles == new Vector3(0, 0))
+            if (moveElapsedtime >= moveCooltime)
             {
-                BookAnimatorPlayer.Play(uturnClip);
-                isUturn = false;
-            }
+                rightEnemyLocation = new Vector2(transform.position.x, transform.position.y);
 
-            if (BookAnimatorPlayer.isEndofFrame)
-            {
-                BookAnimatorPlayer.Play(idleClip);
-            }
+                if (isUturn == true)
+                {
+                    BookAnimatorPlayer.Play(uturnClip, idleClip);
+                    isUturn = false;
+                }
 
-            Invoke("Turn", 0.36f);
-
-            if (gameObject.transform.rotation == Quaternion.Euler(0, 180, 0))
-            {
-                isUturn = true;
+                if(isUturn == false && BookAnimatorPlayer.IsPlaying(uturnClip) != true)
+                {
+                    Invoke("Turn", 0.36f);
+                    isUturn = true;
+                    moveElapsedtime = 0;
+                    isFacingRight = false;
+                }
+                
             }
-            isFacingRight = false;
-        }
+        }        
     }
 
     public override void MoveLeft()
-    {
+    {      
         base.MoveLeft();
 
-        if (rightEnemyLocation.x - nowEnemyLocation.x >= moveDistance)
+        if (rightEnemyLocation.x - nowEnemyLocation.x >= moveDistance )
         {
             MoveStop();
-            if (isUturn == true && gameObject.transform.eulerAngles == new Vector3(0, 180))
-            {
-                BookAnimatorPlayer.Play(uturnClip);
-                isUturn = false;
-            }
+            moveElapsedtime += Time.deltaTime;
 
-            if (BookAnimatorPlayer.isEndofFrame)
-            {
-                BookAnimatorPlayer.Play(idleClip);
-            }
-            Invoke("Turn", 0.36f);
+            if (moveElapsedtime >= moveCooltime)
+            {              
+                if (isUturn == true)
+                {
+                    BookAnimatorPlayer.Play(uturnClip, idleClip);
+                    isUturn = false;
+                }
 
-            if (gameObject.transform.rotation == Quaternion.Euler(0, 0, 0))
-            {
-                isUturn = true;
+                if (isUturn == false && BookAnimatorPlayer.IsPlaying(uturnClip) != true)
+                {
+                    Invoke("Turn", 0.36f);
+                    isUturn = true;
+                    moveElapsedtime = 0;
+                    isFacingRight = true;
+                }
+
+
             }
-            isFacingRight = true;
-        }
+        }           
     }
 
     public void Turn()
     {
         if (isFacingRight == false)
         {
-            gameObject.transform.rotation = Quaternion.Euler(0, 180, 0);
+            gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         }
 
         else if (isFacingRight == true)
         {
-            gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+            gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
         }
     }
 
@@ -213,8 +245,10 @@ public class Enemy_Book_AI : Walker, IHittable
         Gizmos.DrawWireSphere(this.transform.position, BookSightRange);
     }
 
-    void IHittable.Hit(Strike strike)
+    public void Hit(Strike strike)
     {
+        NowEnemyHealth += strike.result;
+
         if (NowEnemyHealth < MaxEnemyHealth / 2)
         {
             MoveStop();
@@ -222,8 +256,13 @@ public class Enemy_Book_AI : Walker, IHittable
         }
     }
 
-    Collider2D IHittable.GetCollider2D()
+    public Collider2D GetCollider2D()
     {
         return enemyCollider;
+    }
+
+    void Die()
+    {
+        BookAnimatorPlayer.Play(dieClip);
     }
 }

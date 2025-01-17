@@ -4,6 +4,5 @@ using UnityEngine;
 using UnityEngine.Events;
 public class surpriseImote : MonoBehaviour
 {
-    public bool stop;
-    
+    public bool stop;    
 }
