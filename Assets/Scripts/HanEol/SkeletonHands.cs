@@ -85,7 +85,6 @@ public class SkeletonHands : MonoBehaviour
             attackRangeCol = null; 
             currentCoroutine = null;
             attackAvailale = false;
-            //attackRangeCol = null;
         }
 
 
@@ -99,15 +98,10 @@ public class SkeletonHands : MonoBehaviour
             if(attackCoolTime < 0)
             {
 
-                Debug.Log("공격");
                 animator.SetBool("Attack", true);
-                // Debug.Log($"Animator Attack Parameter: {animator.GetBool("Attack")}");
-                //Debug.Log($"Current State: {animator.GetCurrentAnimatorStateInfo(0).IsName("Skeleton_Hands_Attack")}");
-                Debug.Log(attackCoolTime);
                 yield return new WaitForSeconds(1);
              
                 animator.SetBool("Attack", false);
-               // Debug.Log("공격");
                 attackCoolTime = 2;
             }
             yield return null;
