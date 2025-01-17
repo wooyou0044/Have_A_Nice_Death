@@ -151,11 +151,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scytheInfo: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
-  _comboState: 0
-  _combo1Delay: 0.4
-  _combo2Delay: 0.4
-  _combo3Delay: 0.4
-  _combo4Delay: 1.3
+  _state: 0
+  _comboBaseDelay: 0.5
+  _comboLastDelay: 1
+  _comboRecoverDelay: 0.8
+  _concentrationTime: 0
+  _concentrationClip: {fileID: 0}
 --- !u!1 &1740954006816009771
 GameObject:
   m_ObjectHideFlags: 0

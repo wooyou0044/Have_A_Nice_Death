@@ -90,17 +90,16 @@ public sealed class ObjectPooler : MonoBehaviour
                     if (projectile.gameObject.activeInHierarchy == false)
                     {
                         projectile.transform.parent = getTransform;
+                        projectile.gameObject.SetActive(true);
                         return projectile;
                     }
                 }
                 Projectile value = Instantiate(original, getTransform);
-                value.gameObject.SetActive(false);
                 _projectiles[original].Add(value);
             }
             else
             {
                 Projectile value = Instantiate(original, getTransform);
-                value.gameObject.SetActive(false);
                 _projectiles.Add(original, new List<Projectile>() { value });
                 return value;
             }
