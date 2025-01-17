@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Player_Combo_Stand_3
   m_EditorClassIdentifier: 
   strike:
-    power: -13
+    power: -12
     extension: 10
-  shape: {fileID: 11400000, guid: ebee20ef544a2d54c9216cac084d1c2c, type: 2}
+  shape: {fileID: 11400000, guid: 0858eb7cd7a9e8f47824f037d6e3feea, type: 2}
   shotObject: {fileID: 0}
   splashObject: {fileID: 0}
   hitObject: {fileID: 0}

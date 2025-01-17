@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51b3682f435d5f249af3a23cd41047ec, type: 3}
   m_Name: Player_Combo_Stand_3
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 31c39921c404b2d4b99a2702115087b5, type: 2}
+  animationClip: {fileID: 7400000, guid: 9cf6455bad4db57468aab86f7f3ebfcd, type: 2}

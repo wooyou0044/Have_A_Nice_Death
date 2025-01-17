@@ -59,20 +59,22 @@ public class WeaponSet : MonoBehaviour
                                         {
                                             StopCoroutine(_coroutine);
                                         }
+                                        _state++;
+                                        if (player.isGrounded == true)
+                                        {
+                                            player.Dash(new Vector2(player.transform.forward.normalized.z, 0), _comboBaseDelay);
+                                        }
+
                                         _coroutine = DoPlay();
                                         StartCoroutine(_coroutine);
                                         IEnumerator DoPlay()
                                         {
-                                            _state++;
                                             switch (_state)
                                             {
                                                 case State.Combo1:
                                                 case State.Combo2:
                                                 case State.Combo3:
-                                                    if (player.isGrounded == false)
-                                                    {
-                                                        player.Levitate(_comboBaseDelay);
-                                                    }
+                                                
                                                     yield return new WaitForSeconds(_comboBaseDelay);
                                                     break;
                                                 case State.Combo4:
@@ -96,12 +98,12 @@ public class WeaponSet : MonoBehaviour
                                     break;
                             }
                         }
-                        _concentrationTime += Time.deltaTime;
                     }
                     else if(player.isGrounded == true)
                     {
 
                     }
+                    _concentrationTime += Time.deltaTime;
                 }
                 else
                 {

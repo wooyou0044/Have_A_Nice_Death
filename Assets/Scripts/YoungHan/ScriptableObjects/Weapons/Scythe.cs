@@ -57,10 +57,10 @@ public class Scythe : Weapon
                 {
                     return true;
                 }
-                //if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
-                //{
-                //    return true;
-                //}
+                if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
+                {
+                    return true;
+                }
                 break;
         }
         return false;

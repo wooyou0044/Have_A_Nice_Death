@@ -51,31 +51,31 @@ MonoBehaviour:
     essentialClips:
     - {fileID: 7400000, guid: 7e563f1ccdce77345b2f6e1414ebf8d5, type: 2}
   standAction1:
-    skill: {fileID: 11400000, guid: 8d03f79c3d830b3449e3c67872c3e860, type: 2}
+    skill: {fileID: 11400000, guid: e72087e40f8ecfa4baa7cc5f74812629, type: 2}
     coolTime: 0.1
     tags:
     - Enemy
-    animatorHandler: {fileID: 11400000, guid: 97c068b302368f24d98f72f8de0df9cc, type: 2}
+    animatorHandler: {fileID: 11400000, guid: b1ae805bee855254a922e243fcea9494, type: 2}
     essentialClips:
     - {fileID: 7400000, guid: a3be67727dbe26945b83e21d6b99ffca, type: 2}
     - {fileID: 7400000, guid: 2a66cc0c8ff5b684bb773ad6f5e57764, type: 2}
     - {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   standAction2:
-    skill: {fileID: 11400000, guid: be9d7eb3baf6563448b01e852edbf2b9, type: 2}
+    skill: {fileID: 11400000, guid: 841532ecf9fdfec4b9009ecc6a4d1a22, type: 2}
     coolTime: 0.3
     tags:
     - Enemy
-    animatorHandler: {fileID: 11400000, guid: e4277ce6afc742e4a803a230da30f045, type: 2}
+    animatorHandler: {fileID: 11400000, guid: 9a30de469af749f4a99807dd03b920eb, type: 2}
     essentialClips:
-    - {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
+    - {fileID: 7400000, guid: a9a7e1368fac0ea4eae5ac5a5731a9db, type: 2}
   standAction3:
-    skill: {fileID: 11400000, guid: 87565e9eedba1f54e806eeb8709d45bc, type: 2}
+    skill: {fileID: 11400000, guid: 4d73f85b5748f2b4ca6fb690b5211951, type: 2}
     coolTime: 0.3
     tags:
     - Enemy
-    animatorHandler: {fileID: 11400000, guid: 9443a4b997d426b49863497c67d8f718, type: 2}
+    animatorHandler: {fileID: 11400000, guid: f29595d2a7114ce4c8c0b154f9f7c77b, type: 2}
     essentialClips:
-    - {fileID: 7400000, guid: 8fcce7e6c798a86459b2820ed6e0ec71, type: 2}
+    - {fileID: 7400000, guid: 9cf6455bad4db57468aab86f7f3ebfcd, type: 2}
   standAction4:
     skill: {fileID: 11400000, guid: 95f3f58632e61c94784680cfec7611e1, type: 2}
     coolTime: 0.2

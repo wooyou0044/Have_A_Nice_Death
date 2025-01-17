@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51b3682f435d5f249af3a23cd41047ec, type: 3}
-  m_Name: Player_Combo_Stand_2
+  m_Script: {fileID: 11500000, guid: 34fd9d9b5151ddd4e93ea9a222d0cfde, type: 3}
+  m_Name: Square(8.5, 2)
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
+  size: {x: 8.5, y: 2}
+  offset: {x: 4.3, y: 0}

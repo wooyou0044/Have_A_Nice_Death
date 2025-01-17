@@ -216,6 +216,10 @@ public sealed class Player : Runner, IHittable
         {
             _animatorPlayer?.Play(_jumpLandingClip, _idleClip, false);
             _escapeAction?.Invoke();
+            if(getRigidbody2D.constraints == (RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation))
+            {
+                getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
         }
     }
 
@@ -334,7 +338,7 @@ public sealed class Player : Runner, IHittable
         if (isAlive == true)
         {
             _direction = Direction.Up;
-            if (_animatorPlayer != null)
+            if (_stopping == false && _animatorPlayer != null)
             {
                 AnimationClip animationClip = _animatorPlayer.GetCurrentClips();
                 if (animationClip != _zipUpClip && animationClip != _dashClip && _ladderFunction != null && _ladderFunction.Invoke(true) == true)
@@ -352,7 +356,7 @@ public sealed class Player : Runner, IHittable
         if (isAlive == true)
         {
             _direction = Direction.Down;
-            if (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true && _ladderFunction != null && _ladderFunction.Invoke(false) == true)
+            if (_stopping == false && _animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true && _ladderFunction != null && _ladderFunction.Invoke(false) == true)
             {
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
                 _animatorPlayer.Play(_jumpFallingClip);
