@@ -137,7 +137,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.031319782}
@@ -166,16 +166,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _adhesion: 0
-  _penetration: 0
   _dealyTime: 0
   _flyingTime: 1
   _flyingSpeed: 1
+  _tags: []
+  _strike:
+    power: 0
+    extension: 0
+  _offset: {x: 0, y: 0}
   _shape: {fileID: 0}
   _hitObject: {fileID: 0}
   _explosionObject: {fileID: 0}
   _gizmoDuration: 1
   _gizmoColor: {r: 1, g: 0, b: 0, a: 1}
-  _strike:
-    power: 0
-    extension: 0
-  _tags: []
