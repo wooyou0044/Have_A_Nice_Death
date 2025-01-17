@@ -287,8 +287,6 @@ MonoBehaviour:
   _isGrounded: 0
   _movingSpeed: 2
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
-  MaxEnemyHealth: 0
-  NowEnemyHealth: 0
   idleClip: {fileID: 7400000, guid: 3494ab4ee886b5647afc3c9c7704d0c0, type: 2}
   uturnClip: {fileID: 7400000, guid: b346e81363f3c2c488d1398313f3058c, type: 2}
   findClip: {fileID: 7400000, guid: f131e17d6c7eede4ba191204962b197b, type: 2}
