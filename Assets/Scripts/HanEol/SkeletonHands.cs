@@ -59,27 +59,33 @@ public class SkeletonHands : MonoBehaviour
 
         }
 
-       if(attackRangeCol == null)
-        {
-            attackRangeCol = Physics2D.OverlapCircle(transform.position, attackRange, playerMask);
-        }
+
+        
+        attackRangeCol = Physics2D.OverlapCircle(transform.position, attackRange, playerMask);
+        
          
         
 
         if (attackRangeCol != null)
         {
             attackAvailale = true;
-            if(currentCoroutine == null) currentCoroutine = Attack();
-            StartCoroutine(currentCoroutine);
-            
-            
+            if (currentCoroutine == null)
+            {
+                currentCoroutine = Attack();
+                StartCoroutine(currentCoroutine);
+            }
         }
         else
         {
-            if (currentCoroutine != null) StopCoroutine(currentCoroutine);
+            if (currentCoroutine != null)
+            {
+                StopCoroutine(currentCoroutine);
+                animator.SetBool("Attack", false);
+            }
+            attackRangeCol = null; 
             currentCoroutine = null;
             attackAvailale = false;
-            attackRangeCol = null;
+            //attackRangeCol = null;
         }
 
 
@@ -92,17 +98,19 @@ public class SkeletonHands : MonoBehaviour
         {
             if(attackCoolTime < 0)
             {
-               
-                animator.SetBool("Attack", true);
-                Debug.Log($"Animator Attack Parameter: {animator.GetBool("Attack")}");
-                Debug.Log($"Current State: {animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")}");
-                yield return null;
-                
-                animator.SetBool("Attack", false);
+
                 Debug.Log("공격");
+                animator.SetBool("Attack", true);
+                // Debug.Log($"Animator Attack Parameter: {animator.GetBool("Attack")}");
+                //Debug.Log($"Current State: {animator.GetCurrentAnimatorStateInfo(0).IsName("Skeleton_Hands_Attack")}");
+                Debug.Log(attackCoolTime);
+                yield return new WaitForSeconds(1);
+             
+                animator.SetBool("Attack", false);
+               // Debug.Log("공격");
                 attackCoolTime = 2;
             }
-            yield return new WaitForSeconds(attackCoolTime);
+            yield return null;
 
         }
     }

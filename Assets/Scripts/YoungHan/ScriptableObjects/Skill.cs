@@ -60,7 +60,7 @@ public class Skill : ScriptableObject
             }
             else
             {
-                action2?.Invoke(strike, new Strike.TagTarget(tags), hitObject);
+                action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
             }
         }
         //공격 모양이 없으면
@@ -69,7 +69,7 @@ public class Skill : ScriptableObject
             int length = tags != null ? tags.Length : 0;
             if(length > 0)
             {
-                action2?.Invoke(strike, new Strike.TagTarget(tags), hitObject);
+                action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
             }
             else if(target != null)
             {

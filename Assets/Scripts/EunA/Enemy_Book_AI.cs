@@ -62,7 +62,7 @@ public class Enemy_Book_AI : Walker, IHittable
         EnemyBookAnimator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();
         BookSightRange = 5;
-        moveDistance = 4.0f;
+        moveDistance = 6.0f;
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
         BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
         BookFindCooltime = 4.0f;
@@ -70,10 +70,11 @@ public class Enemy_Book_AI : Walker, IHittable
     }
 
     void Update()
-    {      
-        
+    {
+        if (BookAnimatorPlayer.IsPlaying(findClip) != true && BookAnimatorPlayer.IsPlaying(attackClip) != true)
+        {
             DetectPlayer();
-                   
+        }
     }
 
     void DetectPlayer()
@@ -85,8 +86,7 @@ public class Enemy_Book_AI : Walker, IHittable
             FindPlayer();
         }
 
-        else if((BookAnimatorPlayer.IsPlaying(findClip) != true && BookAnimatorPlayer.IsPlaying(attackClip)) 
-            != true && detectplayerErea == null)
+        else if (detectplayerErea == null)
         {
             Debug.Log("방황 시작");
             BookWander();
@@ -102,25 +102,23 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (isFind == true)
         {
+            Debug.Log("놀람");
             BookAnimatorPlayer.Play(findClip, idleClip);
-
-            if (BookAnimatorPlayer.IsPlaying(findClip) != true)
-            {
-                isFind = false;
-            }                 
+            isFind = false;
         }
 
-        if (BookAnimatorPlayer.IsPlaying(findClip) != true && BookFindElapsedtime >= BookFindCooltime) 
+        if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime) 
         {
+            Debug.Log("공격");
             BookAnimatorPlayer.Play(attackClip, idleClip);
             BookFindElapsedtime = 0;
         }
 
-        else if(BookAnimatorPlayer.isEndofFrame)
+        else if (BookAnimatorPlayer.isEndofFrame)
         {
             BookAnimatorPlayer.Play(idleClip);
         }
-        
+
     }
 
     void BookWander()
@@ -129,52 +127,13 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (isFacingRight == true)
         {
-            Invoke("MoveRight", 3.0f);
+            MoveRight();
         }
 
         if (isFacingRight == false)
         {
-            Invoke("MoveLeft", 3.0f);
+            MoveLeft();
         }
-
-        #region
-        //nowEnemyLocation = new Vector2(transform.position.x, transform.position.y);
-
-        //if(isFacingRight == true && transform.rotation.y ==0)
-        //{
-        //    EnemyBookAnimator.SetBool("Book_isUturn", false);
-        //    Invoke("MoveRight", 3.0f);
-        //    Debug.Log(Vector2.Distance(firstEnemyLocation, nowEnemyLocation) >= moveDistance);
-
-        //    if (Vector2.Distance(firstEnemyLocation, nowEnemyLocation) >= moveDistance)
-        //    {
-        //        MoveStop();
-        //        EnemyBookAnimator.SetBool("Book_isUturn", true);
-
-        //        transform.rotation = new Quaternion(0, 0, 0, 0);
-
-        //        isFacingRight = false;
-
-        //    }
-        //}
-
-        //if(isFacingRight == false && transform.rotation.y == 180)
-        //{
-        //    EnemyBookAnimator.SetBool("Book_isUturn", false);
-        //    Invoke("MoveLeft", 3.0f);
-
-        //    if (Vector2.Distance(firstEnemyLocation, nowEnemyLocation) >= 0)
-        //    {
-        //        MoveStop();
-        //        EnemyBookAnimator.SetBool("Book_isUturn", true);
-
-        //        transform.rotation = new Quaternion(0, 180, 0, 0);
-
-        //        isFacingRight = true;
-
-        //    }          
-        //}
-        #endregion
     }
 
 
@@ -256,7 +215,7 @@ public class Enemy_Book_AI : Walker, IHittable
 
     void IHittable.Hit(Strike strike)
     {
-        if(NowEnemyHealth < MaxEnemyHealth/2)
+        if (NowEnemyHealth < MaxEnemyHealth / 2)
         {
             MoveStop();
             BookAnimatorPlayer.Play(hitClip);
