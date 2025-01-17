@@ -63,11 +63,11 @@ public struct Strike
     /// <summary>
     /// 특정 태그만 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class TagTarget : Area
+    public class TagArea : Area
     {
         private string[] tags;
 
-        public TagTarget(string[] tags)
+        public TagArea(string[] tags)
         {
             this.tags = tags;
         }
@@ -159,7 +159,7 @@ public struct Strike
     /// <summary>
     /// 특정 위치의 특정 태그 값을 가지면 타격 대상으로 간주하는 클래스
     /// </summary>
-    public class PolygonArea : TagTarget
+    public class PolygonArea : TagArea
     {
         private Vector2[] vertices;
 

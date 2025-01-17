@@ -15,6 +15,7 @@ public class Spooksmen_AI : Walker, IHittable
     [SerializeField] AnimationClip surprisedClip;
     [SerializeField] AnimationClip hitClip;
     [SerializeField] AnimationClip stunClip;
+    [SerializeField] AnimationClip deathClip;
 
     [Header("나의 정보")]
     [SerializeField] float hp = 200.0f;
@@ -138,7 +139,7 @@ public class Spooksmen_AI : Walker, IHittable
         {
             // 전방 공격할 때 플레이어가 범위 안에 없으면 리셋
             frontAttackNum = 0;
-            myAnimator.SetInteger("AttackNum", frontAttackNum);
+            myAnimator.SetInteger("FrontAttackNum", frontAttackNum);
 
             bangMark.SetActive(false);
             isAttacking = false;
@@ -172,6 +173,7 @@ public class Spooksmen_AI : Walker, IHittable
         {
             isDetect = true;
             targetPos = player.transform;
+            attackPos = targetPos;
             if (isHome)
             {
                 // 공격 타입 결정
@@ -184,7 +186,7 @@ public class Spooksmen_AI : Walker, IHittable
             if(myPlayer.isEndofFrame)
             {
                 surprised.SetActive(false);
-                attackPos = targetPos;
+                //attackPos = targetPos;
                 // 플레이어 따라다니는 동작 실행
                 MovePosition(targetPos.position.x);
             }
@@ -327,7 +329,7 @@ public class Spooksmen_AI : Walker, IHittable
         if (attackPos.position.y > transform.position.y)
         {
             Debug.Log("상향 공격");
-            UpAttack();
+            //UpAttack();
         }
         else if(isFrontAttack)
         {
@@ -347,16 +349,16 @@ public class Spooksmen_AI : Walker, IHittable
     {
         //myAnimator.SetInteger("AttackNum", 1);
         // 피해량 추가 필요
-        frontAttackNum++;
-        myAnimator.SetInteger("AttackNum", frontAttackNum);
-        attack.SetActive(true);
-        StartCoroutine(DoPlay());
-        IEnumerator DoPlay()
-        {
-            yield return new WaitForSeconds(0.5f);
-            frontAttack[frontAttackNum - 1].Use(transform, null, new string[] { "Player" }, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
-        }
-        state = AttackState.FrontAttack;
+        //frontAttackNum++;
+        //myAnimator.SetInteger("FrontAttackNum", frontAttackNum);
+        //attack.SetActive(true);
+        //StartCoroutine(DoPlay());
+        //IEnumerator DoPlay()
+        //{
+        //    yield return new WaitForSeconds(0.5f);
+        //    frontAttack[frontAttackNum - 1].Use(transform, null, new string[] { "Player" }, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
+        //}
+        //state = AttackState.FrontAttack;
     }
 
     void BackAttack()
@@ -400,7 +402,7 @@ public class Spooksmen_AI : Walker, IHittable
                 if(frontAttackNum >= 3)
                 {
                     frontAttackNum = 0;
-                    myAnimator.SetInteger("AttackNum", frontAttackNum);
+                    myAnimator.SetInteger("FrontAttackNum", frontAttackNum);
                     state = AttackState.Default;
                 }
                 break;
@@ -425,6 +427,7 @@ public class Spooksmen_AI : Walker, IHittable
         if(hp > 0)
         {
             myPlayer.Play(hitClip, idleClip, false);
+            MovePosition(targetPos.position.x);
             Debug.Log("myHp : " + hp);
 
             // 특정 공격 받을 때 스턴 걸림
@@ -432,13 +435,16 @@ public class Spooksmen_AI : Walker, IHittable
 
         else
         {
+            hp = 0;
             // 죽는 모션
+            myPlayer.Play(deathClip);
+            StartCoroutine(DoDead());
+            IEnumerator DoDead()
+            {
+                yield return new WaitForSeconds(0.8f);
+                gameObject.SetActive(false);
+            }
         }
-
-        //if(myPlayer.isEndofFrame)
-        //{
-            
-        //}
     }
 
     public Collider2D GetCollider2D()

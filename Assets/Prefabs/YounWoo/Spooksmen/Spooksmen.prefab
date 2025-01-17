@@ -257,6 +257,7 @@ MonoBehaviour:
   surprisedClip: {fileID: 7400000, guid: f383ff2e036b8f249b615a9bfefade51, type: 2}
   hitClip: {fileID: 7400000, guid: f82ea533f7b46f8409cce003cb488dc2, type: 2}
   stunClip: {fileID: 7400000, guid: b22b5e7060c5e2a41a23f46f7e62a06b, type: 2}
+  deathClip: {fileID: 7400000, guid: 1cf0c2a4c42674e47b9faef634f2c225, type: 2}
   hp: 200
   sightRange: 15
   surprisedMark: {fileID: 114126727675654133, guid: b9ab3022a49ba0d4fa84f807553444f4, type: 3}
@@ -268,6 +269,7 @@ MonoBehaviour:
   attackRange: 5
   attackCoolTime: 3
   bangMark: {fileID: 8155302115414528479, guid: 20540e6a8e9f5264282d0f1992e67865, type: 3}
+  attackMark: {fileID: 4854480821340185355, guid: e688c3432393dd341955297defff6a4b, type: 3}
   frontAttack:
   - {fileID: 11400000, guid: e5dee6fc901c75644a88fa0c39278a1c, type: 2}
   - {fileID: 11400000, guid: 23dd21280c14b9e4bbb52db1d62c4eb5, type: 2}

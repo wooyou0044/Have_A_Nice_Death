@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class Shape : ScriptableObject
@@ -103,5 +101,28 @@ public abstract class Shape : ScriptableObject
             return true;
         }
         return false;
+    }
+
+    public static Strike.PolygonArea GetPolygonArea(Collider2D collider2D, string[] tags)
+    {
+        if(collider2D != null)
+        {
+            Vector2[] vertices = BoxShape.GetVertices(collider2D as BoxCollider2D);
+            if (vertices != null)
+            {
+                return new Strike.PolygonArea(vertices, tags);
+            }
+            vertices = CircleShape.GetVertices(collider2D as CircleCollider2D);
+            if (vertices != null)
+            {
+                return new Strike.PolygonArea(vertices, tags);
+            }
+            vertices = CapsuleShape.GetVertices(collider2D as CapsuleCollider2D);
+            if (vertices != null)
+            {
+                return new Strike.PolygonArea(vertices, tags);
+            }
+        }
+        return null;
     }
 }
