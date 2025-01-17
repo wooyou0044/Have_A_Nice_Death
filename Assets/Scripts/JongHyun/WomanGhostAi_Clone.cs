@@ -22,7 +22,10 @@ public class WomanGhostAi_Clone : Walker,IHittable
     surpriseImote getSurprisedImote;
     [SerializeField, Header("자식애니메이션")]    
     private Animator surprisedAnimator;
-    
+    [SerializeField]
+    GameObject find;
+    [SerializeField]
+    GameObject AttackEffect;
 
     //애니메이션 클립들
     [SerializeField, Header("애니메이션 클립")]
@@ -73,6 +76,8 @@ public class WomanGhostAi_Clone : Walker,IHittable
         DetectPlayer();
         
         
+        
+        
         //만약 내 하위 오브젝트 불값이 false라면?
         if (getSurprisedImote.stop == false)
         {
@@ -119,11 +124,15 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     IEnumerator DoFire(float delay)
     {
-        while(true)
+        while (true)
         {
+            Debug.Log("출발");
             yield return new WaitForSeconds(delay);
+            AttackEffect.gameObject.SetActive(false);
+            find.gameObject.SetActive(false);
             FireShot();
-        }
+            Debug.Log("끝");
+        }        
     }
 
     void DetectPlayer()
@@ -139,7 +148,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
                 getSurprisedImote.stop = true;
 
                 attackPlayer = player.GetComponent<IHittable>();
-                StartCoroutine(DoFire(1.3f));                
+                StartCoroutine(DoFire(1.4f));
             }
             target = player.transform;
 
@@ -157,8 +166,11 @@ public class WomanGhostAi_Clone : Walker,IHittable
     }
     void FireShot()
     {
+        AttackEffect.gameObject.SetActive(true);
+        find.gameObject.SetActive(true);
         Projectile projectile = GameManager.GetProjectile(womanFire);
         projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);
+                
     }
     void SpottedPlayer()
     {        
