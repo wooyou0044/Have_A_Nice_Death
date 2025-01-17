@@ -134,7 +134,7 @@ public sealed class AnimatorPlayer : MonoBehaviour
     /// <param name="force">true일 경우 기존에 진행 중인 애니메이션 재생을 취소하고 새롭게 재생</param>
     public void Play(AnimationClip first, AnimationClip second, bool flip, bool force = true)
     {
-        if(Application.isPlaying == false)
+        if (gameObject.activeInHierarchy == false || Application.isPlaying == false)
         {
             return;
         }

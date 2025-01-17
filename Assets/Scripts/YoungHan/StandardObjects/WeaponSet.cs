@@ -30,8 +30,6 @@ public class WeaponSet : MonoBehaviour
 
     private IEnumerator _coroutine = null;
 
-
-
     public bool TryScythe(Player player, bool pressed, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func)
     {
         if (player != null && player.isAlive == true)
