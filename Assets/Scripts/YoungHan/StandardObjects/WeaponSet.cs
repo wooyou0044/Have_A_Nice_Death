@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponSet : MonoBehaviour
 {
-    private enum Combo: byte
+    private enum State: byte
     {
         None,
         Combo1,
@@ -16,11 +16,13 @@ public class WeaponSet : MonoBehaviour
     [SerializeField, Header("³´ Á¤º¸")]
     private Scythe _scytheInfo = null;
     [SerializeField, Header("ÄÞº¸ È½¼ö")]
-    private Combo _comboState;
+    private State _state;
     [SerializeField, Range(0, 5)]
-    private float _comboDelay = 0.4f;
+    private float _comboBaseDelay = 0.4f;
     [SerializeField, Range(0, 5)]
-    private float _recoverDelay = 1.0f;
+    private float _comboLastDelay = 0.6f;
+    [SerializeField, Range(0, 5)]
+    private float _comboRecoverDelay = 0.8f;
     [SerializeField]
     private float _concentrationTime = 0;
     [SerializeField]
@@ -46,7 +48,7 @@ public class WeaponSet : MonoBehaviour
                         switch (player.direction)
                         {
                             case Player.Direction.Center:
-                                if (_comboState < Combo.Combo4 && _scytheInfo.TryUse(transform, Weapon.Attack.Stand, action1, action2, func, animator) == true)
+                                if (_state < State.Combo4 && _scytheInfo.TryUse(transform, Weapon.Attack.Stand, action1, action2, func, animator) == true)
                                 {
                                     if (hasAnimatorPlayer == true)
                                     {
@@ -61,24 +63,24 @@ public class WeaponSet : MonoBehaviour
                                     StartCoroutine(_coroutine);
                                     IEnumerator DoPlay()
                                     {
-                                        _comboState++;
-                                        switch (_comboState)
+                                        _state++;
+                                        switch (_state)
                                         {
-                                            case Combo.Combo1:
-                                            case Combo.Combo2:
-                                            case Combo.Combo3:
-                                                player.Levitate(_comboDelay);
-                                                yield return new WaitForSeconds(_comboDelay);
+                                            case State.Combo1:
+                                            case State.Combo2:
+                                            case State.Combo3:
+                                                player.Levitate(_comboBaseDelay);
+                                                yield return new WaitForSeconds(_comboBaseDelay);
                                                 break;
-                                            case Combo.Combo4:
-                                                player.Levitate(_comboDelay);
-                                                yield return new WaitForSeconds(_comboDelay);
-                                                player.Dash(Vector2.down, _recoverDelay);
-                                                yield return new WaitForSeconds(_recoverDelay);
+                                            case State.Combo4:
+                                                player.Levitate(_comboLastDelay);
+                                                yield return new WaitForSeconds(_comboLastDelay);
+                                                player.Dash(Vector2.down, _comboRecoverDelay);
+                                                yield return new WaitForSeconds(_comboRecoverDelay);
                                                 break;
                                         }
                                         player?.Recover();
-                                        _comboState = Combo.None;
+                                        _state = State.None;
                                         _coroutine = null;
                                     }
                                 }
@@ -95,11 +97,7 @@ public class WeaponSet : MonoBehaviour
                 }
                 else
                 {
-                    if (_comboState == Combo.None && _coroutine != null)
-                    {
-                        StopCoroutine(_coroutine);
-                        _coroutine = null;
-                    }
+                   
                     _concentrationTime = 0;
                 }
             }
