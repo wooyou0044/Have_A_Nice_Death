@@ -4,25 +4,48 @@ using UnityEngine;
 [CreateAssetMenu(menuName = nameof(Weapon) + "/Scythe")]
 public class Scythe : Weapon
 {
-    [SerializeField]
+    [SerializeField, Header("±âº» ÄÞº¸1")]
+    private Skill.Action moveAction1;
+    [SerializeField, Header("±âº» ÄÞº¸2")]
+    private Skill.Action moveAction2;
+    [SerializeField, Header("±âº» ÄÞº¸3")]
+    private Skill.Action moveAction3;
+    [SerializeField, Header("±âº» ÄÞº¸4")]
+    private Skill.Action moveAction4;
+
+    [SerializeField, Header("°øÁß ÄÞº¸1")]
     private Skill.Action standAction1;
-    [SerializeField]
+    [SerializeField, Header("°øÁß ÄÞº¸2")]
     private Skill.Action standAction2;
-    [SerializeField]
+    [SerializeField, Header("°øÁß ÄÞº¸3")]
     private Skill.Action standAction3;
-    [SerializeField]
+    [SerializeField, Header("°øÁß ÄÞº¸4")]
     private Skill.Action standAction4;
 
     public override bool TryUse(Transform transform, Attack attack, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
     {
         switch (attack)
         {
-            case Attack.Stand:
-                if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
+            case Attack.Move:
+                if (moveAction1.TryUse(transform, null, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
-                if (standAction3.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (moveAction2.TryUse(transform, null, action1, action2, func, animator) == true)
+                {
+                    return true;
+                }
+                if (moveAction3.TryUse(transform, null, action1, action2, func, animator) == true)
+                {
+                    return true;
+                }
+                if (moveAction4.TryUse(transform, null, action1, action2, func, animator) == true)
+                {
+                    return true;
+                }
+                break;
+            case Attack.Stand:
+                if (standAction1.TryUse(transform, null, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
@@ -30,10 +53,14 @@ public class Scythe : Weapon
                 {
                     return true;
                 }
-                if (standAction1.TryUse(transform, null, action1, action2, func, animator) == true)
+                if (standAction3.TryUse(transform, null, action1, action2, func, animator) == true)
                 {
                     return true;
                 }
+                //if (standAction4.TryUse(transform, null, action1, action2, func, animator) == true)
+                //{
+                //    return true;
+                //}
                 break;
         }
         return false;

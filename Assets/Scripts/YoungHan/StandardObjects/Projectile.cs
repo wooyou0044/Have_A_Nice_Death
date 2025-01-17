@@ -1,21 +1,40 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class Projectile : MonoBehaviour
 {
-    private bool hasTransform = false;
+    private bool _hasTransform = false;
     private Transform _transform = null;
     private Transform getTransform {
         get
         {
-            if (hasTransform == false)
+            if (_hasTransform == false)
             {
                 _transform = transform;
-                hasTransform = true;
+                _hasTransform = true;
             }
             return _transform;
+        }
+    }
+
+    private bool _hasCollider2D = false;
+
+    private Collider2D _collider2D = null;
+
+    private Collider2D getCollider2D
+    {
+        get
+        {
+            if (_hasCollider2D == false)
+            {
+                _hasCollider2D = true;
+                _collider2D = GetComponent<Collider2D>();
+            }
+            return _collider2D;
         }
     }
 
@@ -24,13 +43,15 @@ public class Projectile : MonoBehaviour
     [SerializeField, Header("발사 지연 시간"),Range(0, byte.MaxValue)]
     private float _dealyTime = 0;
     [SerializeField, Header("날아가는 시간"), Range(0, byte.MaxValue)]
-    private float _flyingTime = 1;
+    private float _flyingTime = 0.01f;
     [SerializeField, Header("날아가는 속도"), Range(0, byte.MaxValue)]
     private float _flyingSpeed = 1;
     [SerializeField, Header("타격 대상 태그")]
     private string[] _tags;
     [SerializeField, Header("타격 세기")]
     private Strike _strike;
+    [SerializeField, Header("오프셋")]
+    private Vector2 _offset;
     [SerializeField, Header("폭발 모양")]
     private Shape _shape = null;
     [SerializeField, Header("맞는 대상 모두에게 나타날 효과 오브젝트")]
@@ -38,9 +59,9 @@ public class Projectile : MonoBehaviour
     [SerializeField, Header("해당 객체가 소멸하면서 나타날 효과 오브젝트")]
     private GameObject _explosionObject = null;
 
-    private bool ignition = false;
-    private Action<GameObject, Vector2, Transform> _action2 = null;
-    private Action<Strike, Strike.Area, GameObject> _action1 = null;
+    private bool _ignition = false;
+    private Action<GameObject, Vector2, Transform> _effectAction = null;
+    private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
 
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]
@@ -61,36 +82,74 @@ public class Projectile : MonoBehaviour
     }
 #endif
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        Explode();
+        Explode(collision.collider);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        Explode();
+        Explode(collision);
     }
 
-    private void OnEnable()
+    /// <summary>
+    /// 폭발하는 함수
+    /// </summary>
+    /// <param name="collider2D"></param>
+    private void Explode(Collider2D collider2D = null)
     {
-        StartCoroutine(DoPlay());
-        IEnumerator DoPlay()
+        if (_ignition == true)
         {
-            while (true)
+            if (collider2D == null)
             {
-                yield return new WaitForSeconds(1);
-                gameObject.SetActive(true);
-                yield return new WaitForSeconds(0.5f);
+                _effectAction?.Invoke(_explosionObject, getTransform.position, null);
+                if (_shape != null)
+                {
+                    _strikeAction?.Invoke(_strike, _shape.GetPolygonArea(getTransform, _tags), _hitObject);
+                }
+                else if (_strikeAction != null)
+                {
+#if UNITY_EDITOR
+                    Shape.GetPolygonArea(getCollider2D, _tags)?.Show(_gizmoColor, _gizmoDuration);
+#endif
+                    ContactFilter2D contactFilter = new ContactFilter2D();
+                    List<Collider2D> others = new List<Collider2D>();
+                    Physics2D.OverlapCollider(getCollider2D, contactFilter, others);
+                    int count = others != null ? others.Count : 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        IHittable hittable = others[i].GetComponent<IHittable>();
+                        if (hittable != null && _tags.Contains(hittable.tag) == true)
+                        {
+                            _strikeAction.Invoke(_strike, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
+                        }
+                    }
+                }
+                _strikeAction = null;
+                _effectAction = null;
+                StopAllCoroutines();
+                _ignition = false;
+                gameObject.SetActive(false);
+            }
+            else if (_tags.Contains(collider2D.tag) == true)
+            {
+                _effectAction?.Invoke(_explosionObject, getTransform.position, null);
+                if (_shape != null)
+                {
+                    Strike.PolygonArea polygonArea = _shape.GetPolygonArea(collider2D.transform, _tags);
+                    _strikeAction?.Invoke(_strike, polygonArea, _hitObject);
+                }
+                else
+                {
+                    _strikeAction?.Invoke(_strike, new Strike.TargetArea(new IHittable[] { collider2D.GetComponent<IHittable>() }), _hitObject);
+                }
+                _strikeAction = null;
+                _effectAction = null;
+                StopAllCoroutines();
+                _ignition = false;
+                gameObject.SetActive(false);
             }
         }
-    }
-
-    private void Explode()
-    {
-        StopAllCoroutines();
-        Vector2 position = getTransform.position;
-        //_action1?.Invoke(_strike, new Strike.PolygonArea(position, null, _tags), _hitObject);
-        //_action2?.Invoke(_explosionObject, position);
     }
 
     /// <summary>
@@ -102,41 +161,49 @@ public class Projectile : MonoBehaviour
     /// <param name="action2"></param>
     private void Shot(Vector2 position, Quaternion rotation, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
-        getTransform.position = position;
+        gameObject.SetActive(true);
+        Vector2 rotatedOffset = rotation * _offset;
+        getTransform.position = position + rotatedOffset;
         getTransform.rotation = rotation;
-        _action1 = action2;
-        _action2 = action1;
-        //StopAllCoroutines();
-        //StartCoroutine(DoProject());
-        //IEnumerator DoProject()
-        //{
-        //    yield return new WaitForSeconds(_dealyTime);
-        //    float duration = _flyingTime;
-        //    while (duration >= 0 || _flyingTime == 0)
-        //    {
-        //        float deltaTime = Time.deltaTime;
-        //        Vector2 direction = getTransform.right.normalized;
-        //        getTransform.Translate(direction * _flyingSpeed * deltaTime, Space.World);
-        //        duration -= deltaTime;
-        //        yield return null;
-        //    }
-        //    Explode();
-        //}
+        _strikeAction = action2;
+        _effectAction = action1;
+        StartCoroutine(DoProject());
+        IEnumerator DoProject()
+        {
+            _ignition = false;
+            yield return new WaitForSeconds(_dealyTime);
+            _ignition = true;
+            float duration = _flyingTime;
+            while (duration >= 0 || _flyingTime == 0)
+            {
+                float deltaTime = Time.deltaTime;
+                Vector2 direction = getTransform.right.normalized;
+                getTransform.Translate(direction * _flyingSpeed * deltaTime, Space.World);
+                duration -= deltaTime;
+                yield return null;
+            }
+            Explode();
+        }
     }
 
+    /// <summary>
+    /// 발사체를 쏘는 함수
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="target"></param>
+    /// <param name="action1"></param>
+    /// <param name="action2"></param>
     public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
-        return;
         if (user != null)
         {
-            gameObject.SetActive(true);
             if (_adhesion == true)
             {
                 getTransform.parent = user;
             }
             if (target != null)
             {
-                Shot(user.position, Quaternion.LookRotation((target.transform.position - user.position).normalized), action1, action2);
+                Shot(user.position, Quaternion.LookRotation((target.GetCollider2D().bounds.center - user.position).normalized), action1, action2);
             }
             else
             {
@@ -145,7 +212,6 @@ public class Projectile : MonoBehaviour
         }
         else if (target != null)
         {
-            gameObject.SetActive(true);
             if (_adhesion == true)
             {
                 getTransform.parent = target.transform;

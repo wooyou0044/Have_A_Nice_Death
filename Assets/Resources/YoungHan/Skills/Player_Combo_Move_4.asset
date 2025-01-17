@@ -19,4 +19,4 @@ MonoBehaviour:
   shotObject: {fileID: 0}
   splashObject: {fileID: 0}
   hitObject: {fileID: 0}
-  projectile: {fileID: 0}
+  projectile: {fileID: 3419790063420941498, guid: db3aa44744b0c594d9968f2b57b82a89, type: 3}
