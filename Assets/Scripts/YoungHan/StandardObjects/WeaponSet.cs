@@ -111,7 +111,7 @@ public class WeaponSet : MonoBehaviour
                                                     }
                                                     else
                                                     {
-                                                        player.Dash(_comboMoveValue, _comboMoveDelay -0.5f, 0);
+                                                        player.Dash(_comboMoveValue, _comboMoveDelay, 0);
                                                         yield return new WaitForSeconds(_comboMoveDelay);
                                                         player.Dash(Vector2.zero);
                                                     }

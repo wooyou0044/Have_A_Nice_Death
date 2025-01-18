@@ -100,7 +100,6 @@ public class Projectile : MonoBehaviour
     {
         if (_ignition == true && (collider2D == null || _tags.Contains(collider2D.tag) == true))
         {
-            Debug.Log(collider2D);
             _effectAction?.Invoke(_explosionObject, getTransform.position, null);
             if (_shape != null)
             {
@@ -154,7 +153,7 @@ public class Projectile : MonoBehaviour
             yield return new WaitForSeconds(_dealyTime);
             _ignition = true;
             float duration = _flyingTime;
-            while (duration >= 0 || _flyingTime == 0)
+            while (duration >= 0 /*|| _flyingTime == 0*/)
             {
                 float deltaTime = Time.deltaTime;
                 Vector2 direction = getTransform.right.normalized;
