@@ -120,9 +120,9 @@ public class Runner : Walker
         }
     }
 
-    public virtual void Dash(float value)
+    public virtual void Dash(float value, float delay, float coolTime)
     {
-        Dash(new Vector2(getTransform.forward.normalized.z, 0), value);
+        Dash(new Vector2(getTransform.forward.normalized.z * value, 0), delay, coolTime);
     }
   
     protected void RecoverJumpCount()
@@ -138,6 +138,11 @@ public class Runner : Walker
     //대쉬를 하게 만드는 메서드
     public void Dash(Vector2 direction, float value)
     {
+        Dash(direction, value, _dashCoolTime);
+    }
+
+    public void Dash(Vector2 direction, float value, float coolTime)
+    {
         if (_dashCoroutine != null)
         {
             StopCoroutine(_dashCoroutine);
@@ -147,11 +152,11 @@ public class Runner : Walker
         IEnumerator DoDashAndDelay()
         {
             _isDashed = true;
-            if(direction == Vector2.zero)
+            if (direction == Vector2.zero)
             {
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeAll;
             }
-            else if(direction == Vector2.up || direction == Vector2.down)
+            else if (direction == Vector2.up || direction == Vector2.down)
             {
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
             }
@@ -164,7 +169,7 @@ public class Runner : Walker
             getRigidbody2D.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
             getRigidbody2D.velocity += Vector2.down;
             _dashCoroutine = null;
-            yield return new WaitForSeconds(_dashCoolTime);
+            yield return new WaitForSeconds(coolTime);
             _isDashed = false;
         }
     }

@@ -298,11 +298,11 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public override void Dash(float value)
+    public override void Dash(float value, float delay, float coolTime)
     {
         if (isAlive == true)
         {
-            base.Dash(value);
+            base.Dash(value, delay, coolTime);
         }
     }
 

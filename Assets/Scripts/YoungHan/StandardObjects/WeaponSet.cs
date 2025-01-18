@@ -8,7 +8,7 @@ public class WeaponSet : MonoBehaviour
 
     private Transform _transform = null;
 
-    protected Transform getTransform
+    private Transform getTransform
     {
         get
         {
@@ -35,17 +35,19 @@ public class WeaponSet : MonoBehaviour
     [SerializeField, Header("ÄÞº¸ È½¼ö")]
     private State _state;
     [SerializeField, Range(0, 5)]
-    private float _comboBaseDelay = 0.5f;
+    private float _comboMoveValue = 0.15f;
     [SerializeField, Range(0, 5)]
-    private float _comboDashDelay = 0.05f;
+    private float _comboMoveDelay = 0.4f;
     [SerializeField, Range(0, 5)]
-    private float _comboLastDelay = 0.7f;
+    private float _comboLastDelay = 1.0f;
+    [SerializeField, Range(0, 5)]
+    private float _comboStandDelay = 0.5f;
     [SerializeField, Range(0, 1)]
     private float _jumpStartDelay = 0.1f;
     [SerializeField, Range(0, 1)]
     private float _jumpFallingDelay = 0.3f;
     [SerializeField, Range(0, 1)]
-    private float _jumpLandingDelay = 0.4f;
+    private float _jumpLandingDelay = 1.0f;
 
     [SerializeField]
     private float _concentrationTime = 0;
@@ -104,13 +106,14 @@ public class WeaponSet : MonoBehaviour
                                                 case State.Combo3:
                                                     if (player.isGrounded == false)
                                                     {
-                                                        player.Dash(Vector2.zero, _comboBaseDelay);
+                                                        player.Dash(Vector2.zero, _comboStandDelay);
                                                         yield return new WaitUntil(() => player!= null && player.isGrounded == true);
                                                     }
                                                     else
                                                     {
-                                                        player.Dash(_comboDashDelay);
-                                                        yield return new WaitForSeconds(_comboBaseDelay);
+                                                        player.Dash(_comboMoveValue, _comboMoveDelay -0.5f, 0);
+                                                        yield return new WaitForSeconds(_comboMoveDelay);
+                                                        player.Dash(Vector2.zero);
                                                     }
                                                     break;
                                                 case State.Combo4:
@@ -132,7 +135,7 @@ public class WeaponSet : MonoBehaviour
                                     break;
                             }
                         }
-                        else if(_concentrationTime > _comboBaseDelay && player.isGrounded == true && _coroutine == null && _state == State.None)
+                        else if(_concentrationTime > _comboStandDelay && player.isGrounded == true && _coroutine == null && _state == State.None)
                         {
                             _coroutine = DoPlay();
                             StartCoroutine(_coroutine);
