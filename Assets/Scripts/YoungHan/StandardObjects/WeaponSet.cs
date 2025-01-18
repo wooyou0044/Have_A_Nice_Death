@@ -129,6 +129,7 @@ public class WeaponSet : MonoBehaviour
                                 case Player.Direction.Forward:
                                     if (_scytheInfo.TryUse(transform, Weapon.Attack.Move_Up, action1, action2, func, animator) == true)
                                     {
+                                        player.Jump();
                                     }
                                     break;
                                 case Player.Direction.Backward:

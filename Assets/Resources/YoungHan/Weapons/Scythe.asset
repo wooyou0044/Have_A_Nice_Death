@@ -76,3 +76,10 @@ MonoBehaviour:
     animatorHandler: {fileID: 11400000, guid: 9a30de469af749f4a99807dd03b920eb, type: 2}
     essentialClips:
     - {fileID: 7400000, guid: 365c377345a5e6e45a11c4c0cda796f4, type: 2}
+  upAction:
+    skill: {fileID: 11400000, guid: 23dd21280c14b9e4bbb52db1d62c4eb5, type: 2}
+    coolTime: 0.4
+    tags:
+    - Enemy
+    animatorHandler: {fileID: 0}
+    essentialClips: []
