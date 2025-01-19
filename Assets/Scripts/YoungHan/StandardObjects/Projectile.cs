@@ -98,57 +98,36 @@ public class Projectile : MonoBehaviour
     /// <param name="collider2D"></param>
     private void Explode(Collider2D collider2D = null)
     {
-        if (_ignition == true)
+        if (_ignition == true && (collider2D == null || _tags.Contains(collider2D.tag) == true))
         {
-            if (collider2D == null)
+            _effectAction?.Invoke(_explosionObject, getTransform.position, null);
+            if (_shape != null)
             {
-                _effectAction?.Invoke(_explosionObject, getTransform.position, null);
-                if (_shape != null)
-                {
-                    _strikeAction?.Invoke(_strike, _shape.GetPolygonArea(getTransform, _tags), _hitObject);
-                }
-                else if (_strikeAction != null)
-                {
+                _strikeAction?.Invoke(_strike, _shape.GetPolygonArea(getTransform, _tags), _hitObject);
+            }
+            else if (_strikeAction != null)
+            {
 #if UNITY_EDITOR
-                    Shape.GetPolygonArea(getCollider2D, _tags)?.Show(_gizmoColor, _gizmoDuration);
+                Shape.GetPolygonArea(getCollider2D, _tags)?.Show(_gizmoColor, _gizmoDuration);
 #endif
-                    ContactFilter2D contactFilter = new ContactFilter2D();
-                    List<Collider2D> others = new List<Collider2D>();
-                    Physics2D.OverlapCollider(getCollider2D, contactFilter, others);
-                    int count = others != null ? others.Count : 0;
-                    for (int i = 0; i < count; i++)
+                ContactFilter2D contactFilter = new ContactFilter2D();
+                List<Collider2D> others = new List<Collider2D>();
+                Physics2D.OverlapCollider(getCollider2D, contactFilter, others);
+                int count = others != null ? others.Count : 0;
+                for (int i = 0; i < count; i++)
+                {
+                    IHittable hittable = others[i].GetComponent<IHittable>();
+                    if (hittable != null && _tags.Contains(hittable.tag) == true)
                     {
-                        IHittable hittable = others[i].GetComponent<IHittable>();
-                        if (hittable != null && _tags.Contains(hittable.tag) == true)
-                        {
-                            _strikeAction.Invoke(_strike, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
-                        }
+                        _strikeAction.Invoke(_strike, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
                     }
                 }
-                _strikeAction = null;
-                _effectAction = null;
-                StopAllCoroutines();
-                _ignition = false;
-                gameObject.SetActive(false);
             }
-            else if (_tags.Contains(collider2D.tag) == true)
-            {
-                _effectAction?.Invoke(_explosionObject, getTransform.position, null);
-                if (_shape != null)
-                {
-                    Strike.PolygonArea polygonArea = _shape.GetPolygonArea(collider2D.transform, _tags);
-                    _strikeAction?.Invoke(_strike, polygonArea, _hitObject);
-                }
-                else
-                {
-                    _strikeAction?.Invoke(_strike, new Strike.TargetArea(new IHittable[] { collider2D.GetComponent<IHittable>() }), _hitObject);
-                }
-                _strikeAction = null;
-                _effectAction = null;
-                StopAllCoroutines();
-                _ignition = false;
-                gameObject.SetActive(false);
-            }
+            _strikeAction = null;
+            _effectAction = null;
+            StopAllCoroutines();
+            _ignition = false;
+            gameObject.SetActive(false);
         }
     }
 
@@ -174,7 +153,7 @@ public class Projectile : MonoBehaviour
             yield return new WaitForSeconds(_dealyTime);
             _ignition = true;
             float duration = _flyingTime;
-            while (duration >= 0 || _flyingTime == 0)
+            while (duration >= 0 /*|| _flyingTime == 0*/)
             {
                 float deltaTime = Time.deltaTime;
                 Vector2 direction = getTransform.right.normalized;

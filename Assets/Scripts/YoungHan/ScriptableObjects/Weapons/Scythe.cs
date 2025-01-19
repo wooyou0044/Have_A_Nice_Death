@@ -20,6 +20,9 @@ public class Scythe : Weapon
     [SerializeField, Header("공중 콤보3")]
     private Skill.Action standAction3;
 
+    [SerializeField, Header("상단 공격")]
+    private Skill.Action upAction;
+
     public override bool TryUse(Transform transform, Attack attack, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func, Animator animator)
     {
         switch (attack)
@@ -52,6 +55,12 @@ public class Scythe : Weapon
                     return true;
                 }
                 if (standAction3.TryUse(transform, null, action1, action2, func, animator) == true)
+                {
+                    return true;
+                }
+                break;
+            case Attack.Move_Up:
+                if(upAction.TryUse(transform, null, action1, action2, func, animator) == true)
                 {
                     return true;
                 }

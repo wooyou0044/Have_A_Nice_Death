@@ -126,12 +126,10 @@ public class WomanGhostAi_Clone : Walker,IHittable
     {
         while (true)
         {
-            Debug.Log("√‚πﬂ");
             yield return new WaitForSeconds(delay);
             AttackEffect.gameObject.SetActive(false);
             find.gameObject.SetActive(false);
             FireShot();
-            Debug.Log("≥°");
         }        
     }
 
@@ -148,7 +146,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
                 getSurprisedImote.stop = true;
 
                 attackPlayer = player.GetComponent<IHittable>();
-                StartCoroutine(DoFire(1.4f));
+                StartCoroutine(DoFire(1.3f));
             }
             target = player.transform;
 
@@ -169,8 +167,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
         AttackEffect.gameObject.SetActive(true);
         find.gameObject.SetActive(true);
         Projectile projectile = GameManager.GetProjectile(womanFire);
-        projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);
-                
+        projectile.Shot(Launcher, attackPlayer, GameManager.ShowEffect, GameManager.Use);                
     }
     void SpottedPlayer()
     {        

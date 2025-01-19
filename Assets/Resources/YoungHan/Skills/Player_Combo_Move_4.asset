@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Player_Combo_Move_4
   m_EditorClassIdentifier: 
   strike:
-    power: -20
-    extension: 10
-  shape: {fileID: 11400000, guid: ebee20ef544a2d54c9216cac084d1c2c, type: 2}
+    power: 0
+    extension: 0
+  shape: {fileID: 0}
   shotObject: {fileID: 0}
   splashObject: {fileID: 0}
   hitObject: {fileID: 0}

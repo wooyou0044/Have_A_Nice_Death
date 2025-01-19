@@ -152,8 +152,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scytheInfo: {fileID: 11400000, guid: 4cdb741bb10f8fc4f9771cbb0d36ffdb, type: 2}
   _state: 0
-  _comboBaseDelay: 0.5
+  _comboMoveValue: 0.15
+  _comboMoveDelay: 0.4
   _comboLastDelay: 1
+  _comboStandDelay: 0.5
   _jumpStartDelay: 0.1
   _jumpFallingDelay: 0.3
   _jumpLandingDelay: 1
