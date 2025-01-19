@@ -196,12 +196,14 @@ public class Spooksmen_AI : Walker, IHittable
         if (isAttacking && attackCoolTime <= attackElapsedTime)
         {
             AttackPlayer();
-            // FrontAttack일때 계속해서 들어와서 멈추는 듯
+            //FrontAttack일때 계속해서 들어와서 멈추는 듯
             if (state != AttackState.FrontAttack)
             {
                 attackElapsedTime = 0;
                 isAttacking = false;
             }
+            //attackElapsedTime = 0;
+            //isAttacking = false;
         }
 
         if(isHit)
@@ -375,8 +377,8 @@ public class Spooksmen_AI : Walker, IHittable
         //                          플레이어가 뒤에 있으면 후방 공격을 하고
         //                          플레이어가 위에 있으면 상향 공격을 함
 
-        // 만약에 어퍼컷이 부자연스러우면 state != AttackState.FrontAttack으로 바꿔야 함
-        if(isDetect== false && state == AttackState.BackAttack)
+        // 만약에 어퍼컷이 부자연스러우면 state == AttackState.BackAttack으로 바꿔야 함
+        if(isDetect== false && state != AttackState.FrontAttack)
         {
             attackPos = attackPlayer.transform;
 
@@ -476,6 +478,7 @@ public class Spooksmen_AI : Walker, IHittable
                 else
                 {
                     attackElapsedTime = attackCoolTime;
+                    isAttacking = true;
                 }
                 break;
             case AttackState.UpAttack:
@@ -491,8 +494,8 @@ public class Spooksmen_AI : Walker, IHittable
 
     public void Hit(Strike strike)
     {
-        //surprised.SetActive(false);
-        //attack.SetActive(false);
+        surprised.SetActive(false);
+        attack.SetActive(false);
         // 맞는 애니메이션 쓰고
         hp += strike.result;
 
