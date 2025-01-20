@@ -224,6 +224,15 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    protected override void OnCollisionStay2D(Collision2D collision)
+    {
+        base.OnCollisionStay2D(collision);
+        if (isGrounded == true && _stopping == false && getRigidbody2D.velocity.y == 0 && _animatorPlayer != null && _animatorPlayer.GetCurrentClips() == _jumpFallingClip)
+        {
+            _animatorPlayer?.Play(_jumpLandingClip, _idleClip, false);
+        }
+    }
+
     protected override void OnCollisionExit2D(Collision2D collision)
     {
         base.OnCollisionExit2D(collision);
