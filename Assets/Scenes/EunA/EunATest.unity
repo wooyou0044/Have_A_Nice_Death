@@ -682,7 +682,7 @@ GameObject:
   - component: {fileID: 1336136672}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Ladder
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1147,6 +1147,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53efdf7ec51ed9e46a3aa10c2c5fe187, type: 3}
+--- !u!1001 &5314461966320930705
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2737697866972290077, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7097148633374086970, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
+      propertyPath: m_Name
+      value: Coffee
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1afd5061fa4f3204ca1a081901148174, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1155,3 +1212,4 @@ SceneRoots:
   - {fileID: 1336136674}
   - {fileID: 674671131}
   - {fileID: 979060474}
+  - {fileID: 5314461966320930705}
