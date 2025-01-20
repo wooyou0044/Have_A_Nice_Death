@@ -184,13 +184,14 @@ public class Projectile : MonoBehaviour
             {
                 Bounds bounds = target.GetCollider2D().bounds;
                 Vector2 direction = ((Vector2)bounds.center - (Vector2)user.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 if (user.position.x <= bounds.center.x)
                 {
-                    Shot(user.position, Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg), action1, action2);
+                    Shot(user.position, Quaternion.Euler(0, 0, +angle), action1, action2);
                 }
                 else
                 {
-                    Shot(user.position, Quaternion.Euler(180, 0, (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + 270), action1, action2);
+                    Shot(user.position, Quaternion.Euler(180, 0, -angle), action1, action2);
                 }
             }
             else
