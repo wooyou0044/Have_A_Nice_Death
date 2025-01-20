@@ -20,6 +20,8 @@ public class BossMovement : Runner, IHittable
     AnimatorPlayer myPlayer;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
+    Vector2 startPoint;
+    Vector2 endPoint;
     Vector2 midPoint;
     Vector2 targetPos;
     Vector2 pointPos;
@@ -28,6 +30,7 @@ public class BossMovement : Runner, IHittable
     float fullHp;
 
     bool isStun;
+    bool isArrive;
 
     // 임시
     GameObject player;
@@ -45,7 +48,10 @@ public class BossMovement : Runner, IHittable
         bossCollider = GetComponent<Collider2D>();
         myPlayer = GetComponent<AnimatorPlayer>();
         myRigid = GetComponent<Rigidbody2D>();
-        midPoint = GameObject.Find("MidPoint").transform.position;
+        startPoint = GameObject.Find("StartPoint").transform.position;
+        endPoint = GameObject.Find("EndPoint").transform.position;
+
+        midPoint = (startPoint + endPoint) / 2;
 
         // 임시
         player = GameObject.FindGameObjectWithTag("Player");
@@ -61,16 +67,16 @@ public class BossMovement : Runner, IHittable
 
     void Update()
     {
-        // 임시
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if(Input.GetKeyDown(KeyCode.M))
         {
+            // 임시
             if (target == null)
             {
                 Debug.Log("target null");
                 Collider2D col = player.GetComponent<Collider2D>();
                 target = col.GetComponent<IHittable>();
             }
-            else
+            else if (isArrive == false)
             {
                 Debug.Log("target");
                 MoveToAttack(target);
@@ -153,32 +159,35 @@ public class BossMovement : Runner, IHittable
     // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
     public void MoveToAttack(IHittable hitTarget)
     {
-        Vector2 direction = Vector2.zero;
+        // 임시
+        isArrive = false;
 
+        Vector2 destination = Vector2.zero;
         // 때릴 상대에 대한 위치 저장
         targetPos = hitTarget.transform.position;
         
         // 내 위치가 중간 지점보다 크면
         if (transform.position.x > midPoint.x)
         {
-            // 중간 지점 왼쪽에 있는 곳이 목표
-            pointPos = new Vector2(-(midPoint.x * 2), 0);
-            direction = (Vector2)transform.position - pointPos;
+            // 왼쪽 끝에 있는 곳이 목표
+            pointPos = startPoint;
+            OnDrawGizmos();
             // 밑으로 날아가면서 이동 (대각선으로 내려와서 플레이어 위치로 이동)
             // 내 위치가 때릴 상대보다 위에 있으면
-            //if (transform.position.y > targetPos.y)
-            //{
-            //    // 애니메이션 추가
-            //    //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
-            //    direction = (Vector2)transform.position - pointPos;
-            //    myRigid.velocity -= direction;
-            //    Debug.Log("오른쪽 아래 대각선 이동");
-            //}
-            //else
-            //{
-            //    myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
-            //    Debug.Log("왼쪽 위 대각선 이동");
-            //}
+            if (transform.position.y > targetPos.y)
+            {
+                // 애니메이션 추가
+                destination = (Vector2)transform.position - pointPos;
+                //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
+                Debug.Log("오른쪽 아래 대각선 이동");
+            }
+            else
+            {
+                //myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
+                Debug.Log("왼쪽 위 대각선 이동");
+            }
+
+            myRigid.velocity -= destination * (moveSpeed * 0.4f);
             // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
 
             // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
@@ -186,31 +195,36 @@ public class BossMovement : Runner, IHittable
         // 내 위치가 중간 지점보다 작으면
         else if (transform.position.x < midPoint.x)
         {
-            // 중간 지점 오른쪽에 있는 곳이 목표
-            pointPos = new Vector2((midPoint.x * 2), 0);
-            Debug.Log(midPoint.x * 2);
-            direction = (Vector2)transform.position - pointPos;
-            //if (transform.position.y > targetPos.y)
-            //{
-            //    myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
-            //    Debug.Log("왼쪽 아래 대각선 이동");
-            //}
-            //else
-            //{
-            //    myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
-            //    Debug.Log("오른쪽 위 대각선 이동");
-            //}
-            //direction = (Vector2)transform.position - pointPos;
-            //myRigid.velocity -= direction;
+            // 오른쪽 끝에 있는 곳이 목표
+            pointPos = endPoint;
+            OnDrawGizmos();
+            if (transform.position.y > targetPos.y)
+            {
+                destination = (Vector2)transform.position - pointPos;
+                //myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
+                Debug.Log("왼쪽 아래 대각선 이동");
+            }
+            else
+            {
+                //myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
+                Debug.Log("오른쪽 위 대각선 이동");
+            }
+            myRigid.velocity -= destination * (moveSpeed * 0.4f);
         }
-        if(transform.position.y > 0)
+
+        if (myRigid.velocity.y == 0)
         {
-            myRigid.velocity -= direction;
+            Debug.Log("들어옴");
+            //myRigid.velocity = new Vector2(0, 0);
+            //// 임시
+            //isArrive = true;
         }
-        else
-        {
-            myRigid.velocity = Vector2.zero;
-        }
+    }
+
+    // 임시
+    new void OnDrawGizmos()
+    {
+        Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
     // 공격 -> 애니메이션, 대쉬하는 효과
