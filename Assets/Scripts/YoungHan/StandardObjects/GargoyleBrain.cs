@@ -5,6 +5,23 @@ using UnityEngine;
 [RequireComponent(typeof(BossMovement))]
 public class GargoyleBrain : MonoBehaviour
 {
+    private bool _hasBossMovement = false;
+
+    private BossMovement _bossMovement = null;
+
+    private BossMovement getBossMovement
+    {
+        get
+        {
+            if(_hasBossMovement == false)
+            {
+                _hasBossMovement = true;
+                _bossMovement = GetComponent<BossMovement>();
+            }
+            return _bossMovement;
+        }
+    }
+
     [SerializeField, Header("스킬 준비 시간"), Range(0, byte.MaxValue)]
     private float _preparationTime = 2f;
 
@@ -26,9 +43,35 @@ public class GargoyleBrain : MonoBehaviour
         StartCoroutine(DoPlay());
         IEnumerator DoPlay()
         {
-            while (true)
+            while (getBossMovement.isAlive == true)
             {
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(_preparationTime);
+                Skill skill = Skill.Scratching;
+                float probability = Random.Range(0, 100);
+                if (probability < 50)
+                {
+                    skill = Skill.Dash;
+                }
+                else if(probability < 30)
+                {
+                    skill = Skill.Stone;
+                }
+                else if (probability < 10)
+                {
+                    skill = Skill.Fall;
+                }
+                switch(skill)
+                {
+                    case Skill.Scratching:
+
+                        break;
+                    case Skill.Dash:
+                        break;
+                    case Skill.Stone:
+                        break;
+                    case Skill.Fall:
+                        break;
+                }
                 yield return null;
             }
         }
