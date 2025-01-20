@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7634369538437973449}
   - component: {fileID: 3419790063420941498}
   m_Layer: 0
-  m_Name: ComboMoveLast
+  m_Name: ComboStandLast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   _strike:
     power: -20
     extension: 10
-  _offset: {x: 1.5, y: 3}
+  _offset: {x: 0.3, y: 0}
   _shape: {fileID: 0}
   _hitObject: {fileID: 0}
   _explosionObject: {fileID: 0}

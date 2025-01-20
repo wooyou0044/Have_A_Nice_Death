@@ -107,7 +107,10 @@ public class Runner : Walker
     {
         if (_jumpCount > 0 && _jumpCoroutine == null && getRigidbody2D.gravityScale > 0)
         {
-            //StopLevitate();
+            if (_dashCoroutine != null)
+            {
+                StopCoroutine(_dashCoroutine);
+            }
             _jumpCoroutine = DoJumpAndDelay();
             StartCoroutine(_jumpCoroutine);
             IEnumerator DoJumpAndDelay()

@@ -96,6 +96,7 @@ public sealed class ObjectPooler : MonoBehaviour
                 }
                 Projectile value = Instantiate(original, getTransform);
                 _projectiles[original].Add(value);
+                return value;
             }
             else
             {
