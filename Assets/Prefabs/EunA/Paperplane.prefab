@@ -225,12 +225,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _adhesion: 0
   _dealyTime: 0
-  _flyingTime: 1
+  _flyingTime: 2
   _flyingSpeed: 1
   _tags:
   - Player
   _strike:
-    power: 0
+    power: -1
     extension: 0
   _offset: {x: 0, y: 0}
   _shape: {fileID: 0}
