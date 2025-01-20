@@ -73,12 +73,12 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MaxEnemyHealth = 20;
         NowEnemyHealth = 20;
-        BookSightRange = 5;
+        BookSightRange = 8;
         moveCooltime = 3.0f;
         moveElapsedtime = 0;
         BookFindCooltime = 4.0f;
         BookFindElapsedtime = 4.0f;
-        moveDistance = 8.0f;
+        moveDistance = 10.0f;
         EnemyBookAnimator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();       
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
@@ -146,15 +146,17 @@ public class Enemy_Book_AI : Walker, IHittable
             AttackEffect.SetActive(true);
             FindEffect.SetActive(true);
 
-            if(EffectCooltime > 3.0f)
-            {
-                FindEffect.SetActive(false);
-                AttackEffect.SetActive(false);
-            }
-
             EffectCooltime = 0;
-            BookFindElapsedtime = 0;
+            BookFindElapsedtime = 0;           
+            
         }
+
+        if (BookFindElapsedtime >= 2 && BookFindElapsedtime < 3.0f)
+        {
+            FindEffect.SetActive(false);
+            AttackEffect.SetActive(false);
+        }
+        
 
         else if (BookAnimatorPlayer.isEndofFrame)
         {

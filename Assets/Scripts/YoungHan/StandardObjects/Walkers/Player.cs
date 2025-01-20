@@ -142,6 +142,12 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    public byte anima
+    {
+        private set;
+        get;
+    }
+
     private bool _stopping = false;
 
     private Action _escapeAction = null;
@@ -177,12 +183,10 @@ public sealed class Player : Runner, IHittable
 
     private void PlayMove(Vector2 rotation)
     {
-        //직진
         if ((Vector2)getTransform.rotation.eulerAngles == rotation)
         {
             PlayMove(true);
         }
-        //유턴
         else
         {
             PlayMove(false);

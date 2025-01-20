@@ -33,7 +33,15 @@ public class Enemy_Book_Attack : MonoBehaviour
             projectile.Shot(PaperPlaneMuzzle.transform, hittable, GameManager.ShowEffect, GameManager.Use);
             //Instantiate(PaperPlane, PaperPlaneMuzzle.transform.position, PaperPlaneMuzzle.transform.rotation);
             PlaneElapsedTime = 0;
+
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Wall")
+        {
+            Destroy(gameObject);
+        }
+    }
 }
