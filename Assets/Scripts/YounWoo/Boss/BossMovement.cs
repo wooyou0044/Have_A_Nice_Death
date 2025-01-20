@@ -4,32 +4,70 @@ using UnityEngine;
 
 public class BossMovement : Runner, IHittable
 {
-    int hp;
+    [Header("애니메이션 클립")]
+    [SerializeField] AnimationClip idleClip;
+    [SerializeField] AnimationClip hitClip;
+    [SerializeField] AnimationClip stunClip;
+    [SerializeField] AnimationClip deathClip;
+
+    [Header("정보")]
+    [SerializeField] float HP = 1300;
+    [SerializeField] float attackCoolTime;
+    [SerializeField] float moveSpeed;
+
     Collider2D bossCollider;
+    Rigidbody2D myRigid;
+    AnimatorPlayer myPlayer;
+
+    // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
+    Vector2 midPoint;
+    Vector2 targetPos;
+
+    float attackElapsedTime;
+    float fullHp;
+
+    bool isStun;
 
     public bool isAlive
     {
         get
         {
-            if(hp>0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (HP > 0) ? true : false;
         }
     }
 
     void Awake()
     {
         bossCollider = GetComponent<Collider2D>();
+        myPlayer = GetComponent<AnimatorPlayer>();
+        myRigid = GetComponent<Rigidbody2D>();
+        midPoint = GameObject.Find("MidPoint").transform.position;
     }
+
+    private void Start()
+    {
+        fullHp = HP;
+        isStun = false;
+    }
+
+    IHittable target;
 
     void Update()
     {
-        
+        // 임시
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (target == null)
+            {
+                Collider2D col = Physics2D.OverlapCircle(transform.position, 5.0f);
+                target = col.GetComponent<IHittable>();
+            }
+            else
+            {
+                Debug.Log("target");
+                MoveToAttack(target);
+            }
+        }
     }
 
     public Collider2D GetCollider2D()
@@ -39,8 +77,121 @@ public class BossMovement : Runner, IHittable
 
     public void Hit(Strike strike)
     {
-        hp += strike.result;
+        Debug.Log(HP);
+        if(isAlive)
+        {
+            // HP 감소
+            HP += strike.result;
 
-        
+            //if(isStun == true)
+            //{
+            //    // 스턴을 일정 시간동안 계속 재생
+            //    myPlayer.Play(stunClip);
+            //    StartCoroutine(DoStun());
+            //    IEnumerator DoStun()
+            //    {
+            //        yield return new WaitForSeconds(5f);
+            //        isStun = false;
+            //        fullHp = 0;
+            //    }
+            //    //isStun = false;
+            //    //fullHp = 0;
+            //}
+
+            // 스턴
+            if(HP <= fullHp / 2)
+            {
+                isStun = true;
+            }
+
+            if(isStun == false)
+            {
+                myPlayer.Play(hitClip, idleClip, false);
+            }
+            // 만약에 나랑 같은 방향을 바라보고 있으면 턴 해야 함
+        }
+        else
+        {
+            if(bossCollider.isActiveAndEnabled == true)
+            {
+                HP = 0;
+                bossCollider.enabled = false;
+                myRigid.gravityScale = 0;
+                // gameObject는 아직 죽이면 안 됨 => 대화 창 켜지고 새로운 애로 바뀌어야 함
+                myPlayer.Play(deathClip);
+            }
+        }
+    }
+
+    // 스킬을 사용중인가에 대한 함수
+    public bool isAttacking()
+    {
+        attackElapsedTime += Time.deltaTime;
+
+        // attackCoolTime이 차서 공격 실행하면
+        if(attackCoolTime <= attackElapsedTime)
+        {
+            attackElapsedTime = 0;
+            // 스킬 사용중이라는 값 반환
+            return true;
+        }
+        else
+        {
+            // 스킬 사용중 아니라는 값 반환
+            return false;
+        }
+    }
+
+    // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
+    public void MoveToAttack(IHittable hitTarget)
+    {
+        // 때릴 상대에 대한 위치 저장
+        targetPos = hitTarget.transform.position;
+
+        // 내 위치가 때릴 상대보다 위에 있으면
+        if(transform.position.y > targetPos.y)
+        {
+            // 밑으로 날아가면서 이동 (대각선으로 내려와서 플레이어 위치로 이동)
+            // 내 위치가 오른쪽 위면
+            if(transform.position.x > midPoint.x)
+            {
+                // 애니메이션 추가
+                myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
+            }
+            else
+            {
+                myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
+            }
+
+            // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
+
+            // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+        }
+
+        // 내 위치가 때릴 상대보다 아래에 있으면
+        else if(transform.position.y < targetPos.y)
+        {
+            // 위로 날아가면서 이동 (대각선으로 올라가서 플레이어 위치로 이동)
+            if(transform.position.x > midPoint.x)
+            {
+                myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
+            }
+
+            // 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
+            else
+            {
+                myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
+            }
+
+            // 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+        }
+
+        // 공격 => 애니메이션, 대쉬하는 효과
+    }
+
+    // 공격 -> 애니메이션, 대쉬하는 효과
+    public void PlayerDash()
+    {
+
     }
 }

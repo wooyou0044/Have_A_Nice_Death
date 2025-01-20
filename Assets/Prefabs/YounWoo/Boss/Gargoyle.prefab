@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 256987344728768662}
   - component: {fileID: 767055249796999312}
   - component: {fileID: 2070077846556700284}
+  - component: {fileID: 79716899360246641}
   m_Layer: 0
   m_Name: Gargoyle
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -160,7 +161,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -171,7 +172,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &767055249796999312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,3 +207,21 @@ MonoBehaviour:
   _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
+  idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
+  hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
+  deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
+  HP: 1300
+  attackCoolTime: 10
+  moveSpeed: 5
+--- !u!114 &79716899360246641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6825786477796645821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e4c81c291abf146a7472287813e289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

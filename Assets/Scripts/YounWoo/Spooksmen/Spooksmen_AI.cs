@@ -51,6 +51,7 @@ public class Spooksmen_AI : Walker, IHittable
     Collider2D player;
     Collider2D attackPlayer;
     Collider2D damageCollider;
+    Rigidbody2D myRigid;
 
     Transform targetPos;
     // 공격하기 위해 플레이어가 있는 위치 담을 변수
@@ -105,6 +106,7 @@ public class Spooksmen_AI : Walker, IHittable
         myAnimator = GetComponent<Animator>();
         myPlayer = GetComponent<AnimatorPlayer>();
         damageCollider = GetComponent<Collider2D>();
+        myRigid = GetComponent<Rigidbody2D>();
     }
 
     void Start()
@@ -511,7 +513,8 @@ public class Spooksmen_AI : Walker, IHittable
 
         isHit = true;
 
-        if(hp > 0)
+        // 원래 HP>0이였음
+        if(isAlive)
         {
             MovePosition(targetPos.position.x);
 
@@ -542,20 +545,25 @@ public class Spooksmen_AI : Walker, IHittable
 
         else
         {
-            hp = 0;
-            for(int i=0; i<death.Length; i++)
+            if(damageCollider.isActiveAndEnabled == true)
             {
-                death[i].SetActive(true);
-            }
-            // 죽는 모션
-            myPlayer.Play(deathClip);
-            if(gameObject.activeInHierarchy)
-            {
-                StartCoroutine(DoDead());
-                IEnumerator DoDead()
+                hp = 0;
+                damageCollider.enabled = false;
+                myRigid.gravityScale = 0;
+                for (int i = 0; i < death.Length; i++)
                 {
-                    yield return new WaitForSeconds(0.5f);
-                    gameObject.SetActive(false);
+                    death[i].SetActive(true);
+                }
+                // 죽는 모션
+                myPlayer.Play(deathClip);
+                if (gameObject.activeInHierarchy)
+                {
+                    StartCoroutine(DoDead());
+                    IEnumerator DoDead()
+                    {
+                        yield return new WaitForSeconds(0.8f);
+                        gameObject.SetActive(false);
+                    }
                 }
             }
         }
