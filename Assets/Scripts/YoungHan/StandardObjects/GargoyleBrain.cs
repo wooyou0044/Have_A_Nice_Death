@@ -1,18 +1,36 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[DisallowMultipleComponent]
+[RequireComponent(typeof(BossMovement))]
 public class GargoyleBrain : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField, Header("스킬 준비 시간"), Range(0, byte.MaxValue)]
+    private float _preparationTime = 2f;
+
+    private enum Skill
     {
-        
+        Scratching, //할퀴기
+        Dash,       //돌진
+        Stone,      //돌 던지기
+        Fall,       //낙하
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        StopAllCoroutines();
+    }
+
+    public void Trace(IHittable hittable)
+    {
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(2);
+                yield return null;
+            }
+        }
     }
 }
