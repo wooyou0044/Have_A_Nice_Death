@@ -15,7 +15,7 @@ public class EnterSpot : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
-            Debug.Log("µé¾î¿È");
+            //Debug.Log("µé¾î¿È");
         }
     }
 }

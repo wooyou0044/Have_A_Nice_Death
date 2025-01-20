@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 767055249796999312}
   - component: {fileID: 2070077846556700284}
   - component: {fileID: 79716899360246641}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Gargoyle
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -185,6 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d5e8741da510f7429b4c16534204dfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _preparationTime: 2
 --- !u!114 &2070077846556700284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +210,7 @@ MonoBehaviour:
   _isDashed: 0
   idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
   hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
+  stunClip: {fileID: 0}
   deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
   HP: 1300
   attackCoolTime: 10

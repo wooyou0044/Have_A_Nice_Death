@@ -22,11 +22,15 @@ public class BossMovement : Runner, IHittable
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 midPoint;
     Vector2 targetPos;
+    Vector2 pointPos;
 
     float attackElapsedTime;
     float fullHp;
 
     bool isStun;
+
+    // 임시
+    GameObject player;
 
     public bool isAlive
     {
@@ -42,6 +46,9 @@ public class BossMovement : Runner, IHittable
         myPlayer = GetComponent<AnimatorPlayer>();
         myRigid = GetComponent<Rigidbody2D>();
         midPoint = GameObject.Find("MidPoint").transform.position;
+
+        // 임시
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void Start()
@@ -59,7 +66,8 @@ public class BossMovement : Runner, IHittable
         {
             if (target == null)
             {
-                Collider2D col = Physics2D.OverlapCircle(transform.position, 5.0f);
+                Debug.Log("target null");
+                Collider2D col = player.GetComponent<Collider2D>();
                 target = col.GetComponent<IHittable>();
             }
             else
@@ -145,48 +153,64 @@ public class BossMovement : Runner, IHittable
     // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
     public void MoveToAttack(IHittable hitTarget)
     {
+        Vector2 direction = Vector2.zero;
+
         // 때릴 상대에 대한 위치 저장
         targetPos = hitTarget.transform.position;
-
-        // 내 위치가 때릴 상대보다 위에 있으면
-        if(transform.position.y > targetPos.y)
+        
+        // 내 위치가 중간 지점보다 크면
+        if (transform.position.x > midPoint.x)
         {
+            // 중간 지점 왼쪽에 있는 곳이 목표
+            pointPos = new Vector2(-(midPoint.x * 2), 0);
+            direction = (Vector2)transform.position - pointPos;
             // 밑으로 날아가면서 이동 (대각선으로 내려와서 플레이어 위치로 이동)
-            // 내 위치가 오른쪽 위면
-            if(transform.position.x > midPoint.x)
-            {
-                // 애니메이션 추가
-                myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
-            }
-            else
-            {
-                myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
-            }
-
+            // 내 위치가 때릴 상대보다 위에 있으면
+            //if (transform.position.y > targetPos.y)
+            //{
+            //    // 애니메이션 추가
+            //    //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
+            //    direction = (Vector2)transform.position - pointPos;
+            //    myRigid.velocity -= direction;
+            //    Debug.Log("오른쪽 아래 대각선 이동");
+            //}
+            //else
+            //{
+            //    myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
+            //    Debug.Log("왼쪽 위 대각선 이동");
+            //}
             // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
 
             // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
         }
-
-        // 내 위치가 때릴 상대보다 아래에 있으면
-        else if(transform.position.y < targetPos.y)
+        // 내 위치가 중간 지점보다 작으면
+        else if (transform.position.x < midPoint.x)
         {
-            // 위로 날아가면서 이동 (대각선으로 올라가서 플레이어 위치로 이동)
-            if(transform.position.x > midPoint.x)
-            {
-                myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
-            }
-
-            // 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
-            else
-            {
-                myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
-            }
-
-            // 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+            // 중간 지점 오른쪽에 있는 곳이 목표
+            pointPos = new Vector2((midPoint.x * 2), 0);
+            Debug.Log(midPoint.x * 2);
+            direction = (Vector2)transform.position - pointPos;
+            //if (transform.position.y > targetPos.y)
+            //{
+            //    myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
+            //    Debug.Log("왼쪽 아래 대각선 이동");
+            //}
+            //else
+            //{
+            //    myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
+            //    Debug.Log("오른쪽 위 대각선 이동");
+            //}
+            //direction = (Vector2)transform.position - pointPos;
+            //myRigid.velocity -= direction;
         }
-
-        // 공격 => 애니메이션, 대쉬하는 효과
+        if(transform.position.y > 0)
+        {
+            myRigid.velocity -= direction;
+        }
+        else
+        {
+            myRigid.velocity = Vector2.zero;
+        }
     }
 
     // 공격 -> 애니메이션, 대쉬하는 효과
