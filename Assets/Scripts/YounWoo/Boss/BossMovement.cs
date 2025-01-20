@@ -39,6 +39,8 @@ public class BossMovement : Runner, IHittable
 
     public void Hit(Strike strike)
     {
+        hp += strike.result;
 
+        
     }
 }
