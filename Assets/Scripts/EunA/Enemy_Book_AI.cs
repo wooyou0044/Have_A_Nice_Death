@@ -16,6 +16,7 @@ public class Enemy_Book_AI : Walker, IHittable
 
     public GameObject FindEffect;
     public GameObject AttackEffect;
+    public GameObject SurprisedEffect;
 
     #region 애니메이션 클립
     public AnimationClip idleClip;
@@ -32,8 +33,10 @@ public class Enemy_Book_AI : Walker, IHittable
     bool isUturn = true;
     bool isFind = true;
     bool isAttack = false;
+    bool isDie = false;
     bool AttackAnimationIsOver = true;
     int facingRight;
+    float dieCooltime;
 
     float BookFindCooltime;
     float BookFindElapsedtime;
@@ -67,8 +70,8 @@ public class Enemy_Book_AI : Walker, IHittable
 
     void Start()
     {
-        MaxEnemyHealth = 15;
-        NowEnemyHealth = 15;
+        MaxEnemyHealth = 20;
+        NowEnemyHealth = 20;
         BookSightRange = 5;
         moveCooltime = 3.0f;
         moveElapsedtime = 0;
@@ -79,25 +82,26 @@ public class Enemy_Book_AI : Walker, IHittable
         enemyCollider = GetComponent<Collider2D>();       
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
         BookAnimatorPlayer = GetComponent<AnimatorPlayer>();
-        StunEffect = GetComponent<ParticleSystem>();
-        //FindEffect = GameObject.Find("Find");
-        //AttackEffect = GameObject.Find("Attack_Effect");
     }
 
     void Update()
     {
-        if (BookAnimatorPlayer.IsPlaying(findClip) != true && BookAnimatorPlayer.IsPlaying(attackClip) != true)
-        {
-            DetectPlayer();
-        }
-
         if (NowEnemyHealth <= 0)
         {
             MoveStop();
             Die();
         }
-        Debug.Log(isUturn);
-        //Debug.Log(moveElapsedtime);
+
+        else if (BookAnimatorPlayer.IsPlaying(hitClip)!= true && BookAnimatorPlayer.IsPlaying(findClip) != true 
+            && BookAnimatorPlayer.IsPlaying(attackClip) != true)
+        {
+            DetectPlayer();
+        }     
+    }
+
+    void LateUpdate()
+    {
+
     }
 
     void DetectPlayer()
@@ -111,8 +115,9 @@ public class Enemy_Book_AI : Walker, IHittable
 
         else if (detectplayerErea == null)
         {
-            Debug.Log("방황 시작");
+            Debug.Log("방황 시작");           
             BookWander();
+            SurprisedEffect.SetActive(false);
             isFind = true;
             BookFindElapsedtime = 4.0f;
         }
@@ -126,25 +131,27 @@ public class Enemy_Book_AI : Walker, IHittable
         if (isFind == true)
         {
             Debug.Log("놀람");
-            FindEffect.SetActive(true);
+    
+            FindEffect.SetActive(false);
+            AttackEffect.SetActive(false);
             BookAnimatorPlayer.Play(findClip, idleClip);
+            SurprisedEffect.SetActive(true);
             isFind = false;
         }
 
         if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime)
         {
             Debug.Log("공격");
-            AttackEffect.SetActive(true);
             BookAnimatorPlayer.Play(attackClip, idleClip);
-
+            AttackEffect.SetActive(true);
+            FindEffect.SetActive(true);
+            
             BookFindElapsedtime = 0;
         }
 
         else if (BookAnimatorPlayer.isEndofFrame)
         {
-            BookAnimatorPlayer.Play(idleClip);
-            FindEffect.SetActive(false);
-            AttackEffect.SetActive(false);
+            BookAnimatorPlayer.Play(idleClip);           
         }
 
     }
@@ -220,8 +227,6 @@ public class Enemy_Book_AI : Walker, IHittable
                     moveElapsedtime = 0;
                     isFacingRight = true;
                 }
-
-
             }
         }           
     }
@@ -249,10 +254,11 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         NowEnemyHealth += strike.result;
 
-        if (NowEnemyHealth < MaxEnemyHealth / 2)
+        if (NowEnemyHealth < MaxEnemyHealth / 2 && NowEnemyHealth > 0)
         {
             MoveStop();
-            BookAnimatorPlayer.Play(hitClip);
+            BookAnimatorPlayer.Play(hitClip,idleClip);
+            StunEffect.Play();
         }
     }
 
@@ -263,6 +269,17 @@ public class Enemy_Book_AI : Walker, IHittable
 
     void Die()
     {
-        BookAnimatorPlayer.Play(dieClip);
+        dieCooltime += Time.deltaTime;
+
+        if(isDie == false)
+        {
+            BookAnimatorPlayer.Play(dieClip);
+            isDie = true;
+        }
+
+        if(dieCooltime > 1.0f)
+        {
+            Destroy(gameObject);
+        }
     }
 }

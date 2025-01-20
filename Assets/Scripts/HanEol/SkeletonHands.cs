@@ -8,7 +8,6 @@ public class SkeletonHands : MonoBehaviour, IHittable
     [SerializeField]bool alive = true;
     [SerializeField]bool detectPlayer;
     [SerializeField]Animator animator;
-   // [SerializeField]Player player;
     [SerializeField] LayerMask playerMask;
     private Collider2D detectRangeCol;
     private Collider2D attackRangeCol;
@@ -16,39 +15,35 @@ public class SkeletonHands : MonoBehaviour, IHittable
     [SerializeField]int damage;
     [SerializeField]float detectRange;
     [SerializeField]float attackRange;
-    [SerializeField]float responTime;
+    [SerializeField]float responTime = 5f;
     [SerializeField]float attackTime;//공격에 걸리는 시간
     [SerializeField] float attackCoolTime;//공격 후 재시전 까지 걸리는 시간
     private Vector2 rotation = new Vector2(0, 0);//Rotation.y로 방향 조절
     [SerializeField] IEnumerator currentCoroutine;
     Strike strike;
-    
+    [SerializeField]private Transform imageTransform;
     float left = -180f;
     float right = 0f;
     private Collider2D thisCol;//IHittable 규격을 위한 자신의 콜라이더
 
+
+    //미구현 항목: 방향 틀기, 데미지 주기 / Fix: 잘 안맞음 이거
     public bool isAlive
     {
-        get { return isAlive; }
-        private set { isAlive = value; }
+        get { return alive; }
+        private set { alive = value; }
     }
 
-    public string tag
-    {
-        get { return gameObject.tag; }
-        set { gameObject.tag = value; }
-    }
-
-    public Transform transform
-    {
-        get { return gameObject.transform; }
-    }
+   
 
     public void Hit(Strike strike)
     {
-        if(isAlive == true)
+        Debug.Log("때렸다");
+        if (isAlive == true)
         {
-
+            Debug.Log("나 쳐맞음");
+            currentCoroutine = IamDead();
+            StartCoroutine(currentCoroutine);
         }
     }
 
@@ -63,7 +58,7 @@ public class SkeletonHands : MonoBehaviour, IHittable
         playerMask = LayerMask.GetMask("Player");
         alive = true;
         thisCol = GetComponent<Collider2D>();
-        
+        imageTransform = transform.GetChild(0);
     }
 
     private void Update()
@@ -153,12 +148,15 @@ public class SkeletonHands : MonoBehaviour, IHittable
 
     IEnumerator IamDead()
     {
+        Debug.Log("죽어라!!");
         alive = false;
         animator.SetTrigger("Dead");
         animator.SetBool("Regen", true);
+        imageTransform.position = transform.position;
         yield return new WaitForSecondsRealtime(responTime);
-        alive = true;
         animator.SetBool("Regen", false);
+        alive = true;
+        currentCoroutine = null;
     }
 
 }
