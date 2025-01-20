@@ -227,12 +227,14 @@ MonoBehaviour:
   _dealyTime: 0
   _flyingTime: 1
   _flyingSpeed: 1
-  _tags: []
+  _tags:
+  - Player
   _strike:
     power: 0
     extension: 0
+  _offset: {x: 0, y: 0}
   _shape: {fileID: 0}
   _hitObject: {fileID: 0}
-  _explosionObject: {fileID: 0}
+  _explosionObject: {fileID: 4514428825277192914, guid: 04d1ac75b811d8d479e78bdee5c13d09, type: 3}
   _gizmoDuration: 1
   _gizmoColor: {r: 1, g: 0, b: 0, a: 1}
