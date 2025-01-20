@@ -207,7 +207,7 @@ MonoBehaviour:
   damage: 0
   detectRange: 10
   attackRange: 3
-  responTime: 0
-  attackTime: 0
-  attackCoolTime: 0
+  responTime: 5
+  attackTime: 2
+  attackCoolTime: 2
   imageTransform: {fileID: 0}

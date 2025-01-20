@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -197,16 +198,30 @@ public class Walker : MonoBehaviour, IMovable
         }
     }
 
-    protected virtual void OnTriggerExit2D(Collider2D collider)
+    protected virtual void OnTriggerStay2D(Collider2D collider)
     {
-        if(_groundCollision2D != null && _groundCollision2D.collider == collider)
+        if (_groundCollision2D != null && _groundCollision2D.collider == collider)
         {
+            Bounds bounds = getCollider2D.bounds;
+            float radius = bounds.size.x * 0.5f;
+            float minX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.75f));
+            float maxX = bounds.center.x + (radius * Mathf.Cos(Mathf.PI * -0.25f));
+            float centerY = bounds.min.y + radius + (radius * Mathf.Sin(Mathf.PI * -0.25f));
+            for (int i = 0; i < _groundCollision2D.contactCount; i++)
+            {
+                Vector2 point = _groundCollision2D.contacts[i].point;
+                if(point.y < centerY)
+                {
 #if UNITY_EDITOR
-            _isGrounded = false;
+                    _isGrounded = false;
 #endif
-            _groundCollision2D = null;
+                    _groundCollision2D = null;
+                    break;
+                }
+            }
         }
     }
+
 
     /// <summary>
     /// 오른쪽으로 이동 시키는 메서드
