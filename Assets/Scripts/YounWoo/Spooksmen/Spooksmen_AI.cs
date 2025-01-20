@@ -209,7 +209,7 @@ public class Spooksmen_AI : Walker, IHittable
         if(isHit)
         {
             hitElapsedTime += Time.deltaTime;
-            if(hitElapsedTime >= 1f)
+            if(hitElapsedTime >= 1.5f)
             {
                 comboHitNum = 0;
                 isComboHit = false;
@@ -378,7 +378,14 @@ public class Spooksmen_AI : Walker, IHittable
         //                          플레이어가 위에 있으면 상향 공격을 함
 
         // 만약에 어퍼컷이 부자연스러우면 state == AttackState.BackAttack으로 바꿔야 함
-        if(isDetect== false && state != AttackState.FrontAttack)
+        //if(isDetect== false && state != AttackState.FrontAttack)
+        //{
+        //    attackPos = attackPlayer.transform;
+
+        //    isFrontAttack = AttackType(attackPos.rotation.eulerAngles.y, transform.rotation.eulerAngles.y);
+        //}
+
+        if (isDetect == false && isAttackFinish == true)
         {
             attackPos = attackPlayer.transform;
 
@@ -436,6 +443,8 @@ public class Spooksmen_AI : Walker, IHittable
             backAttack.Use(transform, null, new string[] {"Player"}, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
         }
         state = AttackState.BackAttack;
+
+        isAttackFinish = false;
     }
 
     void UpAttack()
@@ -453,6 +462,8 @@ public class Spooksmen_AI : Walker, IHittable
         }
 
         state = AttackState.UpAttack;
+
+        isAttackFinish = false;
     }
 
     public void ResetAttack()
@@ -462,7 +473,6 @@ public class Spooksmen_AI : Walker, IHittable
 
         isAttackFinish = true;
 
-        Debug.Log(state);
         switch (state)
         {
             // 밑에 꺼지는 것 작동하기 위해서 전방 공격 뒤에 붙여야 함
@@ -510,6 +520,7 @@ public class Spooksmen_AI : Walker, IHittable
                 comboHitNum -= strike.result;
             }
 
+            Debug.Log(comboHitNum);
             // 특정 공격 받을 때 스턴 걸림
             if (comboHitNum >= 40)
             {
@@ -543,7 +554,7 @@ public class Spooksmen_AI : Walker, IHittable
                 StartCoroutine(DoDead());
                 IEnumerator DoDead()
                 {
-                    yield return new WaitForSeconds(0.7f);
+                    yield return new WaitForSeconds(0.5f);
                     gameObject.SetActive(false);
                 }
             }

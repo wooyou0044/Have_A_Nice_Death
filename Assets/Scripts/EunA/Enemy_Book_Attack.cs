@@ -26,7 +26,7 @@ public class Enemy_Book_Attack : MonoBehaviour
     void Update()
     {
         PlaneElapsedTime += Time.deltaTime;
-        if (isEnabled == true && isAttack == true&& PlaneElapsedTime >= PlaneCoolTime)
+        if (isEnabled == true && isAttack == true && PlaneElapsedTime >= PlaneCoolTime) 
         {
             Projectile projectile = GameManager.GetProjectile(Projectile);
             IHittable hittable = GameObject.FindWithTag("Player").GetComponent<IHittable>();
