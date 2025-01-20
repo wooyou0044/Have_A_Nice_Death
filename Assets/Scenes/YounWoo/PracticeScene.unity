@@ -610,6 +610,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gargoyle_UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5580783542629858745, guid: f3e2a12d570394e4f84328b5c1dcb925, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5900860903344940213, guid: f3e2a12d570394e4f84328b5c1dcb925, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8817005991961928313, guid: f3e2a12d570394e4f84328b5c1dcb925, type: 3}
       propertyPath: m_Pivot.x
       value: 1
@@ -700,6 +708,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8817005991961928313, guid: f3e2a12d570394e4f84328b5c1dcb925, type: 3}
   m_PrefabInstance: {fileID: 646632748}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &646632751 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5900860903344940213, guid: f3e2a12d570394e4f84328b5c1dcb925, type: 3}
+  m_PrefabInstance: {fileID: 646632748}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &725976737
 GameObject:
   m_ObjectHideFlags: 0
@@ -969,6 +988,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeakerText: {fileID: 1457087178}
   DialogueText: {fileID: 1212345663}
+  PlayerImage: {fileID: 2027485592}
+  BossImage: {fileID: 646632751}
   dialogues:
   - character: "\uB370\uC2A4"
     dialogue: "\uB3C4\uB300\uCCB4 \uC774\uAC8C \uB2E4 \uBB54\uAC00, \uBE0C\uB798\uB4DC?
@@ -1262,7 +1283,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 6fc10d44b5aa6684a9cd8ea33421d1e1, type: 3}
+    m_Font: {fileID: 12800000, guid: 7430749d099fd5d4a87948821bd93a94, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -1409,7 +1430,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 6fc10d44b5aa6684a9cd8ea33421d1e1, type: 3}
+    m_Font: {fileID: 12800000, guid: 7430749d099fd5d4a87948821bd93a94, type: 3}
     m_FontSize: 70
     m_FontStyle: 1
     m_BestFit: 0
@@ -1591,7 +1612,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1601479468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1756,6 +1777,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702693811}
   m_CullTransparentMesh: 1
+--- !u!114 &2027485592 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3397367948820391240, guid: 17cec0bcd07750f4fab6892349dce5cb, type: 3}
+  m_PrefabInstance: {fileID: 393121552}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2030439239 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1671469481644130997, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}

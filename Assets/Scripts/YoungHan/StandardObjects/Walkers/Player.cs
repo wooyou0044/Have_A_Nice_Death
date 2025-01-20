@@ -224,12 +224,6 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    protected override void OnCollisionStay2D(Collision2D collision)
-    {
-        base.OnCollisionStay2D(collision);
-
-    }
-
     protected override void OnCollisionExit2D(Collision2D collision)
     {
         base.OnCollisionExit2D(collision);
@@ -239,11 +233,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    protected override void OnTriggerExit2D(Collider2D collider)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        bool isGrounded = this.isGrounded;
-        base.OnTriggerExit2D(collider);
-        if((isGrounded != this.isGrounded || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true)) && _stopping == false)
+        if (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true)
         {
             _animatorPlayer.Play(_jumpFallingClip);
         }
