@@ -6,9 +6,6 @@ using UnityEngine;
 /// </summary>
 public class Runner : Walker
 {
-    //점프 후 다시 점프 할 수 있게 기다리는 최소 시간
-    private static readonly float JumpDelay = 0.05f;
-
     //점프력
     [SerializeField, Header("점프 강도"), Range(0, byte.MaxValue)]
     protected float _jumpValue = 5;
@@ -117,7 +114,10 @@ public class Runner : Walker
             {
                 _jumpCount--;
                 getRigidbody2D.velocity = new Vector2(0, _jumpValue);
-                yield return new WaitForSeconds(_jumpValue / getRigidbody2D.gravityScale * JumpDelay);
+                while (getRigidbody2D.velocity.y > 0)
+                {
+                    yield return null; // 프레임 단위로 대기
+                }
                 _jumpCoroutine = null;
             }
         }
