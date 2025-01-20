@@ -6,8 +6,10 @@ using UnityEngine.UI;
 
 public class SceneChange : MonoBehaviour
 {
-    public void MainScene()
-    {
+    public Animator animator;
+    public void MainSceneChanger(string animationName)
+    {        
+        animator.SetTrigger("FadeIn");
         SceneManager.LoadScene("JonghyunTest");
     }
 }
