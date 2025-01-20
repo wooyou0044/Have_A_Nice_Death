@@ -37,6 +37,7 @@ public class Enemy_Book_AI : Walker, IHittable
     bool AttackAnimationIsOver = true;
     int facingRight;
     float dieCooltime;
+    float EffectCooltime;
 
     float BookFindCooltime;
     float BookFindElapsedtime;
@@ -127,13 +128,12 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MoveStop();
         BookFindElapsedtime += Time.deltaTime;
+        EffectCooltime += Time.deltaTime;
 
         if (isFind == true)
         {
             Debug.Log("³î¶÷");
     
-            FindEffect.SetActive(false);
-            AttackEffect.SetActive(false);
             BookAnimatorPlayer.Play(findClip, idleClip);
             SurprisedEffect.SetActive(true);
             isFind = false;
@@ -145,7 +145,14 @@ public class Enemy_Book_AI : Walker, IHittable
             BookAnimatorPlayer.Play(attackClip, idleClip);
             AttackEffect.SetActive(true);
             FindEffect.SetActive(true);
-            
+
+            if(EffectCooltime > 3.0f)
+            {
+                FindEffect.SetActive(false);
+                AttackEffect.SetActive(false);
+            }
+
+            EffectCooltime = 0;
             BookFindElapsedtime = 0;
         }
 
