@@ -137,7 +137,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 300125243}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyMuzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,7 +258,7 @@ GameObject:
   - component: {fileID: 674671126}
   - component: {fileID: 674671125}
   - component: {fileID: 674671132}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy_Book
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -524,7 +524,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.27224994, g: 0.33513805, b: 0.4339623, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -682,7 +682,7 @@ GameObject:
   - component: {fileID: 1336136672}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Ladder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -808,7 +808,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1398212548}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -913,6 +913,10 @@ PrefabInstance:
       value: Surprised
       objectReference: {fileID: 0}
     - target: {fileID: 3131965018638429683, guid: dd58d33f8983ddb40b0da0115aedcac6, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3131965018638429683, guid: dd58d33f8983ddb40b0da0115aedcac6, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -984,6 +988,10 @@ PrefabInstance:
     - target: {fileID: 3638420132638984033, guid: 870bc71356d81224293f4388f6ddde63, type: 3}
       propertyPath: m_Name
       value: Find
+      objectReference: {fileID: 0}
+    - target: {fileID: 3638420132638984033, guid: 870bc71356d81224293f4388f6ddde63, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3638420132638984033, guid: 870bc71356d81224293f4388f6ddde63, type: 3}
       propertyPath: m_IsActive
@@ -1062,6 +1070,10 @@ PrefabInstance:
       value: Attack_Effect
       objectReference: {fileID: 0}
     - target: {fileID: 6608226576935443808, guid: 61edbfbce4959bc4cbb5ca356b338db5, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6608226576935443808, guid: 61edbfbce4959bc4cbb5ca356b338db5, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1081,6 +1093,10 @@ PrefabInstance:
     - target: {fileID: 636485134912671540, guid: 53efdf7ec51ed9e46a3aa10c2c5fe187, type: 3}
       propertyPath: m_Name
       value: Stun
+      objectReference: {fileID: 0}
+    - target: {fileID: 636485134912671540, guid: 53efdf7ec51ed9e46a3aa10c2c5fe187, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 636485134912671540, guid: 53efdf7ec51ed9e46a3aa10c2c5fe187, type: 3}
       propertyPath: m_IsActive

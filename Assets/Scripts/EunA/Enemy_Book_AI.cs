@@ -37,6 +37,7 @@ public class Enemy_Book_AI : Walker, IHittable
     bool AttackAnimationIsOver = true;
     int facingRight;
     float dieCooltime;
+    float EffectCooltime;
 
     float BookFindCooltime;
     float BookFindElapsedtime;
@@ -72,12 +73,12 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MaxEnemyHealth = 20;
         NowEnemyHealth = 20;
-        BookSightRange = 5;
+        BookSightRange = 10;
         moveCooltime = 3.0f;
         moveElapsedtime = 0;
         BookFindCooltime = 4.0f;
         BookFindElapsedtime = 4.0f;
-        moveDistance = 8.0f;
+        moveDistance = 10.0f;
         EnemyBookAnimator = GetComponent<Animator>();
         enemyCollider = GetComponent<Collider2D>();       
         leftEnemyLocation = new Vector2(transform.position.x, transform.position.y);
@@ -127,13 +128,12 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MoveStop();
         BookFindElapsedtime += Time.deltaTime;
+        EffectCooltime += Time.deltaTime;
 
         if (isFind == true)
         {
             Debug.Log("³î¶÷");
     
-            FindEffect.SetActive(false);
-            AttackEffect.SetActive(false);
             BookAnimatorPlayer.Play(findClip, idleClip);
             SurprisedEffect.SetActive(true);
             isFind = false;
@@ -145,9 +145,18 @@ public class Enemy_Book_AI : Walker, IHittable
             BookAnimatorPlayer.Play(attackClip, idleClip);
             AttackEffect.SetActive(true);
             FindEffect.SetActive(true);
+
+            EffectCooltime = 0;
+            BookFindElapsedtime = 0;           
             
-            BookFindElapsedtime = 0;
         }
+
+        if (BookFindElapsedtime >= 2 && BookFindElapsedtime < 3.0f)
+        {
+            FindEffect.SetActive(false);
+            AttackEffect.SetActive(false);
+        }
+        
 
         else if (BookAnimatorPlayer.isEndofFrame)
         {

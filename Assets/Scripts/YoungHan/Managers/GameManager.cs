@@ -136,7 +136,6 @@ public sealed class GameManager : Manager<GameManager>
     public static void Report(IHittable hittable, int result)
     {
         //데미지가 이 대상에게 얼마나 들어왔는지 보고하고 ui로 값을 전송
-
         if (hittable.isAlive == false)
         {
             //사망하면 추가 보고
@@ -165,7 +164,7 @@ public sealed class GameManager : Manager<GameManager>
 #endif
             foreach (IHittable hittable in instance._hittableList)
             {
-                if (area.CanStrike(hittable) == true)
+                if (area.CanStrike(hittable) == true && hittable.transform.gameObject.activeInHierarchy == true)
                 {
                     instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
                     hittable.Hit(strike);

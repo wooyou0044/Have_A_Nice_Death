@@ -10,11 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3356491018782216083}
   - component: {fileID: 3665569055379915338}
-  - component: {fileID: 7891408197972110252}
   - component: {fileID: 8758651708557374439}
   - component: {fileID: 7599239476316480796}
   - component: {fileID: 8030082091612108102}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Paperplane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -88,27 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &7891408197972110252
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1206412442746695548}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: eeed7637158af3242901a8ecc312e664, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!50 &8758651708557374439
 Rigidbody2D:
   serializedVersion: 4
@@ -165,7 +143,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -225,16 +203,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _adhesion: 0
   _dealyTime: 0
-  _flyingTime: 1
-  _flyingSpeed: 1
+  _flyingTime: 5
+  _flyingSpeed: 10
   _tags:
   - Player
   _strike:
-    power: 0
+    power: -5
     extension: 0
   _offset: {x: 0, y: 0}
   _shape: {fileID: 0}
-  _hitObject: {fileID: 0}
+  _hitObject: {fileID: 6828598917612356073, guid: 439974881638366459313151d71ac69e, type: 3}
   _explosionObject: {fileID: 4514428825277192914, guid: 04d1ac75b811d8d479e78bdee5c13d09, type: 3}
   _gizmoDuration: 1
   _gizmoColor: {r: 1, g: 0, b: 0, a: 1}
