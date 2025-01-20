@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -43,12 +44,13 @@ public sealed class GameManager : Manager<GameManager>
 
     private List<IHittable> _hittableList = new List<IHittable>();
 
-    private List<Ladder> ladderList = new List<Ladder>();
+    private List<Ladder> _ladderList = new List<Ladder>();
+    private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(EscapeLadder, Report, ShowEffect, Use, TryLadder, GetProjectile);
+        getController._player?.Initialize(EscapeLadder, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -58,14 +60,18 @@ public sealed class GameManager : Manager<GameManager>
             }
             else if (monoBehaviour is Ladder ladder)
             {
-                ladderList.Add(ladder);
+                _ladderList.Add(ladder);
+            }
+            else if(monoBehaviour is ThinGround thinGround)
+            {
+                _thinGroundList.Add(thinGround);
             }
         }
     }
 
     private void EscapeLadder()
     {
-        foreach (Ladder ladder in ladderList)
+        foreach (Ladder ladder in _ladderList)
         {
             if (ladder.MoveStop() == true)
             {
@@ -74,11 +80,23 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
+    private bool TryFalling()
+    {
+        foreach (ThinGround thinGround in _thinGroundList)
+        {
+            if (thinGround.MoveDownThinGround() == true)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private bool TryLadder(bool rising)
     {
         if (rising == true)
         {
-            foreach (Ladder ladder in ladderList)
+            foreach (Ladder ladder in _ladderList)
             {
                 if (ladder.MoveUp() == true)
                 {
@@ -88,7 +106,7 @@ public sealed class GameManager : Manager<GameManager>
         }
         else
         {
-            foreach (Ladder ladder in ladderList)
+            foreach (Ladder ladder in _ladderList)
             {
                 if (ladder.MoveDown() == true)
                 {

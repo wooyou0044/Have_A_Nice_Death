@@ -148,6 +148,7 @@ public sealed class Player : Runner, IHittable
     private Action<IHittable, int> _reportAction = null;
     private Action<Strike, Strike.Area, GameObject> _useAction = null;
     private Action<GameObject, Vector2, Transform> _effectAction = null;
+    private Func<bool> _fallFunction = null;
     private Func<bool, bool> _ladderFunction = null;
     private Func<Projectile, Projectile> _projectileFunction = null;
 
@@ -223,6 +224,12 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    protected override void OnCollisionStay2D(Collision2D collision)
+    {
+        base.OnCollisionStay2D(collision);
+
+    }
+
     protected override void OnCollisionExit2D(Collision2D collision)
     {
         base.OnCollisionExit2D(collision);
@@ -232,9 +239,11 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    protected override void OnTriggerExit2D(Collider2D collider)
     {
-        if(_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true)
+        bool isGrounded = this.isGrounded;
+        base.OnTriggerExit2D(collider);
+        if((isGrounded != this.isGrounded || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true)) && _stopping == false)
         {
             _animatorPlayer.Play(_jumpFallingClip);
         }
@@ -287,13 +296,20 @@ public sealed class Player : Runner, IHittable
     {
         if (isAlive == true && _stopping == false)
         {
-            float velocity = getRigidbody2D.velocity.y;
-            base.Jump();
-            if(velocity != getRigidbody2D.velocity.y || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true))
+            if (_direction == Direction.Backward && _fallFunction != null && _fallFunction.Invoke() == true)
             {
-                getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
-                _escapeAction?.Invoke();
-                _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip , false);
+                _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip, false);
+            }
+            else
+            {
+                float velocity = getRigidbody2D.velocity.y;
+                base.Jump();
+                if (velocity != getRigidbody2D.velocity.y || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true))
+                {
+                    getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+                    _escapeAction?.Invoke();
+                    _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip, false);
+                }
             }
         }
     }
@@ -306,13 +322,14 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action escape, Action<IHittable, int> report, Action<GameObject, Vector2, Transform> effect, Action<Strike, Strike.Area, GameObject> use, Func<bool, bool> bounding, Func<Projectile, Projectile> projectile)
+    public void Initialize(Action escape, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
     {
         _escapeAction = escape;
         _reportAction = report;
         _effectAction = effect;
         _useAction = use;
-        _ladderFunction = bounding;
+        _fallFunction = fall;
+        _ladderFunction = ladder;
         _projectileFunction = projectile;
     }
 

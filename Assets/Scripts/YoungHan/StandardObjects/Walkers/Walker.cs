@@ -197,6 +197,17 @@ public class Walker : MonoBehaviour, IMovable
         }
     }
 
+    protected virtual void OnTriggerExit2D(Collider2D collider)
+    {
+        if(_groundCollision2D != null && _groundCollision2D.collider == collider)
+        {
+#if UNITY_EDITOR
+            _isGrounded = false;
+#endif
+            _groundCollision2D = null;
+        }
+    }
+
     /// <summary>
     /// 오른쪽으로 이동 시키는 메서드
     /// </summary>
