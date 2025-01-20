@@ -182,7 +182,7 @@ public class Projectile : MonoBehaviour
             }
             if (target != null)
             {
-                Shot(user.position, Quaternion.LookRotation((target.GetCollider2D().bounds.center - user.position).normalized), action1, action2);
+                Shot(user.position, Quaternion.LookRotation((user.position - target.GetCollider2D().bounds.center).normalized), action1, action2);
             }
             else
             {
