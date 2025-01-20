@@ -73,7 +73,7 @@ public class Enemy_Book_AI : Walker, IHittable
     {
         MaxEnemyHealth = 20;
         NowEnemyHealth = 20;
-        BookSightRange = 10;
+        BookSightRange = 8;
         moveCooltime = 3.0f;
         moveElapsedtime = 0;
         BookFindCooltime = 4.0f;
