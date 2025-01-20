@@ -33,6 +33,12 @@ public class GargoyleBrain : MonoBehaviour
         Fall,       //³«ÇÏ
     }
 
+    private void OnEnable()
+    {
+        Player player = FindObjectOfType<Player>();
+        Trace(player);
+    }
+
     private void OnDisable()
     {
         StopAllCoroutines();
@@ -47,23 +53,23 @@ public class GargoyleBrain : MonoBehaviour
             {
                 yield return new WaitForSeconds(_preparationTime);
                 Skill skill = Skill.Scratching;
-                float probability = Random.Range(0, 100);
-                if (probability < 50)
-                {
-                    skill = Skill.Dash;
-                }
-                else if(probability < 30)
-                {
-                    skill = Skill.Stone;
-                }
-                else if (probability < 10)
-                {
-                    skill = Skill.Fall;
-                }
+                //float probability = Random.Range(0, 100);
+                //if (probability < 50)
+                //{
+                //    skill = Skill.Dash;
+                //}
+                //else if(probability < 30)
+                //{
+                //    skill = Skill.Stone;
+                //}
+                //else if (probability < 10)
+                //{
+                //    skill = Skill.Fall;
+                //}
                 switch(skill)
                 {
                     case Skill.Scratching:
-
+                        getBossMovement.MoveToAttack(hittable);
                         break;
                     case Skill.Dash:
                         break;
@@ -72,7 +78,7 @@ public class GargoyleBrain : MonoBehaviour
                     case Skill.Fall:
                         break;
                 }
-                yield return null;
+                yield return new WaitForSeconds(5f);
             }
         }
     }

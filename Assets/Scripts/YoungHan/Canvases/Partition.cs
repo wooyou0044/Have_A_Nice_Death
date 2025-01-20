@@ -98,6 +98,11 @@ public class Partition : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        Resize();
+    }
+
     private void Resize()
     {
         if (screenSize.x != 0 && screenSize.y != 0)
