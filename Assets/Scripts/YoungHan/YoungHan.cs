@@ -1,47 +1,37 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(Collider2D))]
-public class YoungHan :MonoBehaviour, IHittable
+public class YoungHan :MonoBehaviour
 {
-    private bool _hasCollider2D = false;
+    private bool _hasRigidbody2D = false;
 
-    private Collider2D _collider2D = null;
+    private Rigidbody2D _rigidbody2D = null;
 
-    private Collider2D getCollider2D {
+    private Rigidbody2D getRigidbody2D
+    {
         get
         {
-            if (_hasCollider2D == false)
+            if (_hasRigidbody2D == false)
             {
-                _hasCollider2D = true;
-                _collider2D = GetComponent<Collider2D>();
+                _hasRigidbody2D = true;
+                _rigidbody2D = GetComponent<Rigidbody2D>();
+                _rigidbody2D.freezeRotation = true;
             }
-            return _collider2D;
+            return _rigidbody2D;
         }
     }
 
     [SerializeField]
-    private int hitCount = 0;
+    private Vector2 point;
 
-
-    public bool isAlive {
-        get
-        {
-            return true;
-        }
+    private void OnDrawGizmos()
+    {
+        Debug.DrawRay(point, (Vector2)transform.position - point);
     }
 
-    public Collider2D GetCollider2D()
+    private void Start()
     {
-        return getCollider2D;
-    }
-
-    public void Hit(Strike strike)
-    {
-        int result = strike.result;
-        if(result < 0)
-        {
-            hitCount++;
-        }
+        Vector2 direction = (Vector2)transform.position - point;
+        getRigidbody2D.velocity -= direction;
     }
 }

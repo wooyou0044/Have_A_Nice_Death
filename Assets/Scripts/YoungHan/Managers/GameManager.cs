@@ -47,6 +47,9 @@ public sealed class GameManager : Manager<GameManager>
     private List<Ladder> _ladderList = new List<Ladder>();
     private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
+    public static byte soulary = 0;
+    public static byte prismium = 0;
+
     protected override void Initialize()
     {
         _destroyOnLoad = true;
@@ -171,17 +174,6 @@ public sealed class GameManager : Manager<GameManager>
                 }
             }
         }
-        //else
-        //{
-        //    foreach (IHittable hittable in instance._hittableList)
-        //    {
-        //        if (hittable != null)
-        //        {
-        //            instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
-        //            hittable.Hit(strike);
-        //        }
-        //    }
-        //}
     }
 
     /// <summary>
