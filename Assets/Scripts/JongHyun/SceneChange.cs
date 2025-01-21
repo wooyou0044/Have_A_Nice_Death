@@ -6,10 +6,21 @@ using UnityEngine.UI;
 
 public class SceneChange : MonoBehaviour
 {
-    public Animator animator;
-    public void MainSceneChanger(string animationName)
-    {        
-        animator.SetTrigger("FadeIn");
-        SceneManager.LoadScene("JonghyunTest");
+    [SerializeField]
+    GameObject CanvasPanel;
+    [SerializeField]
+    Image Image;
+    [SerializeField]
+    Animator ani;
+    public void MainSceneChanger()
+    {
+        CanvasPanel.SetActive(true);        
+    }
+    private void FixedUpdate()
+    {
+        if (Image.color.g == 0)
+        {
+            SceneManager.LoadScene("JonghyunTest");
+        }
     }
 }

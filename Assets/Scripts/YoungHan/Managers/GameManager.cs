@@ -53,7 +53,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(EscapeLadder, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
+        getController._player?.Initialize(Engage, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -72,14 +72,21 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private void EscapeLadder()
+    private void Engage(bool escape)
     {
-        foreach (Ladder ladder in _ladderList)
+        if (escape == true)
         {
-            if (ladder.MoveStop() == true)
+            foreach (Ladder ladder in _ladderList)
             {
-                break;
+                if (ladder.MoveStop() == true)
+                {
+                    break;
+                }
             }
+        }
+        else
+        {
+            //아이템 줍기 또는 대화
         }
     }
 
@@ -144,7 +151,15 @@ public sealed class GameManager : Manager<GameManager>
             //사망하면 추가 보고
             if (instance._controller._player == (Object)hittable)
             {
-
+                //게임 오버
+            }
+            else if (hittable is ILootable lootable)
+            {
+                MonoBehaviour monoBehaviour = lootable.GetLootObject();
+                if (monoBehaviour != null)
+                {
+                    instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
+                }
             }
         }
     }
