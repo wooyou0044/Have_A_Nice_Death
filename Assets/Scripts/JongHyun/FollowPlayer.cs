@@ -11,10 +11,11 @@ public class FollowPlayer : MonoBehaviour
     [SerializeField]
     float maxXPos;
     Player player;
-
+    ScreenShaking shaking;
 
     void Start()
-    {        
+    {
+        shaking = Camera.main.GetComponent<ScreenShaking>();
         if (cameraTransform == null)
         {
             cameraTransform = Camera.main.transform;
@@ -44,7 +45,7 @@ public class FollowPlayer : MonoBehaviour
                 cameraTransform.position.x + stepX,
                 cameraTransform.position.y + stepY,
                 cameraTransform.position.z + stepZ );
-
+            
             MaximumDistanceCamera();        
         }
     }
@@ -53,6 +54,7 @@ public class FollowPlayer : MonoBehaviour
         if(cameraTransform.position.x < maxXPos)
         {
             cameraTransform.position = new Vector3(maxXPos, cameraTransform.position.y, cameraTransform.position.z);
+            shaking.Shake();
         }
         //반대쪽 x대입
         else if (cameraTransform.position.x > 316f)

@@ -245,12 +245,16 @@ MonoBehaviour:
   _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
+  _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
   idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
   uTurnClip: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
   hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
   stunStartClip: {fileID: 7400000, guid: 762d080de6cf46744acf8075f376b9e1, type: 2}
   stunIdleClip: {fileID: 7400000, guid: 7a08d63b7e1bb164d89420773b92f0b7, type: 2}
   stunEndClip: {fileID: 7400000, guid: 5e479aad6a388b648848ea855ca816a5, type: 2}
+  dashStartClip: {fileID: 7400000, guid: 634e94faa6cee0242aab3334d48ec032, type: 2}
+  dashLoopClip: {fileID: 7400000, guid: 5112ba5ea6b47d44fb3c65fbf8a273ac, type: 2}
+  dashEndClip: {fileID: 7400000, guid: c09e7f78e55522d4096ef6287c4ff1d4, type: 2}
   deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
   HP: 1300
   attackCoolTime: 10

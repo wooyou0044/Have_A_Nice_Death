@@ -34,6 +34,8 @@ public sealed class Player : Runner, IHittable
     [SerializeField]
     private AnimationClip _idleUturnClip = null;
     [SerializeField]
+    private AnimationClip _waitingClip = null;
+    [SerializeField]
     private AnimationClip _runClip = null;
     [SerializeField]
     private AnimationClip _runToIdleClip = null;
@@ -169,7 +171,7 @@ public sealed class Player : Runner, IHittable
             AnimationClip animationClip = _animatorPlayer.GetCurrentClips();
             if (straight == false)
             {
-                if (animationClip == _idleClip)
+                if (animationClip == _idleClip || animationClip == _waitingClip)
                 {
                     _animatorPlayer.Play(_idleUturnClip, _idleClip, true);
                 }
@@ -178,7 +180,7 @@ public sealed class Player : Runner, IHittable
                     _animatorPlayer.Play(_runUturnClip, _runClip, true);
                 }
             }
-            else if (animationClip == _idleClip)
+            else if (animationClip == _idleClip || animationClip == _waitingClip)
             {
                 _animatorPlayer.Play(_idleToRunClip, _runClip, false);
             }
@@ -453,21 +455,14 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Heal(bool anima = false)
+    public void Heal(byte value = 0)
     {
-        if (anima == false)
-        {
-            this.anima++;
-        }
-        else //큰 아니마
-        {
 
-        }
     }
 
     public void Hit(Strike strike)
     {
-        if (isAlive == true)
+        if (isAlive == true && _animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip)
         {
             int result = strike.result;
             //피 채우는 용도라면
