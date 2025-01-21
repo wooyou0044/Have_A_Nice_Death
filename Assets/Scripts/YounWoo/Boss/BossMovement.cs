@@ -86,6 +86,7 @@ public partial class BossMovement : Runner, IHittable
     private void Start()
     {
         stun = Instantiate(stunPrefab, stunPos);
+        stun.transform.localScale = new Vector2(0.7f, 0.7f);
         stun.SetActive(false);
         midPoint = (startPoint + endPoint) / 2;
         fullHp = HP;
@@ -96,48 +97,6 @@ public partial class BossMovement : Runner, IHittable
 
     void Update()
     {
-        //// 임시
-        //if (isGrounded)
-        //{
-        //    isArrive = true;
-
-        //    //MovePosition(targetPos.x);
-        //    // 임시로
-        //    if (isEndPoint == false)
-        //    {
-        //        //MoveOppositeEndPoint();
-        //        targetPos = player.transform.position;
-        //        FollowPlayer(targetPos.x);
-        //    }
-        //}
-
-        //if (isBox == true)
-        //{
-        //    myRigid.velocity = new Vector2(0, 0);
-        //    isBox = false;
-        //}
-
-        //// 임시
-        //if (Input.GetKeyDown(KeyCode.Tab))
-        //{
-        //    if (target == null)
-        //    {
-        //        Debug.Log("target null");
-        //        Collider2D col = player.GetComponent<Collider2D>();
-        //        target = col.GetComponent<IHittable>();
-        //    }
-        //    else if (isArrive == false)
-        //    {
-        //        Debug.Log("target");
-        //        //MoveToAttack(target);
-        //        DropDiagonalMove();
-        //        //FlyMove();
-        //    }
-        //    else
-        //    {
-
-        //    }
-        //}
     }
 
     public Collider2D GetCollider2D()
@@ -153,33 +112,34 @@ public partial class BossMovement : Runner, IHittable
             // HP 감소
             HP += strike.result;
 
-            //if (isStun == true)
-            //{
-            //    Debug.Log("스턴");
-            //    // 스턴을 일정 시간동안 계속 재생
-            //    myPlayer.Play(stunIdleClip);
-            //    stun.SetActive(true);
-            //    StartCoroutine(DoStun());
-            //    IEnumerator DoStun()
-            //    {
-            //        yield return new WaitForSeconds(3f);
-            //        myPlayer.Play(stunIdleClip, stunEndClip, false);
-            //        stun.SetActive(false);
-            //        //isStun = false;
-            //        //fullHp = 0;
-            //    }
-            //    isStun = false;
-            //    fullHp = 0;
-            //}
+            if (isStun == true)
+            {
+                Debug.Log("스턴");
+                // 스턴을 일정 시간동안 계속 재생
+                myPlayer.Play(stunIdleClip);
+                stun.SetActive(true);
+                fullHp = 0;
+                StartCoroutine(DoStun());
+                IEnumerator DoStun()
+                {
+                    yield return new WaitForSeconds(1.5f);
+                    myPlayer.Play(stunEndClip, idleClip, false);
+                    stun.SetActive(false);
+                    isStun = false;
+                }
+                //isStun = false;
+                //fullHp = 0;
+            }
 
             // 스턴
-            //if (HP <= fullHp / 2)
-            //{
-            //    isStun = true;
-            //    myPlayer.Play(stunStartClip, stunIdleClip, false);
-            //}
+            if (HP <= fullHp / 2)
+            {
+                Debug.Log("fullHP : " + fullHp);
+                isStun = true;
+                myPlayer.Play(stunStartClip, stunIdleClip, false);
+            }
 
-            if(isStun == false)
+            if (isStun == false)
             {
                 myPlayer.Play(hitClip, idleClip, false);
             }
