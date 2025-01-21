@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,13 +8,18 @@ public class NPCInteraction : MonoBehaviour
 {
     [SerializeField] bool hadInteracted = false; //대화 한번만 하도록 설정하기 위한 값
     [SerializeField] GameObject conversationCanvas; //대화할 때 켜줄 Canvas 게임 오브젝트
-    [SerializeField] GameObject showInteratable; //상호작용 가능할 때 표시해주는 버튼 모양 키
+    [SerializeField] GameObject showInteratable; //상호작용 가능시 표시되는 이미지
+    [SerializeField] GameObject interactionableButton; //다가가면 표시해주는 키
+    [SerializeField] TextMeshPro buttonText;
+    [SerializeField] string key = "F";
     [SerializeField]private Text npcName;
     [SerializeField]private Text conversation;
     private string[] conversationLines;
     private NPCInteraction script;
     byte conversationTimes;
 
+    //프로퍼티로 설정 가능
+    
     public bool Interacted
     {
         get { return hadInteracted; }
@@ -24,11 +30,14 @@ public class NPCInteraction : MonoBehaviour
      
         conversationCanvas = GameObject.Find("InteractCanvus");//이름으로 찾아주기
         showInteratable = GameObject.Find("showInteratable");
+        interactionableButton = GameObject.Find("InteractButtonImage");
+        buttonText = interactionableButton.GetComponentInChildren<TextMeshPro>();
         npcName = GameObject.Find("Name").GetComponent<Text>();
         conversation = GameObject.Find("Contents").GetComponent<Text>();
         script = GetComponent<NPCInteraction>();
         conversationCanvas.SetActive(false);
-        showInteratable.SetActive(false);
+        interactionableButton.SetActive(false);
+        showInteratable.SetActive(true);
         conversationTimes = 0;
         #region 대화 내용
         conversationLines = new string[6];
@@ -56,6 +65,11 @@ public class NPCInteraction : MonoBehaviour
     //    }
     //}
 
+    public void SetButtonText(string text)
+    {
+        text = key;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") == true)
@@ -63,7 +77,11 @@ public class NPCInteraction : MonoBehaviour
             if(hadInteracted == false)
             {
                 //버튼을 띄우고 대화를 합시다
-                showInteratable.SetActive(true);
+                if(buttonText.text != key)
+                {
+                    buttonText.text = "F";
+                }
+                interactionableButton.SetActive(true);
             }
         }
     }
@@ -72,10 +90,15 @@ public class NPCInteraction : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
-            if(hadInteracted == false)
+            if(hadInteracted == true)
             {
                 //대화한 적 있으면 다시 대화 못하게 ㅇㅇ
+                interactionableButton.SetActive(false);
                 showInteratable.SetActive(false);
+            }
+            if(interactionableButton == true)
+            {
+                interactionableButton.SetActive(false);
             }
             
         }
@@ -115,7 +138,7 @@ public class NPCInteraction : MonoBehaviour
     {
         conversationCanvas.SetActive(!hadInteracted);
         Time.timeScale = 1.0f;
-        StopAllCoroutines();//문제 생기면 currentCoroutine 변수 생성 및 초기화 ㄱㄱ
+        //StopAllCoroutines();//문제 생기면 currentCoroutine 변수 생성 및 초기화 ㄱㄱ
     }
 
     IEnumerator Conversation()
