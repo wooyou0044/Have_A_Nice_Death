@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerOut : MonoBehaviour
 {
     [SerializeField]
+    Animator elevatorIn;
+    [SerializeField]
     Player player;
     public bool _playerOut;
     private void Start()
@@ -12,11 +14,15 @@ public class PlayerOut : MonoBehaviour
         if (player == null)
         {
             player = GetComponent<Player>();
-        }        
+        } 
     }
     void Update()
     {
         if (_playerOut == false)
+        {
+            player.gameObject.SetActive(false);
+        }
+        else if (elevatorIn.speed == 1f)
         {
             player.gameObject.SetActive(false);
         }

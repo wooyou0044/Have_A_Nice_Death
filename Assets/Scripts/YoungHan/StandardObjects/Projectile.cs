@@ -174,6 +174,20 @@ public class Projectile : MonoBehaviour
     /// <param name="action2"></param>
     public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
     {
+        Shot(user, target, action1, action2, _flyingTime);
+    }
+
+    /// <summary>
+    /// 발사체를 쏘는 함수
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="target"></param>
+    /// <param name="action1"></param>
+    /// <param name="action2"></param>
+    /// <param name="flyingTime"></param>
+    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, float flyingTime)
+    {
+        _flyingTime = flyingTime;
         if (user != null)
         {
             if (_adhesion == true)

@@ -151,7 +151,7 @@ public class Controller : MonoBehaviour
             //체력 회복
             if (GetKey(_healKeyCodes) == true)
             {
-                _player.Heal(true);
+                _player.Heal();
             }
         }
         _upInput.isPressed = false;

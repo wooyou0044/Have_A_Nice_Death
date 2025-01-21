@@ -2,22 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossMovement : Runner, IHittable
+public partial class BossMovement : Runner, IHittable
 {
     [Header("애니메이션 클립")]
     [SerializeField] AnimationClip idleClip;
+    [SerializeField] AnimationClip uTurnClip;
     [SerializeField] AnimationClip hitClip;
-    [SerializeField] AnimationClip stunClip;
+    [SerializeField] AnimationClip stunStartClip;
+    [SerializeField] AnimationClip stunIdleClip;
+    [SerializeField] AnimationClip stunEndClip;
+    [SerializeField] AnimationClip dashStartClip;
+    [SerializeField] AnimationClip dashLoopClip;
+    [SerializeField] AnimationClip dashEndClip;
     [SerializeField] AnimationClip deathClip;
 
     [Header("정보")]
     [SerializeField] float HP = 1300;
     [SerializeField] float attackCoolTime;
-    [SerializeField] float moveSpeed;
+    [SerializeField] float dropSpeed;
+    [SerializeField] float flySpeed;
+    [SerializeField] float maxHeight;
+    [SerializeField] GameObject stunPrefab;
+    [SerializeField] Transform stunPos;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
     AnimatorPlayer myPlayer;
+    GargoyleBrain bossAI;
+
+    GameObject stun;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 startPoint;
@@ -25,15 +38,29 @@ public class BossMovement : Runner, IHittable
     Vector2 midPoint;
     Vector2 targetPos;
     Vector2 pointPos;
+    Vector2 destination;
 
     float attackElapsedTime;
     float fullHp;
+    float oppositePointX;
 
     bool isStun;
     bool isArrive;
 
     // 임시
     GameObject player;
+    bool isEndPoint;
+    bool isBox;
+
+    public float StartPointX
+    {
+        get { return startPoint.x; }
+    }
+
+    public float EndPointX
+    {
+        get { return endPoint.x; }
+    }
 
     public bool isAlive
     {
@@ -50,8 +77,7 @@ public class BossMovement : Runner, IHittable
         myRigid = GetComponent<Rigidbody2D>();
         startPoint = GameObject.Find("StartPoint").transform.position;
         endPoint = GameObject.Find("EndPoint").transform.position;
-
-        midPoint = (startPoint + endPoint) / 2;
+        bossAI = GetComponent<GargoyleBrain>();
 
         // 임시
         player = GameObject.FindGameObjectWithTag("Player");
@@ -59,6 +85,9 @@ public class BossMovement : Runner, IHittable
 
     private void Start()
     {
+        stun = Instantiate(stunPrefab, stunPos);
+        stun.SetActive(false);
+        midPoint = (startPoint + endPoint) / 2;
         fullHp = HP;
         isStun = false;
     }
@@ -67,21 +96,48 @@ public class BossMovement : Runner, IHittable
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            // 임시
-            if (target == null)
-            {
-                Debug.Log("target null");
-                Collider2D col = player.GetComponent<Collider2D>();
-                target = col.GetComponent<IHittable>();
-            }
-            else if (isArrive == false)
-            {
-                Debug.Log("target");
-                MoveToAttack(target);
-            }
-        }
+        //// 임시
+        //if (isGrounded)
+        //{
+        //    isArrive = true;
+
+        //    //MovePosition(targetPos.x);
+        //    // 임시로
+        //    if (isEndPoint == false)
+        //    {
+        //        //MoveOppositeEndPoint();
+        //        targetPos = player.transform.position;
+        //        FollowPlayer(targetPos.x);
+        //    }
+        //}
+
+        //if (isBox == true)
+        //{
+        //    myRigid.velocity = new Vector2(0, 0);
+        //    isBox = false;
+        //}
+
+        //// 임시
+        //if (Input.GetKeyDown(KeyCode.Tab))
+        //{
+        //    if (target == null)
+        //    {
+        //        Debug.Log("target null");
+        //        Collider2D col = player.GetComponent<Collider2D>();
+        //        target = col.GetComponent<IHittable>();
+        //    }
+        //    else if (isArrive == false)
+        //    {
+        //        Debug.Log("target");
+        //        //MoveToAttack(target);
+        //        DropDiagonalMove();
+        //        //FlyMove();
+        //    }
+        //    else
+        //    {
+
+        //    }
+        //}
     }
 
     public Collider2D GetCollider2D()
@@ -97,26 +153,31 @@ public class BossMovement : Runner, IHittable
             // HP 감소
             HP += strike.result;
 
-            //if(isStun == true)
+            //if (isStun == true)
             //{
+            //    Debug.Log("스턴");
             //    // 스턴을 일정 시간동안 계속 재생
-            //    myPlayer.Play(stunClip);
+            //    myPlayer.Play(stunIdleClip);
+            //    stun.SetActive(true);
             //    StartCoroutine(DoStun());
             //    IEnumerator DoStun()
             //    {
-            //        yield return new WaitForSeconds(5f);
-            //        isStun = false;
-            //        fullHp = 0;
+            //        yield return new WaitForSeconds(3f);
+            //        myPlayer.Play(stunIdleClip, stunEndClip, false);
+            //        stun.SetActive(false);
+            //        //isStun = false;
+            //        //fullHp = 0;
             //    }
-            //    //isStun = false;
-            //    //fullHp = 0;
+            //    isStun = false;
+            //    fullHp = 0;
             //}
 
             // 스턴
-            if(HP <= fullHp / 2)
-            {
-                isStun = true;
-            }
+            //if (HP <= fullHp / 2)
+            //{
+            //    isStun = true;
+            //    myPlayer.Play(stunStartClip, stunIdleClip, false);
+            //}
 
             if(isStun == false)
             {
@@ -156,69 +217,144 @@ public class BossMovement : Runner, IHittable
         }
     }
 
-    // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
-    public void MoveToAttack(IHittable hitTarget)
+    public void MovePosition(float targetPosX)
     {
-        // 임시
-        isArrive = false;
+        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        {
+            myPlayer.Play(dashLoopClip);
+        }
 
-        Vector2 destination = Vector2.zero;
-        // 때릴 상대에 대한 위치 저장
-        targetPos = hitTarget.transform.position;
-        
+        if(transform.position.x < targetPosX)
+        {
+            MoveRight();
+        }
+        else if(transform.position.x > targetPosX)
+        {
+            MoveLeft();
+        }
+    }
+
+    // 도착하면 안 움직이게 하는 함수 
+    public override void MoveStop()
+    {
+        if (myRigid.velocity.y != 0)
+        {
+            myRigid.velocity = new Vector2(0, 0);
+        }
+        else
+        {
+            base.MoveStop();
+        }
+    }
+
+    public void UTurn()
+    {
+        if(transform.position.x > midPoint.x)
+        {
+            if(transform.rotation.eulerAngles.y <= 0)
+            {
+                MoveStop();
+                if (bossAI._skill == GargoyleBrain.Skill.Dash)
+                {
+                    myPlayer.Play(dashStartClip);
+                }
+                else
+                {
+                    myPlayer.Play(uTurnClip, idleClip, true);
+                }
+                transform.rotation = Quaternion.Euler(0, -180, 0);
+            }
+        }
+        else
+        {
+            if(transform.rotation.eulerAngles.y >= 180)
+            {
+                MoveStop();
+                if (bossAI._skill == GargoyleBrain.Skill.Dash)
+                {
+                    myPlayer.Play(dashStartClip);
+                }
+                else
+                {
+                    myPlayer.Play(uTurnClip, idleClip, true);
+                }
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+    }
+
+    // 대각선으로 떨어지는 함수
+    public void DropDiagonalMove()
+    {
+        myPlayer.Play(dashLoopClip);
         // 내 위치가 중간 지점보다 크면
         if (transform.position.x > midPoint.x)
         {
             // 왼쪽 끝에 있는 곳이 목표
             pointPos = startPoint;
+            oppositePointX = endPoint.x;
             OnDrawGizmos();
-            // 밑으로 날아가면서 이동 (대각선으로 내려와서 플레이어 위치로 이동)
-            // 내 위치가 때릴 상대보다 위에 있으면
-            if (transform.position.y > targetPos.y)
-            {
-                // 애니메이션 추가
-                destination = (Vector2)transform.position - pointPos;
-                //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
-                Debug.Log("오른쪽 아래 대각선 이동");
-            }
-            else
-            {
-                //myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
-                Debug.Log("왼쪽 위 대각선 이동");
-            }
 
-            myRigid.velocity -= destination * (moveSpeed * 0.4f);
-            // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
+            // 애니메이션 추가 필요
 
-            // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
         }
         // 내 위치가 중간 지점보다 작으면
         else if (transform.position.x < midPoint.x)
         {
             // 오른쪽 끝에 있는 곳이 목표
             pointPos = endPoint;
+            oppositePointX = startPoint.x;
             OnDrawGizmos();
-            if (transform.position.y > targetPos.y)
-            {
-                destination = (Vector2)transform.position - pointPos;
-                //myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
-                Debug.Log("왼쪽 아래 대각선 이동");
-            }
-            else
-            {
-                //myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
-                Debug.Log("오른쪽 위 대각선 이동");
-            }
-            myRigid.velocity -= destination * (moveSpeed * 0.4f);
+
+            // 애니메이션 추가 필요
+
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
+
+        }
+    }
+
+    // 공중으로 날라가는 함수
+    public void FlyMove()
+    {
+        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        {
+            myPlayer.Play(dashLoopClip);
         }
 
-        if (myRigid.velocity.y == 0)
+        Vector2 flyDestination = Vector2.zero;
+        // 내 위치가 중간 지점보다 오른쪽에 있으면
+        if (transform.position.x >= midPoint.x)
         {
-            Debug.Log("들어옴");
-            //myRigid.velocity = new Vector2(0, 0);
-            //// 임시
-            //isArrive = true;
+            pointPos = new Vector2(startPoint.x, maxHeight);
+            OnDrawGizmos();
+
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity = destination * (flySpeed * 0.3f);
         }
+        else if (transform.position.x < midPoint.x)
+        {
+            pointPos = new Vector2(endPoint.x, maxHeight);
+            OnDrawGizmos();
+
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity = destination * (flySpeed * 0.3f);
+        }
+    }
+
+    // 내려 날아와서 반대쪽으로 이동하는 함수
+    public void MoveOppositeEndPoint()
+    {
+        MovePosition(oppositePointX);
+    }
+
+    // 플레이어 따라다니면서 이동하는 함수
+    public void FollowPlayer(float playerPosX)
+    {
+        UTurn();
+        MovePosition(playerPosX);
     }
 
     // 임시
@@ -227,9 +363,18 @@ public class BossMovement : Runner, IHittable
         Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
-    // 공격 -> 애니메이션, 대쉬하는 효과
-    public void PlayerDash()
+    public void ComboAttack()
     {
 
+    }
+
+    // 임시 테스트용
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "tempBox")
+        {
+            Debug.Log("부딪힘");
+            isBox = true;
+        }
     }
 }

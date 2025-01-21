@@ -24,8 +24,16 @@ public class GargoyleBrain : MonoBehaviour
 
     [SerializeField, Header("스킬 준비 시간"), Range(0, byte.MaxValue)]
     private float _preparationTime = 2f;
+    [SerializeField, Header("스킬 휴식 시간"), Range(0, byte.MaxValue)]
+    private float _rechargeTime = 3f;
+    [SerializeField, Header("스킬 시전 종류")]
+    public Skill _skill = Skill.Dash;
+    [SerializeField, Header("활동 범위 왼쪽")]
+    private float _leftBoundary;
+    [SerializeField, Header("활동 범위 오른쪽")]
+    private float _rightBoundary;
 
-    private enum Skill
+    public enum Skill
     {
         Scratching, //할퀴기
         Dash,       //돌진
@@ -33,10 +41,35 @@ public class GargoyleBrain : MonoBehaviour
         Fall,       //낙하
     }
 
+#if UNITY_EDITOR
+
+    [SerializeField, Header("영역 확인 길이")]
+    private float _rayLength = 10f;
+
+    private void OnDrawGizmos()
+    {
+        Debug.DrawRay(new Vector2(_leftBoundary, 0), Vector2.up * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_rightBoundary, 0), Vector2.up * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_leftBoundary, 0), Vector2.down * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_rightBoundary, 0), Vector2.down * _rayLength, Color.red);
+    }
+
+    private void OnValidate()
+    {
+        if (transform.position.x < _leftBoundary)
+        {
+            _leftBoundary = transform.position.x;
+        }
+        if (transform.position.x > _rightBoundary)
+        {
+            _rightBoundary = transform.position.x;
+        }
+    }
+#endif
+
     private void OnEnable()
     {
-        Player player = FindObjectOfType<Player>();
-        Trace(player);
+        Trace(FindObjectOfType<Player>());
     }
 
     private void OnDisable()
@@ -52,7 +85,6 @@ public class GargoyleBrain : MonoBehaviour
             while (getBossMovement.isAlive == true)
             {
                 yield return new WaitForSeconds(_preparationTime);
-                Skill skill = Skill.Scratching;
                 //float probability = Random.Range(0, 100);
                 //if (probability < 50)
                 //{
@@ -66,19 +98,53 @@ public class GargoyleBrain : MonoBehaviour
                 //{
                 //    skill = Skill.Fall;
                 //}
-                switch(skill)
+                switch(_skill)
                 {
-                    case Skill.Scratching:
-                        getBossMovement.MoveToAttack(hittable);
+                    case Skill.Scratching:                     
+                        //콤보1 공격 함수 필요
+                        //기술이 끝났음을 알려주는 함수 필요
+                        //콤보2 공격 함수 필요
                         break;
                     case Skill.Dash:
+                        if((hittable.transform.position.x < transform.position.x && transform.eulerAngles.y == 0) ||
+                            (transform.position.x < hittable.transform.position.x && transform.eulerAngles.y == 180))
+                        {
+                            getBossMovement.UTurn();
+                            yield return new WaitForSeconds(0.5f);
+                        }
+                        getBossMovement.FlyMove();  //공중으로 이동하는 함수 필요
+                        getBossMovement.AdjustRotation();
+                        while (_leftBoundary < transform.position.x && _rightBoundary > transform.position.x) //특정 위치에 도달할 때 까지 기다림
+                        {
+                            yield return null;
+                        }
+                        getBossMovement.UTurn();
+                        yield return new WaitForSeconds(0.5f);
+                        getBossMovement.DropDiagonalMove(); //사선 낙하
+                        getBossMovement.AdjustRotation();
+                        getBossMovement.UseDashSkill(3.059f);
+                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지 기다림
+                        {
+                            yield return null;
+                        }
+                        getBossMovement.UTurn();
+                        yield return new WaitForSeconds(0.5f);
+                        getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
+                        getBossMovement.UseDashSkill(3.82f);
+                        Collider2D collider2D = getBossMovement.GetCollider2D();
+                        while (_leftBoundary < collider2D.bounds.min.x && _rightBoundary > collider2D.bounds.max.x) //특정 위치에 도달할 때 까지 기다림
+                        {
+                            yield return null;
+                        }
+                        getBossMovement.MoveStop();
+                        getBossMovement.UTurn();
                         break;
                     case Skill.Stone:
                         break;
                     case Skill.Fall:
                         break;
                 }
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(_rechargeTime);
             }
         }
     }

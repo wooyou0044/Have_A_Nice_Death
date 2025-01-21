@@ -34,6 +34,8 @@ public sealed class Player : Runner, IHittable
     [SerializeField]
     private AnimationClip _idleUturnClip = null;
     [SerializeField]
+    private AnimationClip _waitingClip = null;
+    [SerializeField]
     private AnimationClip _runClip = null;
     [SerializeField]
     private AnimationClip _runToIdleClip = null;
@@ -49,6 +51,10 @@ public sealed class Player : Runner, IHittable
     private AnimationClip _dashClip = null;
     [SerializeField]
     private AnimationClip _zipUpClip = null;
+    [SerializeField]
+    private AnimationClip _hitClip = null;
+    [SerializeField]
+    private AnimationClip _deadClip = null;
     [SerializeField]
     private AnimatorPlayer _animatorPlayer = null;
 
@@ -150,7 +156,7 @@ public sealed class Player : Runner, IHittable
 
     private bool _stopping = false;
 
-    private Action _escapeAction = null;
+    private Action<bool> _engageAction = null;
     private Action<IHittable, int> _reportAction = null;
     private Action<Strike, Strike.Area, GameObject> _useAction = null;
     private Action<GameObject, Vector2, Transform> _effectAction = null;
@@ -165,7 +171,7 @@ public sealed class Player : Runner, IHittable
             AnimationClip animationClip = _animatorPlayer.GetCurrentClips();
             if (straight == false)
             {
-                if (animationClip == _idleClip)
+                if (animationClip == _idleClip || animationClip == _waitingClip)
                 {
                     _animatorPlayer.Play(_idleUturnClip, _idleClip, true);
                 }
@@ -174,7 +180,7 @@ public sealed class Player : Runner, IHittable
                     _animatorPlayer.Play(_runUturnClip, _runClip, true);
                 }
             }
-            else if (animationClip == _idleClip)
+            else if (animationClip == _idleClip || animationClip == _waitingClip)
             {
                 _animatorPlayer.Play(_idleToRunClip, _runClip, false);
             }
@@ -220,7 +226,7 @@ public sealed class Player : Runner, IHittable
         if (isGrounded != this.isGrounded && _stopping == false)
         {
             _animatorPlayer?.Play(_jumpLandingClip, _idleClip, false);
-            _escapeAction?.Invoke();
+            _engageAction?.Invoke(true);
             if(getRigidbody2D.constraints == (RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation))
             {
                 getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -268,7 +274,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveLeft()
     {
-        if (isAlive == true && CanMoveState() == true && _stopping == false)
+        if (isAlive == true && CanMoveState() == true && _stopping == false && Time.timeScale > 0)
         {
             base.MoveLeft();
             PlayMove(LeftRotation);
@@ -277,7 +283,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveRight()
     {
-        if (isAlive == true && CanMoveState() == true && _stopping == false)
+        if (isAlive == true && CanMoveState() == true && _stopping == false && Time.timeScale > 0)
         {
             base.MoveRight();
             PlayMove(RightRotation);
@@ -299,21 +305,28 @@ public sealed class Player : Runner, IHittable
 
     public override void Jump()
     {
-        if (isAlive == true && _stopping == false)
+        if (isAlive == true)
         {
-            if (_direction == Direction.Backward && _fallFunction != null && _fallFunction.Invoke() == true)
+            if (Time.timeScale == 0)
             {
-                _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip, false);
+                _engageAction?.Invoke(false);
             }
-            else
+            else if(_stopping == false)
             {
-                float velocity = getRigidbody2D.velocity.y;
-                base.Jump();
-                if (velocity != getRigidbody2D.velocity.y || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true))
+                if (_direction == Direction.Backward && _fallFunction != null && _fallFunction.Invoke() == true)
                 {
-                    getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
-                    _escapeAction?.Invoke();
                     _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip, false);
+                }
+                else
+                {
+                    float velocity = getRigidbody2D.velocity.y;
+                    base.Jump();
+                    if (velocity != getRigidbody2D.velocity.y || (_animatorPlayer != null && _animatorPlayer.IsPlaying(_zipUpClip) == true))
+                    {
+                        getRigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+                        _engageAction?.Invoke(true);
+                        _animatorPlayer.Play(_jumpStartClip, _jumpFallingClip, false);
+                    }
                 }
             }
         }
@@ -327,9 +340,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action escape, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
+    public void Initialize(Action<bool> engage, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
     {
-        _escapeAction = escape;
+        _engageAction = engage;
         _reportAction = report;
         _effectAction = effect;
         _useAction = use;
@@ -371,7 +384,7 @@ public sealed class Player : Runner, IHittable
 
     public void Dash(Direction direction)
     {
-        if (isAlive == true && CanDash() == true && _stopping == false)
+        if (isAlive == true && CanDash() == true && _stopping == false && Time.timeScale > 0)
         {
             switch(direction)
             {
@@ -387,7 +400,7 @@ public sealed class Player : Runner, IHittable
                     Dash(new Vector2(-1, 0));
                     break;
             }
-            _escapeAction?.Invoke();
+            _engageAction?.Invoke(true);
             if (isGrounded == true)
             {
                 _animatorPlayer?.Play(_dashClip, _idleClip, false);
@@ -401,7 +414,10 @@ public sealed class Player : Runner, IHittable
 
     public void AttackScythe(bool pressed)
     {
-        _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+        if (Time.timeScale > 0)
+        {
+            _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+        }
     }
 
     public void Attack1()
@@ -421,7 +437,7 @@ public sealed class Player : Runner, IHittable
 
     public void Interact()
     {
-
+        _engageAction?.Invoke(false);
     }
 
     public void Recover()
@@ -439,43 +455,48 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Heal(bool anima = false)
+    public void Heal(byte value = 0)
     {
 
     }
 
     public void Hit(Strike strike)
     {
-        int result = strike.result;
-        //피 채우는 용도라면
-        if (result > 0)
+        if (isAlive == true && _animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip)
         {
-            //최대 체력 보다 값이 넘을 경우는 최대 체력이 된다.
-            if (_remainLife + result > _maxLife - _lossLife)
+            int result = strike.result;
+            //피 채우는 용도라면
+            if (result > 0)
             {
-                _remainLife = (byte)(_maxLife - _lossLife);
+                //최대 체력 보다 값이 넘을 경우는 최대 체력이 된다.
+                if (_remainLife + result > _maxLife - _lossLife)
+                {
+                    _remainLife = (byte)(_maxLife - _lossLife);
+                }
+                //그렇지 않으면 값을 더해준다.
+                else
+                {
+                    _remainLife += (byte)result;
+                }
             }
-            //그렇지 않으면 값을 더해준다.
+            //피 깎는 용도라면
             else
             {
-                _remainLife += (byte)result;
+                //
+                if (-result < _remainLife)
+                {
+                    _animatorPlayer?.Play(_hitClip, _idleClip);
+                    _remainLife -= (byte)-result;
+                }
+                //사망
+                else
+                {
+                    _animatorPlayer?.Play(_deadClip);
+                    _remainLife = 0;
+                }
             }
+            _reportAction?.Invoke(this, result);
         }
-        //피 깎는 용도라면
-        else
-        {
-            //
-            if(-result < _remainLife)
-            {
-                _remainLife -= (byte)-result;
-            }
-            //사망
-            else
-            {
-                _remainLife = 0;
-            }
-        }
-        _reportAction?.Invoke(this, result);
     }
 
     public Collider2D GetCollider2D()

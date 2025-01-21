@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JongHyun/JonghyunTest.unity
     guid: 9e807c6717b4e9441997a0ac6bb2f7e5
-  - enabled: 0
+  - enabled: 1
+    path: Assets/Scenes/JongHyun/BossTestRoom.unity
+    guid: 4a527988ee8022e4a90bf7f06796d7ab
+  - enabled: 1
     path: Assets/Scenes/JongHyun/newTest.unity
     guid: 924a216ff2bce07469b29ece666d25f0
   m_configObjects: {}

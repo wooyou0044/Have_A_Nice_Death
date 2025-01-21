@@ -7,20 +7,24 @@ public class BossCamera : MonoBehaviour
     public GameObject Player;
     public float CameraZ = -10;
     public GameObject BossRoomWall;
-       
+    Vector3 bossRoom;
+
+    private void Start()
+    {
+        bossRoom = new Vector3(5.4f, 1.6f, CameraZ);
+    }
     private void FixedUpdate()
     {        
         if (transform.position.x >= -8f)
         {
-            Vector3 bossRoom = new Vector3(5.4f, 1.6f, CameraZ);
-            transform.position = Vector3.Lerp(bossRoom, transform.position,0.9f);
+            transform.position = Vector3.Lerp(bossRoom, transform.position, 0.9f);
             Camera.main.orthographicSize = 9;
             BossRoomWall.SetActive(true);
         }
         else
         {
-            MaxDistanceCamera();
             Vector3 targetPos = new Vector3(Player.transform.position.x, Player.transform.position.y + 3, CameraZ);
+            MaxDistanceCamera();            
             transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 2f);
         }       
         
