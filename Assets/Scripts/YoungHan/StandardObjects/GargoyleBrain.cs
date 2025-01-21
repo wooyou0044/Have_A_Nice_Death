@@ -24,6 +24,10 @@ public class GargoyleBrain : MonoBehaviour
 
     [SerializeField, Header("스킬 준비 시간"), Range(0, byte.MaxValue)]
     private float _preparationTime = 2f;
+    [SerializeField, Header("스킬 휴식 시간"), Range(0, byte.MaxValue)]
+    private float _rechargeTime = 3f;
+    [SerializeField, Header("스킬 시전 종류")]
+    private Skill _skill = Skill.Dash;
 
     private enum Skill
     {
@@ -52,7 +56,6 @@ public class GargoyleBrain : MonoBehaviour
             while (getBossMovement.isAlive == true)
             {
                 yield return new WaitForSeconds(_preparationTime);
-                Skill skill = Skill.Scratching;
                 //float probability = Random.Range(0, 100);
                 //if (probability < 50)
                 //{
@@ -66,19 +69,29 @@ public class GargoyleBrain : MonoBehaviour
                 //{
                 //    skill = Skill.Fall;
                 //}
-                switch(skill)
+                switch(_skill)
                 {
-                    case Skill.Scratching:
-                        getBossMovement.MoveToAttack(hittable);
+                    case Skill.Scratching:                     
+                        //콤보1 공격 함수 필요
+                        //기술이 끝났음을 알려주는 함수 필요
+                        //콤보2 공격 함수 필요
                         break;
-                    case Skill.Dash:
+                    case Skill.Dash:   
+                        //공중으로 이동하는 함수 필요
+                        //특정 위치에 도달할 때 까지 기다림
+                        getBossMovement.MoveToAttack(hittable); //대각선 공격
+                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지
+                        {
+                            yield return null;
+                        }
+                        //땅에 떨어진 후 대쉬하는 함수 필요
                         break;
                     case Skill.Stone:
                         break;
                     case Skill.Fall:
                         break;
                 }
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(_rechargeTime);
             }
         }
     }

@@ -312,16 +312,32 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2091105659}
     - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: stunClip
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: dropSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: moveSpeed
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: uTurnClip
+      value: 
+      objectReference: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
+    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: _movingSpeed
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -23.8
+      value: 62
       objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 37.3
+      value: 44.1
       objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.z

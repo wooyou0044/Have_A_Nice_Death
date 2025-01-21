@@ -131,6 +131,8 @@ MonoBehaviour:
   _jumpLandingClip: {fileID: 7400000, guid: 8da800a54f9d7734aa6938b37715528c, type: 2}
   _dashClip: {fileID: 7400000, guid: b04b9142746b2504b968519aa4ad9176, type: 2}
   _zipUpClip: {fileID: 7400000, guid: e3dad2b7c84bfb94db965db18e2d0c9b, type: 2}
+  _hitClip: {fileID: 7400000, guid: 1fe258874ff02c6418d6d9510704d2c5, type: 2}
+  _deadClip: {fileID: 7400000, guid: 85a933b68eefbbb47b5be2ad28da89f2, type: 2}
   _animatorPlayer: {fileID: 2189132955192660017}
   _direction: 0
   _remainLife: 65

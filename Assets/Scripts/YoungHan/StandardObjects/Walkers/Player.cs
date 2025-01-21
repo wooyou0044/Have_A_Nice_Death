@@ -50,6 +50,10 @@ public sealed class Player : Runner, IHittable
     [SerializeField]
     private AnimationClip _zipUpClip = null;
     [SerializeField]
+    private AnimationClip _hitClip = null;
+    [SerializeField]
+    private AnimationClip _deadClip = null;
+    [SerializeField]
     private AnimatorPlayer _animatorPlayer = null;
 
     public AnimatorPlayer animatorPlayer
@@ -446,36 +450,41 @@ public sealed class Player : Runner, IHittable
 
     public void Hit(Strike strike)
     {
-        int result = strike.result;
-        //피 채우는 용도라면
-        if (result > 0)
+        if (isAlive == true)
         {
-            //최대 체력 보다 값이 넘을 경우는 최대 체력이 된다.
-            if (_remainLife + result > _maxLife - _lossLife)
+            int result = strike.result;
+            //피 채우는 용도라면
+            if (result > 0)
             {
-                _remainLife = (byte)(_maxLife - _lossLife);
+                //최대 체력 보다 값이 넘을 경우는 최대 체력이 된다.
+                if (_remainLife + result > _maxLife - _lossLife)
+                {
+                    _remainLife = (byte)(_maxLife - _lossLife);
+                }
+                //그렇지 않으면 값을 더해준다.
+                else
+                {
+                    _remainLife += (byte)result;
+                }
             }
-            //그렇지 않으면 값을 더해준다.
+            //피 깎는 용도라면
             else
             {
-                _remainLife += (byte)result;
+                //
+                if (-result < _remainLife)
+                {
+                    _animatorPlayer?.Play(_hitClip, _idleClip);
+                    _remainLife -= (byte)-result;
+                }
+                //사망
+                else
+                {
+                    _animatorPlayer?.Play(_deadClip);
+                    _remainLife = 0;
+                }
             }
+            _reportAction?.Invoke(this, result);
         }
-        //피 깎는 용도라면
-        else
-        {
-            //
-            if(-result < _remainLife)
-            {
-                _remainLife -= (byte)-result;
-            }
-            //사망
-            else
-            {
-                _remainLife = 0;
-            }
-        }
-        _reportAction?.Invoke(this, result);
     }
 
     public Collider2D GetCollider2D()

@@ -42,7 +42,6 @@ public class ThinGround : MonoBehaviour
     {
         
         if(player == null) return false;
-        Debug.Log("내려갈래!");
         if (gonnaUp == true)
         {
             gonnaUp = false;
