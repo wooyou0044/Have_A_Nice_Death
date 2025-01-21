@@ -6,6 +6,7 @@ public class BossMovement : Runner, IHittable
 {
     [Header("애니메이션 클립")]
     [SerializeField] AnimationClip idleClip;
+    [SerializeField] AnimationClip uTurnClip;
     [SerializeField] AnimationClip hitClip;
     [SerializeField] AnimationClip stunClip;
     [SerializeField] AnimationClip deathClip;
@@ -13,7 +14,7 @@ public class BossMovement : Runner, IHittable
     [Header("정보")]
     [SerializeField] float HP = 1300;
     [SerializeField] float attackCoolTime;
-    [SerializeField] float moveSpeed;
+    [SerializeField] float dropSpeed;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
@@ -28,6 +29,7 @@ public class BossMovement : Runner, IHittable
 
     float attackElapsedTime;
     float fullHp;
+    float maxHeight;
 
     bool isStun;
     bool isArrive;
@@ -67,9 +69,18 @@ public class BossMovement : Runner, IHittable
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.M))
+        // 임시
+        if(isGrounded)
         {
-            // 임시
+            Debug.Log("들어옴");
+            isArrive = true;
+
+            MovePosition(targetPos.x);
+        }
+
+        // 임시
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
             if (target == null)
             {
                 Debug.Log("target null");
@@ -80,6 +91,10 @@ public class BossMovement : Runner, IHittable
             {
                 Debug.Log("target");
                 MoveToAttack(target);
+            }
+            else
+            {
+                
             }
         }
     }
@@ -156,6 +171,61 @@ public class BossMovement : Runner, IHittable
         }
     }
 
+    public void MovePosition(float targetPosX)
+    {
+        if(transform.position.x <= targetPosX)
+        {
+            MoveRight();
+        }
+        else
+        {
+            MoveLeft();
+        }
+    }
+
+    public override void MoveLeft()
+    {
+        if(transform.rotation.eulerAngles.y <= 0)
+        {
+            MoveStop();
+            myPlayer.Play(uTurnClip, idleClip, true);
+            transform.rotation = Quaternion.Euler(0, -180, 0);
+        }
+        if(myPlayer.isEndofFrame)
+        {
+            base.MoveLeft();
+        }
+    }
+
+    public override void MoveRight()
+    {
+        if (transform.rotation.eulerAngles.y >= 180)
+        {
+            MoveStop();
+            myPlayer.Play(uTurnClip, idleClip, true);
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        if (myPlayer.isEndofFrame)
+        {
+            base.MoveRight();
+        }
+    }
+
+    //void UTurn(Transform targetTrans)
+    //{
+    //    float myRotation = transform.rotation.eulerAngles.y;
+    //    if (targetTrans.rotation.eulerAngles.y >= 180)
+    //    {
+    //        MoveStop();
+    //        myPlayer.Play(uTurnClip, idleClip, true);
+    //        transform.rotation = Quaternion.Euler(0, 0, 0);
+    //    }
+    //    else
+    //    {
+
+    //    }
+    //}
+
     // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
     public void MoveToAttack(IHittable hitTarget)
     {
@@ -178,6 +248,7 @@ public class BossMovement : Runner, IHittable
             {
                 // 애니메이션 추가
                 destination = (Vector2)transform.position - pointPos;
+                myRigid.velocity -= destination * (dropSpeed * 0.4f);
                 //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
                 Debug.Log("오른쪽 아래 대각선 이동");
             }
@@ -186,11 +257,6 @@ public class BossMovement : Runner, IHittable
                 //myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
                 Debug.Log("왼쪽 위 대각선 이동");
             }
-
-            myRigid.velocity -= destination * (moveSpeed * 0.4f);
-            // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
-
-            // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
         }
         // 내 위치가 중간 지점보다 작으면
         else if (transform.position.x < midPoint.x)
@@ -201,6 +267,7 @@ public class BossMovement : Runner, IHittable
             if (transform.position.y > targetPos.y)
             {
                 destination = (Vector2)transform.position - pointPos;
+                myRigid.velocity -= destination * (dropSpeed * 0.4f);
                 //myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
                 Debug.Log("왼쪽 아래 대각선 이동");
             }
@@ -209,16 +276,11 @@ public class BossMovement : Runner, IHittable
                 //myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
                 Debug.Log("오른쪽 위 대각선 이동");
             }
-            myRigid.velocity -= destination * (moveSpeed * 0.4f);
         }
 
-        if (myRigid.velocity.y == 0)
-        {
-            Debug.Log("들어옴");
-            //myRigid.velocity = new Vector2(0, 0);
-            //// 임시
-            //isArrive = true;
-        }
+        // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
+        // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+
     }
 
     // 임시
