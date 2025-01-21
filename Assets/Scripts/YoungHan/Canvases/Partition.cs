@@ -75,31 +75,20 @@ public class Partition : MonoBehaviour
     }
 #endif
 
-    private void OnGUI()
+    private void LateUpdate()
     {
-        bool alteration = false;
         int width = Screen.width;
         int height = Screen.height;
         if (screenSize.x != width || screenSize.y != height)
         {
             screenSize.x = width;
             screenSize.y = height;
-            alteration = true;
         }
         Vector2 sizeDelta = getRectTransform.sizeDelta;
         if (this.sizeDelta != sizeDelta)
         {
             this.sizeDelta = sizeDelta;
-            alteration = true;
         }
-        if (alteration == true)
-        {
-            Resize();
-        }
-    }
-
-    private void LateUpdate()
-    {
         Resize();
     }
 
