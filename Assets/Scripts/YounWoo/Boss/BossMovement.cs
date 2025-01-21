@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossMovement : Runner, IHittable
+public partial class BossMovement : Runner, IHittable
 {
     [Header("애니메이션 클립")]
     [SerializeField] AnimationClip idleClip;
@@ -245,11 +245,6 @@ public class BossMovement : Runner, IHittable
         {
             base.MoveStop();
         }
-
-        if(bossAI._skill == GargoyleBrain.Skill.Dash)
-        {
-            myPlayer.Play(dashStartClip);
-        }
     }
 
     public void UTurn()
@@ -259,7 +254,14 @@ public class BossMovement : Runner, IHittable
             if(transform.rotation.eulerAngles.y <= 0)
             {
                 MoveStop();
-                myPlayer.Play(uTurnClip, idleClip, true);
+                if (bossAI._skill == GargoyleBrain.Skill.Dash)
+                {
+                    myPlayer.Play(dashStartClip);
+                }
+                else
+                {
+                    myPlayer.Play(uTurnClip, idleClip, true);
+                }
                 transform.rotation = Quaternion.Euler(0, -180, 0);
             }
         }
@@ -268,7 +270,14 @@ public class BossMovement : Runner, IHittable
             if(transform.rotation.eulerAngles.y >= 180)
             {
                 MoveStop();
-                myPlayer.Play(uTurnClip, idleClip, true);
+                if (bossAI._skill == GargoyleBrain.Skill.Dash)
+                {
+                    myPlayer.Play(dashStartClip);
+                }
+                else
+                {
+                    myPlayer.Play(uTurnClip, idleClip, true);
+                }
                 transform.rotation = Quaternion.Euler(0, 0, 0);
             }
         }
