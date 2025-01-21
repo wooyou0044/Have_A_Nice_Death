@@ -111,12 +111,16 @@ public class GargoyleBrain : MonoBehaviour
                         {
                             yield return null;
                         }
-                        getBossMovement.DropDiagonalMove();
-                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지
+                        getBossMovement.DropDiagonalMove(); //사선 낙하
+                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지 기다림
                         {
                             yield return null;
                         }
-                        //땅에 떨어진 후 대쉬하는 함수 필요
+                        getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
+                        while (_leftBoundary < getBossMovement.transform.position.x && _rightBoundary > getBossMovement.transform.position.x) //특정 위치에 도달할 때 까지 기다림
+                        {
+                            yield return null;
+                        }
                         break;
                     case Skill.Stone:
                         break;
