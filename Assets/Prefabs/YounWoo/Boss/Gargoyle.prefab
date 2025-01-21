@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6822354466696928261
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8118249707742697409}
+  m_Layer: 7
+  m_Name: StunStarPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8118249707742697409
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6822354466696928261}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.025, y: 0.788, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3746375001716076305}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6825786477796645821
 GameObject:
   m_ObjectHideFlags: 0
@@ -35,7 +66,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8118249707742697409}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &721024731270667490
@@ -186,6 +218,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _preparationTime: 2
+  _rechargeTime: 3
+  _skill: 1
+  _leftBoundary: -28.2
+  _rightBoundary: 56.01
+  _rayLength: 12.58
 --- !u!114 &2070077846556700284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isGrounded: 0
-  _movingSpeed: 10
+  _movingSpeed: 20
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
   _jumpValue: 5
   _jumpLimit: 1
@@ -209,12 +246,19 @@ MonoBehaviour:
   _dashCoolTime: 1.5
   _isDashed: 0
   idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
+  uTurnClip: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
   hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
-  stunClip: {fileID: 0}
+  stunStartClip: {fileID: 7400000, guid: 762d080de6cf46744acf8075f376b9e1, type: 2}
+  stunIdleClip: {fileID: 7400000, guid: 7a08d63b7e1bb164d89420773b92f0b7, type: 2}
+  stunEndClip: {fileID: 7400000, guid: 5e479aad6a388b648848ea855ca816a5, type: 2}
   deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
   HP: 1300
   attackCoolTime: 10
-  moveSpeed: 5
+  dropSpeed: 1
+  flySpeed: 2
+  maxHeight: 40
+  stunPrefab: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
+  stunPos: {fileID: 8118249707742697409}
 --- !u!114 &79716899360246641
 MonoBehaviour:
   m_ObjectHideFlags: 0

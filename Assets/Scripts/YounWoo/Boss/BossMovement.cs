@@ -8,7 +8,12 @@ public class BossMovement : Runner, IHittable
     [SerializeField] AnimationClip idleClip;
     [SerializeField] AnimationClip uTurnClip;
     [SerializeField] AnimationClip hitClip;
-    [SerializeField] AnimationClip stunClip;
+    [SerializeField] AnimationClip stunStartClip;
+    [SerializeField] AnimationClip stunIdleClip;
+    [SerializeField] AnimationClip stunEndClip;
+    [SerializeField] AnimationClip dashStartClip;
+    [SerializeField] AnimationClip dashLoopClip;
+    [SerializeField] AnimationClip dashEndClip;
     [SerializeField] AnimationClip deathClip;
 
     [Header("정보")]
@@ -17,10 +22,15 @@ public class BossMovement : Runner, IHittable
     [SerializeField] float dropSpeed;
     [SerializeField] float flySpeed;
     [SerializeField] float maxHeight;
+    [SerializeField] GameObject stunPrefab;
+    [SerializeField] Transform stunPos;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
     AnimatorPlayer myPlayer;
+    GargoyleBrain bossAI;
+
+    GameObject stun;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 startPoint;
@@ -67,8 +77,7 @@ public class BossMovement : Runner, IHittable
         myRigid = GetComponent<Rigidbody2D>();
         startPoint = GameObject.Find("StartPoint").transform.position;
         endPoint = GameObject.Find("EndPoint").transform.position;
-
-        midPoint = (startPoint + endPoint) / 2;
+        bossAI = GetComponent<GargoyleBrain>();
 
         // 임시
         player = GameObject.FindGameObjectWithTag("Player");
@@ -76,6 +85,9 @@ public class BossMovement : Runner, IHittable
 
     private void Start()
     {
+        stun = Instantiate(stunPrefab, stunPos);
+        stun.SetActive(false);
+        midPoint = (startPoint + endPoint) / 2;
         fullHp = HP;
         isStun = false;
     }
@@ -141,26 +153,31 @@ public class BossMovement : Runner, IHittable
             // HP 감소
             HP += strike.result;
 
-            //if(isStun == true)
+            //if (isStun == true)
             //{
+            //    Debug.Log("스턴");
             //    // 스턴을 일정 시간동안 계속 재생
-            //    myPlayer.Play(stunClip);
+            //    myPlayer.Play(stunIdleClip);
+            //    stun.SetActive(true);
             //    StartCoroutine(DoStun());
             //    IEnumerator DoStun()
             //    {
-            //        yield return new WaitForSeconds(5f);
-            //        isStun = false;
-            //        fullHp = 0;
+            //        yield return new WaitForSeconds(3f);
+            //        myPlayer.Play(stunIdleClip, stunEndClip, false);
+            //        stun.SetActive(false);
+            //        //isStun = false;
+            //        //fullHp = 0;
             //    }
-            //    //isStun = false;
-            //    //fullHp = 0;
+            //    isStun = false;
+            //    fullHp = 0;
             //}
 
             // 스턴
-            if(HP <= fullHp / 2)
-            {
-                isStun = true;
-            }
+            //if (HP <= fullHp / 2)
+            //{
+            //    isStun = true;
+            //    myPlayer.Play(stunStartClip, stunIdleClip, false);
+            //}
 
             if(isStun == false)
             {
@@ -202,50 +219,20 @@ public class BossMovement : Runner, IHittable
 
     public void MovePosition(float targetPosX)
     {
-        Debug.Log("targetPosX : " + targetPosX);
+        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        {
+            myPlayer.Play(dashLoopClip);
+        }
+
         if(transform.position.x < targetPosX)
         {
-            Debug.Log("오른쪽");
             MoveRight();
         }
         else if(transform.position.x > targetPosX)
         {
-            Debug.Log("왼쪽");
             MoveLeft();
         }
     }
-
-    //public override void MoveLeft()
-    //{
-    //    if(transform.rotation.eulerAngles.y <= 0)
-    //    {
-    //        MoveStop();
-    //        myPlayer.Play(uTurnClip, idleClip, true);
-    //        transform.rotation = Quaternion.Euler(0, -180, 0);
-    //        Debug.Log("회전");
-    //    }
-    //    if(myPlayer.isEndofFrame)
-    //    {
-    //        Debug.Log("왼쪽 이동");
-    //        base.MoveLeft();
-    //    }
-    //}
-
-    //public override void MoveRight()
-    //{
-    //    if (transform.rotation.eulerAngles.y >= 180)
-    //    {
-    //        MoveStop();
-    //        myPlayer.Play(uTurnClip, idleClip, true);
-    //        transform.rotation = Quaternion.Euler(0, 0, 0);
-    //    }
-    //    if (myPlayer.isEndofFrame)
-    //    {
-    //        Debug.Log("오른쪽 이동");
-    //        base.MoveRight();
-    //    }
-    //}
-
 
     // 도착하면 안 움직이게 하는 함수 
     public override void MoveStop()
@@ -258,11 +245,15 @@ public class BossMovement : Runner, IHittable
         {
             base.MoveStop();
         }
+
+        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        {
+            myPlayer.Play(dashStartClip);
+        }
     }
 
     public void UTurn()
     {
-        Debug.Log("들어옴");
         if(transform.position.x > midPoint.x)
         {
             if(transform.rotation.eulerAngles.y <= 0)
@@ -286,7 +277,7 @@ public class BossMovement : Runner, IHittable
     // 대각선으로 떨어지는 함수
     public void DropDiagonalMove()
     {
-        Debug.Log("대각선 이동");
+        myPlayer.Play(dashLoopClip);
         // 내 위치가 중간 지점보다 크면
         if (transform.position.x > midPoint.x)
         {
@@ -319,6 +310,11 @@ public class BossMovement : Runner, IHittable
     // 공중으로 날라가는 함수
     public void FlyMove()
     {
+        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        {
+            myPlayer.Play(dashLoopClip);
+        }
+
         Vector2 flyDestination = Vector2.zero;
         // 내 위치가 중간 지점보다 오른쪽에 있으면
         if (transform.position.x >= midPoint.x)
@@ -342,18 +338,13 @@ public class BossMovement : Runner, IHittable
     // 내려 날아와서 반대쪽으로 이동하는 함수
     public void MoveOppositeEndPoint()
     {
-        Debug.Log(oppositePointX);
         MovePosition(oppositePointX);
-        isEndPoint = true;
     }
 
     // 플레이어 따라다니면서 이동하는 함수
     public void FollowPlayer(float playerPosX)
     {
-        if(myRigid.constraints == RigidbodyConstraints2D.FreezePosition)
-        {
-            myRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-        }
+        UTurn();
         MovePosition(playerPosX);
     }
 
@@ -363,8 +354,7 @@ public class BossMovement : Runner, IHittable
         Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
-    // 공격 -> 애니메이션, 대쉬하는 효과
-    public void PlayerDash()
+    public void ComboAttack()
     {
 
     }

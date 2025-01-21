@@ -303,69 +303,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 256987344728768662, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _rayLength
-      value: 12.58
-      objectReference: {fileID: 0}
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _leftBoundary
-      value: -28.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _rightBoundary
-      value: 56.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _leftBoundary.x
-      value: 63.39
-      objectReference: {fileID: 0}
     - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: flySpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: midPoint
+      propertyPath: dashEndClip
       value: 
-      objectReference: {fileID: 2091105659}
+      objectReference: {fileID: 7400000, guid: c09e7f78e55522d4096ef6287c4ff1d4, type: 2}
     - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunClip
+      propertyPath: dashLoopClip
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7400000, guid: 5112ba5ea6b47d44fb3c65fbf8a273ac, type: 2}
     - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: dropSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: maxHeight
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: moveSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: uTurnClip
+      propertyPath: dashStartClip
       value: 
-      objectReference: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
-    - target: {fileID: 2070077846556700284, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _movingSpeed
-      value: 20
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7400000, guid: 634e94faa6cee0242aab3334d48ec032, type: 2}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 48
+      value: -17.7
       objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 36.3
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -402,10 +358,6 @@ PrefabInstance:
     - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Name
       value: Gargoyle
-      objectReference: {fileID: 0}
-    - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_Layer
-      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
