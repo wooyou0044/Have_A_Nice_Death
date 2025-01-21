@@ -273,7 +273,7 @@ public class BossMovement : Runner, IHittable
             // 애니메이션 추가 필요
 
             destination = (Vector2)transform.position - pointPos;
-            myRigid.velocity -= destination * (dropSpeed * 0.3f);
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
         }
         // 내 위치가 중간 지점보다 작으면
         else if (transform.position.x < midPoint.x)
@@ -286,7 +286,7 @@ public class BossMovement : Runner, IHittable
             // 애니메이션 추가 필요
 
             destination = (Vector2)transform.position - pointPos;
-            myRigid.velocity -= destination * (dropSpeed * 0.3f);
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
 
         }
     }

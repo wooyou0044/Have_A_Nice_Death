@@ -272,7 +272,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveLeft()
     {
-        if (isAlive == true && CanMoveState() == true && _stopping == false)
+        if (isAlive == true && CanMoveState() == true && _stopping == false && Time.timeScale > 0)
         {
             base.MoveLeft();
             PlayMove(LeftRotation);
@@ -281,7 +281,7 @@ public sealed class Player : Runner, IHittable
 
     public override void MoveRight()
     {
-        if (isAlive == true && CanMoveState() == true && _stopping == false)
+        if (isAlive == true && CanMoveState() == true && _stopping == false && Time.timeScale > 0)
         {
             base.MoveRight();
             PlayMove(RightRotation);
@@ -303,7 +303,7 @@ public sealed class Player : Runner, IHittable
 
     public override void Jump()
     {
-        if (isAlive == true && _stopping == false)
+        if (isAlive == true && _stopping == false && Time.timeScale > 0)
         {
             if (_direction == Direction.Backward && _fallFunction != null && _fallFunction.Invoke() == true)
             {
@@ -375,7 +375,7 @@ public sealed class Player : Runner, IHittable
 
     public void Dash(Direction direction)
     {
-        if (isAlive == true && CanDash() == true && _stopping == false)
+        if (isAlive == true && CanDash() == true && _stopping == false && Time.timeScale > 0)
         {
             switch(direction)
             {
@@ -405,7 +405,10 @@ public sealed class Player : Runner, IHittable
 
     public void AttackScythe(bool pressed)
     {
-        _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+        if (Time.timeScale > 0)
+        {
+            _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+        }
     }
 
     public void Attack1()

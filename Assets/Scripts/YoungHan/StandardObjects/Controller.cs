@@ -72,99 +72,96 @@ public class Controller : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale > 0)
+        SetKey(ref _upInput);
+        SetKey(ref _downInput);
+        SetKey(ref _leftInput);
+        SetKey(ref _rightInput);
+        SetKey(ref _attack1Input);
+        SetKey(ref _attack2Input);
+        SetKey(ref _attack3Input);
+        SetKey(ref _attackWideInput);
+        if (_player != null)
         {
-            SetKey(ref _upInput);
-            SetKey(ref _downInput);
-            SetKey(ref _leftInput);
-            SetKey(ref _rightInput);
-            SetKey(ref _attack1Input);
-            SetKey(ref _attack2Input);
-            SetKey(ref _attack3Input);
-            SetKey(ref _attackWideInput);
-            if (_player != null)
+            if(_rightInput.isPressed != _leftInput.isPressed)
+            {
+                switch (_rightInput.isPressed)
+                {
+                    case IncreasingDirection:
+                        _player.MoveRight();
+                        break;
+                    case DecreasingDirection:
+                        _player.MoveLeft();
+                        break;
+                }
+            }
+            else
+            {
+                _player.MoveStop();
+            }
+            if (_upInput.isPressed != _downInput.isPressed)
+            {
+                switch(_upInput.isPressed)
+                {
+                    case IncreasingDirection:
+                        _player.MoveUp();
+                        break;
+                    case DecreasingDirection:
+                        _player.MoveDown();
+                        break;
+                }
+            }
+            if(_attackWideInput.isPressed == true)
+            {
+                _player.AttackWide();
+            }
+            else
+            {
+                _player.AttackScythe(_attack1Input.isPressed);
+            }
+            //점프
+            if (GetKey(_jumpKeyCodes) == true)
+            {
+                _player.Jump();
+            }
+            //대쉬
+            if(GetKey(_dashKeyCodes) == true)
             {
                 if (_rightInput.isPressed != _leftInput.isPressed)
                 {
                     switch (_rightInput.isPressed)
                     {
                         case IncreasingDirection:
-                            _player.MoveRight();
+                            _player.Dash(Player.Direction.Forward);
                             break;
                         case DecreasingDirection:
-                            _player.MoveLeft();
+                            _player.Dash(Player.Direction.Backward);
                             break;
                     }
                 }
                 else
                 {
-                    _player.MoveStop();
-                }
-                if (_upInput.isPressed != _downInput.isPressed)
-                {
-                    switch (_upInput.isPressed)
-                    {
-                        case IncreasingDirection:
-                            _player.MoveUp();
-                            break;
-                        case DecreasingDirection:
-                            _player.MoveDown();
-                            break;
-                    }
-                }
-                if (_attackWideInput.isPressed == true)
-                {
-                    _player.AttackWide();
-                }
-                else
-                {
-                    _player.AttackScythe(_attack1Input.isPressed);
-                }
-                //점프
-                if (GetKey(_jumpKeyCodes) == true)
-                {
-                    _player.Jump();
-                }
-                //대쉬
-                if (GetKey(_dashKeyCodes) == true)
-                {
-                    if (_rightInput.isPressed != _leftInput.isPressed)
-                    {
-                        switch (_rightInput.isPressed)
-                        {
-                            case IncreasingDirection:
-                                _player.Dash(Player.Direction.Forward);
-                                break;
-                            case DecreasingDirection:
-                                _player.Dash(Player.Direction.Backward);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        _player.Dash(Player.Direction.Center);
-                    }
-                }
-                //상호작용
-                if (GetKey(_interactionKeyCodes) == true)
-                {
-                    _player.Interact();
-                }
-                //체력 회복
-                if (GetKey(_healKeyCodes) == true)
-                {
-                    _player.Heal(true);
+                    _player.Dash(Player.Direction.Center);
                 }
             }
-            _upInput.isPressed = false;
-            _downInput.isPressed = false;
-            _leftInput.isPressed = false;
-            _rightInput.isPressed = false;
-            _attack1Input.isPressed = false;
-            _attack2Input.isPressed = false;
-            _attack3Input.isPressed = false;
-            _attackWideInput.isPressed = false;
+            //상호작용
+            if (GetKey(_interactionKeyCodes) == true)
+            {
+                _player.Interact();
+            }
+            //체력 회복
+            if (GetKey(_healKeyCodes) == true)
+            {
+                _player.Heal(true);
+            }
         }
+        _upInput.isPressed = false;
+        _downInput.isPressed = false;
+        _leftInput.isPressed = false;
+        _rightInput.isPressed = false;
+        _attack1Input.isPressed = false;
+        _attack2Input.isPressed = false;
+        _attack3Input.isPressed = false;
+        _attackWideInput.isPressed = false;
     }
 
     /// <summary>
