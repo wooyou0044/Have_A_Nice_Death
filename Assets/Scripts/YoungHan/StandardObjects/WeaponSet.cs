@@ -83,7 +83,7 @@ public class WeaponSet : MonoBehaviour
                             {
                                 case Player.Direction.Center:
                                     if (_state < State.Combo4 && player.CompareConstraints(RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation) == false &&
-                                        _scytheInfo.TryUse(transform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action1, action2, func, animator) == true)
+                                        _scytheInfo.TryUse(getTransform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action1, action2, func, animator) == true)
                                     {
                                         if (hasAnimatorPlayer == true)
                                         {
