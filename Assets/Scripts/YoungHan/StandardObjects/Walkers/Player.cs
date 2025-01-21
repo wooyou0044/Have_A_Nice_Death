@@ -448,7 +448,14 @@ public sealed class Player : Runner, IHittable
 
     public void Heal(bool anima = false)
     {
+        if (anima == false) //작은 아니마
+        {
+            this.anima++;
+        }
+        else //큰 아니마
+        {
 
+        }
     }
 
     public void Hit(Strike strike)

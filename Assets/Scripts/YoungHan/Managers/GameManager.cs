@@ -144,7 +144,15 @@ public sealed class GameManager : Manager<GameManager>
             //사망하면 추가 보고
             if (instance._controller._player == (Object)hittable)
             {
-
+                //게임 오버
+            }
+            else if (hittable is ILootable lootable)
+            {
+                MonoBehaviour monoBehaviour = lootable.GetLootObject();
+                if (monoBehaviour != null)
+                {
+                    instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
+                }
             }
         }
     }

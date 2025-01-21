@@ -27,13 +27,13 @@ public class GargoyleBrain : MonoBehaviour
     [SerializeField, Header("스킬 휴식 시간"), Range(0, byte.MaxValue)]
     private float _rechargeTime = 3f;
     [SerializeField, Header("스킬 시전 종류")]
-    private Skill _skill = Skill.Dash;
+    public Skill _skill = Skill.Dash;
     [SerializeField, Header("활동 범위 왼쪽")]
     private float _leftBoundary;
     [SerializeField, Header("활동 범위 오른쪽")]
     private float _rightBoundary;
 
-    private enum Skill
+    public enum Skill
     {
         Scratching, //할퀴기
         Dash,       //돌진
@@ -117,10 +117,12 @@ public class GargoyleBrain : MonoBehaviour
                             yield return null;
                         }
                         getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
-                        while (_leftBoundary < getBossMovement.transform.position.x && _rightBoundary > getBossMovement.transform.position.x) //특정 위치에 도달할 때 까지 기다림
+                        Collider2D collider2D = getBossMovement.GetCollider2D();
+                        while (_leftBoundary < collider2D.bounds.min.x && _rightBoundary > collider2D.bounds.max.x) //특정 위치에 도달할 때 까지 기다림
                         {
                             yield return null;
                         }
+                        getBossMovement.MoveStop();
                         break;
                     case Skill.Stone:
                         break;
