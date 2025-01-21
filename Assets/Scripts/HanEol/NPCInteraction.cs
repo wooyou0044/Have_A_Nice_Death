@@ -17,6 +17,10 @@ public class NPCInteraction : MonoBehaviour
     private string[] conversationLines;
     private NPCInteraction script;
     byte conversationTimes;
+    private Vector3 moveShowInteratable = Vector3.zero;
+    [SerializeField]private float moveUpAndDown;
+   
+
 
     //프로퍼티로 설정 가능
     
@@ -39,6 +43,7 @@ public class NPCInteraction : MonoBehaviour
         interactionableButton.SetActive(false);
         showInteratable.SetActive(true);
         conversationTimes = 0;
+        
         #region 대화 내용
         conversationLines = new string[6];
         conversationLines[0] = ("…그렇게 마음대로 하시는 법이 어딨습니까!\n여기에도 염연히 규칙이란 게 있습니다.\n그러니 먼저...");
@@ -50,20 +55,20 @@ public class NPCInteraction : MonoBehaviour
         #endregion
     }
 
-    //private void Update()//테스트용 코드
-    //{
-    //    if (UnityEngine.Input.GetKeyDown(KeyCode.F))
-    //    {
-    //        if(hadInteracted == false)
-    //        {
-    //            Interact();//코루틴 적용시 이거 하나 불러주면 됨 ㅇㅇ
-    //        }
-    //        if(hadInteracted == true)
-    //        {
-    //            ContinueConversation();
-    //        }
-    //    }
-    //}
+    private void Update()//테스트용 코드
+    {
+        if (UnityEngine.Input.GetKeyDown(KeyCode.F))
+        {
+            if(hadInteracted == false)
+            {
+                Interact();//코루틴 적용시 이거 하나 불러주면 됨 ㅇㅇ
+            }
+            if(hadInteracted == true)
+            {
+                ContinueConversation();
+            }
+        }
+    }
 
     public void SetButtonText(string text)
     {
@@ -82,6 +87,13 @@ public class NPCInteraction : MonoBehaviour
                     buttonText.text = "F";
                 }
                 interactionableButton.SetActive(true);
+                if(showInteratable.gameObject == true)
+                {
+                    moveShowInteratable.y = moveUpAndDown;
+                    showInteratable.transform.Translate(moveShowInteratable);
+                }
+     
+
             }
         }
     }
@@ -96,11 +108,22 @@ public class NPCInteraction : MonoBehaviour
                 interactionableButton.SetActive(false);
                 showInteratable.SetActive(false);
             }
-            if(interactionableButton == true)
+            //대화한 적 없으면
+            if (interactionableButton == true)
             {
                 interactionableButton.SetActive(false);
             }
-            
+            if(showInteratable == true)
+            {
+                if (showInteratable.transform.position.y > 1)
+                {
+                    moveShowInteratable.y -= moveUpAndDown * 2;
+                }
+                showInteratable.transform.Translate(moveShowInteratable);
+            }
+           
+
+
         }
     }
 
@@ -110,6 +133,7 @@ public class NPCInteraction : MonoBehaviour
         if (showInteratable == true)
         {
             showInteratable.SetActive(false);
+            interactionableButton.SetActive(false);
         }
         conversationCanvas.SetActive(true);
         //코루틴 적용시 코드
