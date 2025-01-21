@@ -53,7 +53,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(EscapeLadder, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
+        getController._player?.Initialize(Engage, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -72,14 +72,21 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private void EscapeLadder()
+    private void Engage(bool escape)
     {
-        foreach (Ladder ladder in _ladderList)
+        if (escape == true)
         {
-            if (ladder.MoveStop() == true)
+            foreach (Ladder ladder in _ladderList)
             {
-                break;
+                if (ladder.MoveStop() == true)
+                {
+                    break;
+                }
             }
+        }
+        else
+        {
+            //아이템 줍기 또는 대화
         }
     }
 
