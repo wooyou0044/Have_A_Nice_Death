@@ -28,6 +28,10 @@ public class GargoyleBrain : MonoBehaviour
     private float _rechargeTime = 3f;
     [SerializeField, Header("스킬 시전 종류")]
     private Skill _skill = Skill.Dash;
+    [SerializeField, Header("활동 범위 왼쪽")]
+    private float _leftBoundary;
+    [SerializeField, Header("활동 범위 오른쪽")]
+    private float _rightBoundary;
 
     private enum Skill
     {
@@ -37,10 +41,35 @@ public class GargoyleBrain : MonoBehaviour
         Fall,       //낙하
     }
 
+#if UNITY_EDITOR
+
+    [SerializeField, Header("영역 확인 길이")]
+    private float _rayLength = 10f;
+
+    private void OnDrawGizmos()
+    {
+        Debug.DrawRay(new Vector2(_leftBoundary, 0), Vector2.up * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_rightBoundary, 0), Vector2.up * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_leftBoundary, 0), Vector2.down * _rayLength, Color.red);
+        Debug.DrawRay(new Vector2(_rightBoundary, 0), Vector2.down * _rayLength, Color.red);
+    }
+
+    private void OnValidate()
+    {
+        if (transform.position.x < _leftBoundary)
+        {
+            _leftBoundary = transform.position.x;
+        }
+        if (transform.position.x > _rightBoundary)
+        {
+            _rightBoundary = transform.position.x;
+        }
+    }
+#endif
+
     private void OnEnable()
     {
-        Player player = FindObjectOfType<Player>();
-        Trace(player);
+        Trace(FindObjectOfType<Player>());
     }
 
     private void OnDisable()
@@ -76,15 +105,22 @@ public class GargoyleBrain : MonoBehaviour
                         //기술이 끝났음을 알려주는 함수 필요
                         //콤보2 공격 함수 필요
                         break;
-                    case Skill.Dash:   
-                        //공중으로 이동하는 함수 필요
-                        //특정 위치에 도달할 때 까지 기다림
-                        getBossMovement.MoveToAttack(hittable); //대각선 공격
-                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지
+                    case Skill.Dash:
+                        getBossMovement.FlyMove();  //공중으로 이동하는 함수 필요
+                        while(_leftBoundary < getBossMovement.transform.position.x && _rightBoundary > getBossMovement.transform.position.x) //특정 위치에 도달할 때 까지 기다림
                         {
                             yield return null;
                         }
-                        //땅에 떨어진 후 대쉬하는 함수 필요
+                        getBossMovement.DropDiagonalMove(); //사선 낙하
+                        while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지 기다림
+                        {
+                            yield return null;
+                        }
+                        getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
+                        while (_leftBoundary < getBossMovement.transform.position.x && _rightBoundary > getBossMovement.transform.position.x) //특정 위치에 도달할 때 까지 기다림
+                        {
+                            yield return null;
+                        }
                         break;
                     case Skill.Stone:
                         break;
