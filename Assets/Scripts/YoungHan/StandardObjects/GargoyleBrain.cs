@@ -79,7 +79,7 @@ public class GargoyleBrain : MonoBehaviour
                     case Skill.Dash:   
                         //공중으로 이동하는 함수 필요
                         //특정 위치에 도달할 때 까지 기다림
-                        getBossMovement.MoveToAttack(hittable); //대각선 공격
+                        //getBossMovement.MoveToAttack(hittable); //대각선 공격
                         while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지
                         {
                             yield return null;

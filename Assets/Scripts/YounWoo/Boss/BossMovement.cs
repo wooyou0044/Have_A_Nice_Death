@@ -15,6 +15,8 @@ public class BossMovement : Runner, IHittable
     [SerializeField] float HP = 1300;
     [SerializeField] float attackCoolTime;
     [SerializeField] float dropSpeed;
+    [SerializeField] float flySpeed;
+    [SerializeField] float maxHeight;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
@@ -24,18 +26,31 @@ public class BossMovement : Runner, IHittable
     Vector2 startPoint;
     Vector2 endPoint;
     Vector2 midPoint;
-    Vector2 targetPos;
+    //Vector2 targetPos;
     Vector2 pointPos;
+    Vector2 destination;
 
     float attackElapsedTime;
     float fullHp;
-    float maxHeight;
+    float oppositePointX;
 
     bool isStun;
     bool isArrive;
 
     // 임시
     GameObject player;
+    bool isEndPoint;
+    bool isBox;
+
+    public float StartPointX
+    {
+        get { return startPoint.x; }
+    }
+
+    public float EndPointX
+    {
+        get { return endPoint.x; }
+    }
 
     public bool isAlive
     {
@@ -72,10 +87,21 @@ public class BossMovement : Runner, IHittable
         // 임시
         if(isGrounded)
         {
-            Debug.Log("들어옴");
             isArrive = true;
 
-            MovePosition(targetPos.x);
+            //MovePosition(targetPos.x);
+            // 임시로
+            if(isEndPoint == false)
+            {
+                //MoveOppositeEndPoint();
+                //FollowPlayer(targetPos.x);
+            }
+        }
+
+        if(isBox == true)
+        {
+            myRigid.velocity = new Vector2(0, 0);
+            isBox = false;
         }
 
         // 임시
@@ -90,7 +116,9 @@ public class BossMovement : Runner, IHittable
             else if (isArrive == false)
             {
                 Debug.Log("target");
-                MoveToAttack(target);
+                //MoveToAttack(target);
+                DropDiagonalMove();
+                //FlyMove();
             }
             else
             {
@@ -173,11 +201,11 @@ public class BossMovement : Runner, IHittable
 
     public void MovePosition(float targetPosX)
     {
-        if(transform.position.x <= targetPosX)
+        if(transform.position.x < targetPosX)
         {
             MoveRight();
         }
-        else
+        else if(transform.position.x > targetPosX)
         {
             MoveLeft();
         }
@@ -211,76 +239,97 @@ public class BossMovement : Runner, IHittable
         }
     }
 
-    //void UTurn(Transform targetTrans)
-    //{
-    //    float myRotation = transform.rotation.eulerAngles.y;
-    //    if (targetTrans.rotation.eulerAngles.y >= 180)
-    //    {
-    //        MoveStop();
-    //        myPlayer.Play(uTurnClip, idleClip, true);
-    //        transform.rotation = Quaternion.Euler(0, 0, 0);
-    //    }
-    //    else
-    //    {
 
-    //    }
-    //}
-
-    // 내가 공격하는 대상에 대한 위치 정보 받아서 이동 -> 공격
-    public void MoveToAttack(IHittable hitTarget)
+    // 도착하면 안 움직이게 하는 함수 
+    public override void MoveStop()
     {
-        // 임시
-        isArrive = false;
+        if (myRigid.velocity.y != 0)
+        {
+            myRigid.velocity = new Vector2(0, 0);
+        }
+        else
+        {
+            base.MoveStop();
+        }
+    }
 
-        Vector2 destination = Vector2.zero;
-        // 때릴 상대에 대한 위치 저장
-        targetPos = hitTarget.transform.position;
-        
+    void UTurn()
+    {
+
+    }
+
+    // 대각선으로 떨어지는 함수
+    public void DropDiagonalMove()
+    {
+        Debug.Log("대각선 이동");
         // 내 위치가 중간 지점보다 크면
         if (transform.position.x > midPoint.x)
         {
             // 왼쪽 끝에 있는 곳이 목표
             pointPos = startPoint;
+            oppositePointX = endPoint.x;
             OnDrawGizmos();
-            // 밑으로 날아가면서 이동 (대각선으로 내려와서 플레이어 위치로 이동)
-            // 내 위치가 때릴 상대보다 위에 있으면
-            if (transform.position.y > targetPos.y)
-            {
-                // 애니메이션 추가
-                destination = (Vector2)transform.position - pointPos;
-                myRigid.velocity -= destination * (dropSpeed * 0.4f);
-                //myRigid.velocity = new Vector2(-moveSpeed, -moveSpeed);
-                Debug.Log("오른쪽 아래 대각선 이동");
-            }
-            else
-            {
-                //myRigid.velocity = new Vector2(-moveSpeed, moveSpeed);
-                Debug.Log("왼쪽 위 대각선 이동");
-            }
+
+            // 애니메이션 추가 필요
+
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity -= destination * (dropSpeed * 0.3f);
         }
         // 내 위치가 중간 지점보다 작으면
         else if (transform.position.x < midPoint.x)
         {
             // 오른쪽 끝에 있는 곳이 목표
             pointPos = endPoint;
+            oppositePointX = startPoint.x;
             OnDrawGizmos();
-            if (transform.position.y > targetPos.y)
-            {
-                destination = (Vector2)transform.position - pointPos;
-                myRigid.velocity -= destination * (dropSpeed * 0.4f);
-                //myRigid.velocity = new Vector2(moveSpeed, -moveSpeed);
-                Debug.Log("왼쪽 아래 대각선 이동");
-            }
-            else
-            {
-                //myRigid.velocity = new Vector2(moveSpeed, moveSpeed);
-                Debug.Log("오른쪽 위 대각선 이동");
-            }
+
+            // 애니메이션 추가 필요
+
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity -= destination * (dropSpeed * 0.3f);
+
         }
+    }
 
-        // 대각선으로 내려와서 내 위치 왼쪽에 때릴 상대가 있으면 왼쪽으로 이동
-        // 대각선으로 내려와서 내 위치 오른쪽에 때릴 상대가 있으면 오른쪽 이동
+    // 공중으로 날라가는 함수
+    public void FlyMove()
+    {
+        Vector2 flyDestination = Vector2.zero;
 
+        // 내 위치가 중간 지점보다 오른쪽에 있으면
+        if(transform.position.x >= midPoint.x)
+        {
+            pointPos = new Vector2(startPoint.x, maxHeight);
+            OnDrawGizmos();
+
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity += destination * (flySpeed * 0.3f);
+        }
+        else if (transform.position.x < midPoint.x)
+        {
+            pointPos = new Vector2(endPoint.x, maxHeight);
+            OnDrawGizmos();
+
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity += destination * (flySpeed * 0.3f);
+        }
+    }
+
+    // 내려 날아와서 반대쪽으로 이동하는 함수
+    public void MoveOppositeEndPoint()
+    {
+        MovePosition(oppositePointX);
+        isEndPoint = true;
+    }
+
+    // 플레이어 따라다니면서 이동하는 함수
+    public void FollowPlayer(float playerPosX)
+    {
+        if(myRigid.constraints == RigidbodyConstraints2D.FreezePosition)
+        {
+            myRigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+        MovePosition(playerPosX);
     }
 
     // 임시
@@ -293,5 +342,15 @@ public class BossMovement : Runner, IHittable
     public void PlayerDash()
     {
 
+    }
+
+    // 임시 테스트용
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "tempBox")
+        {
+            Debug.Log("부딪힘");
+            isBox = true;
+        }
     }
 }
