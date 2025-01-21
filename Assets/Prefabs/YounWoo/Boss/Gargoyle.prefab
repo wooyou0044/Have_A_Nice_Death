@@ -245,6 +245,7 @@ MonoBehaviour:
   _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
+  _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
   idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
   uTurnClip: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
   hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
