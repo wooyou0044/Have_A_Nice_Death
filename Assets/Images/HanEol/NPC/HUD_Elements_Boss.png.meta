@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1b15c1ab434fa824799ffbc17b22378b
+guid: 712efde0440f6af40ab74830245a5987
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,13 +110,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TX_Exclamation_0
+      name: HUD_Elements_Boss_0
       rect:
         serializedVersion: 2
-        x: 102
-        y: 58
-        width: 52
-        height: 188
+        x: 138
+        y: 390
+        width: 1153
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,29 +124,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28f341801cd561a4796c5f1bdd49adca
-      internalID: 822446645
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TX_Exclamation_1
-      rect:
-        serializedVersion: 2
-        x: 102
-        y: 12
-        width: 52
-        height: 46
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 834eb62a31e45634cb2127f69a49ef93
-      internalID: -659420418
+      spriteID: 64f0e6b523707cd428a91d3533154cb8
+      internalID: 391005061
       vertices: []
       indices: 
       edges: []
@@ -162,8 +141,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      TX_Exclamation_0: 822446645
-      TX_Exclamation_1: -659420418
+      HUD_Elements_Boss_0: 391005061
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
