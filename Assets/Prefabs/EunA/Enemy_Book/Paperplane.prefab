@@ -204,7 +204,7 @@ MonoBehaviour:
   _adhesion: 0
   _dealyTime: 0
   _flyingTime: 5
-  _flyingSpeed: 10
+  _flyingSpeed: 15
   _tags:
   - Player
   - Ladder
