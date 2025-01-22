@@ -43,6 +43,9 @@ public sealed class GameManager : Manager<GameManager>
 
     [SerializeField]
     private StatusPanel _statusPanel;
+    [SerializeField]
+    private GameObject _gameOverObject;
+
 
     private List<IHittable> _hittableList = new List<IHittable>();
     private List<Ladder> _ladderList = new List<Ladder>();
@@ -216,26 +219,21 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="result"></param>
     public static void Report(IHittable hittable, int result)
     {
-        //데미지가 이 대상에게 얼마나 들어왔는지 보고하고 ui로 값을 전송
-        if (hittable.isAlive == false)
+        if (hittable is ILootable lootable)
         {
-            //사망하면 추가 보고
-            if (instance._controller._player == (Object)hittable)
+            MonoBehaviour monoBehaviour = lootable.GetLootObject();
+            if (monoBehaviour != null)
             {
-                //게임 오버
-            }
-            else if (hittable is ILootable lootable)
-            {
-                MonoBehaviour monoBehaviour = lootable.GetLootObject();
-                if (monoBehaviour != null)
-                {
-                    instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
-                }
+                instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
             }
         }
         if (instance._controller._player == (Object)hittable)
         {
             instance._statusPanel?.Set(instance._controller._player);
+            if(hittable.isAlive == true)
+            {
+                instance._gameOverObject?.SetActive(true);
+            }
         }
     }
 
