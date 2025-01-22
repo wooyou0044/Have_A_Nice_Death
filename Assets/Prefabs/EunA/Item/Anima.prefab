@@ -156,6 +156,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45a5c950b7c998345b82dabf5cc39279, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healValue: 1
+  _dropWaitingTime: 2
+  _hideWaitingTime: 1
   animaImage: {fileID: 5840285724258584646}
   getItemEffect: {fileID: 6858888809399250078}
 --- !u!1 &2093780613666375994
