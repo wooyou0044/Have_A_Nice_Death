@@ -197,7 +197,7 @@ public sealed class GameManager : Manager<GameManager>
             bool shake = false;
             foreach (IHittable hittable in instance._hittableList)
             {
-                if (hittable != null && hittable.transform.gameObject.activeInHierarchy == true && hittable.isAlive == true && area.CanStrike(hittable) == true)
+                if (hittable.Equals(null) == false && hittable.transform.gameObject.activeInHierarchy == true && hittable.isAlive == true && area.CanStrike(hittable) == true)
                 {
                     if (shake == false && strike.power < 0)
                     {
