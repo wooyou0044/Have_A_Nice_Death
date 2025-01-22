@@ -20,11 +20,7 @@ public class DeadScript : MonoBehaviour
     {
         if (deadImage.color.a == 0)
         {
-            deadText.gameObject.SetActive(true);
-            if (Input.anyKeyDown)
-            {
-                SceneManager.LoadScene("IntroScene");
-            }
+            deadText.gameObject.SetActive(true);            
         }
     }
 }
