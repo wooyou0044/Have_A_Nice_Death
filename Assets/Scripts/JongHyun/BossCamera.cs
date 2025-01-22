@@ -15,6 +15,9 @@ public class BossCamera : MonoBehaviour, ITriggerShake
     Vector3 originalPos;
     float shakeElapsed = 0;
 
+    
+    public bool isArrive = false;
+
     private void Start()
     {
         bossRoomPos = new Vector3(5.4f, 1.6f, -10);
@@ -46,8 +49,8 @@ public class BossCamera : MonoBehaviour, ITriggerShake
             {
                 transform.position = bossRoomPos;                
                 BossRoomWall.SetActive(true);
-                
                 currentMode = BossCameraMode.BossRoom;
+                isArrive = true;
             }
         }
         else
