@@ -576,6 +576,7 @@ MonoBehaviour:
   _lifeImage: {fileID: 5140244679429537808}
   _soularyText: {fileID: 302248383748950938}
   _prismiumText: {fileID: 3838784915413100216}
+  animaObjects: []
 --- !u!1 &2757708490621747687
 GameObject:
   m_ObjectHideFlags: 0

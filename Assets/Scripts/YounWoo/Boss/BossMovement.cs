@@ -58,7 +58,7 @@ public class BossMovement : Runner, IHittable
     GameObject player;
 
     //체력바
-    //[SerializeField]Boss_Hp_Bar hpBar;
+    [SerializeField]Boss_Hp_Bar hpBar;
     // 최대 체력
     public float MaxHP
     {
@@ -153,7 +153,11 @@ public class BossMovement : Runner, IHittable
             }
         }
 
-        
+        if(HP <= 0)
+        {
+            HP = 0;
+            // 할 애니메이션 
+        }
     }
 
     public Collider2D GetCollider2D()
@@ -164,7 +168,7 @@ public class BossMovement : Runner, IHittable
     public void Hit(Strike strike)
     {
         Debug.Log(HP);
-        //hpBar.UpdateBossHPBar();
+        hpBar.UpdateBossHPBar();
         if (isAlive)
         {
             // HP 감소
@@ -185,7 +189,7 @@ public class BossMovement : Runner, IHittable
                 // 스턴을 일정 시간동안 계속 재생
                 myPlayer.Play(stunIdleClip);
                 stun.SetActive(true);
-                fullHp = 0;
+                fullHp = -1;
                 StartCoroutine(DoStun());
                 IEnumerator DoStun()
                 {
@@ -322,6 +326,9 @@ public class BossMovement : Runner, IHittable
             pointPos = startPoint;
             oppositePointX = endPoint.x;
             OnDrawGizmos();
+
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
         }
         // 내 위치가 중간 지점보다 작으면
         else
@@ -330,10 +337,10 @@ public class BossMovement : Runner, IHittable
             pointPos = endPoint;
             oppositePointX = startPoint.x;
             OnDrawGizmos();
-        }
 
-        destination = (Vector2)transform.position - pointPos;
-        myRigid.velocity = -destination * (dropSpeed * 0.3f);
+            destination = (Vector2)transform.position - pointPos;
+            myRigid.velocity = -destination * (dropSpeed * 0.3f);
+        }
     }
 
     // 공중으로 날라가는 함수
@@ -349,16 +356,17 @@ public class BossMovement : Runner, IHittable
         {
             pointPos = new Vector2(startPoint.x, maxHeight);
             OnDrawGizmos();
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity = destination * (flySpeed * 0.3f);
         }
 
         else if (transform.position.x < midPoint.x)
         {
             pointPos = new Vector2(endPoint.x, maxHeight);
             OnDrawGizmos();
+            destination = pointPos - (Vector2)transform.position;
+            myRigid.velocity = destination * (flySpeed * 0.3f);
         }
-
-        destination = pointPos - (Vector2)transform.position;
-        myRigid.velocity = destination * (flySpeed * 0.3f);
     }
 
     // 내려 날아와서 반대쪽으로 이동하는 함수

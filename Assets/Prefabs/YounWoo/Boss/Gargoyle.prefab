@@ -303,7 +303,7 @@ MonoBehaviour:
   HP: 1300
   dropSpeed: 1
   flySpeed: 2
-  maxHeight: 40
+  maxHeight: 4
   stunPrefab: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
   stunPos: {fileID: 8118249707742697409}
   _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
