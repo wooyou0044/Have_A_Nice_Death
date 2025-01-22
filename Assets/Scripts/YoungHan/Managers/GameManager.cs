@@ -42,8 +42,10 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private List<IHittable> _hittableList = new List<IHittable>();
+    [SerializeField]
+    private StatusPanel _statusPanel;
 
+    private List<IHittable> _hittableList = new List<IHittable>();
     private List<Ladder> _ladderList = new List<Ladder>();
     private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
@@ -161,6 +163,10 @@ public sealed class GameManager : Manager<GameManager>
                     instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
                 }
             }
+        }
+        else if (instance._controller._player == (Object)hittable)
+        {
+            instance._statusPanel?.Set(instance._controller._player);
         }
     }
 
