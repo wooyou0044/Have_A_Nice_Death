@@ -43,7 +43,7 @@ public class YoungHan : MonoBehaviour, IHittable, ILootable
 
     public MonoBehaviour GetLootObject()
     {
-        throw new System.NotImplementedException();
+        return null;
     }
 
 }

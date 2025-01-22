@@ -22,6 +22,6 @@ public partial class BossMovement : Runner, IHittable
     public void UseDashSkill(float duration)
     {
         Projectile projectile = GameManager.GetProjectile(_dashProjectile);
-        projectile.Shot(getTransform, null, GameManager.ShowEffect, GameManager.Use, duration);
+        projectile.Shot(getTransform, null, GameManager.ShowEffect, GameManager.Use, null, duration);
     }
 }

@@ -157,7 +157,7 @@ MonoBehaviour:
   _state: 0
   _comboMoveValue: 0.15
   _comboMoveDelay: 0.4
-  _comboLastDelay: 1
+  _comboLastDelay: 0.9
   _comboStandDelay: 0.5
   _jumpStartDelay: 0.1
   _jumpFallingDelay: 0.3
@@ -264,7 +264,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: d65aa75959f0b0548a9e0fbac93510a3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
