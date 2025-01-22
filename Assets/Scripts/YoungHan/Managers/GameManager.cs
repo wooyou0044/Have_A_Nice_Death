@@ -219,20 +219,23 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="result"></param>
     public static void Report(IHittable hittable, int result)
     {
-        if (hittable is ILootable lootable)
+        if (hittable.isAlive == false)
         {
-            MonoBehaviour monoBehaviour = lootable.GetLootObject();
-            if (monoBehaviour != null)
+            if (hittable is ILootable lootable)
             {
-                instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
+                MonoBehaviour monoBehaviour = lootable.GetLootObject();
+                if (monoBehaviour != null)
+                {
+                    instance.getObjectPooler.ShowEffect(monoBehaviour.gameObject, hittable.GetCollider2D().bounds.center, null);
+                }
             }
         }
         if (instance._controller._player == (Object)hittable)
         {
             instance._statusPanel?.Set(instance._controller._player);
-            if(hittable.isAlive == true)
+            if (instance._gameOverObject != null)
             {
-                instance._gameOverObject?.SetActive(true);
+                instance._gameOverObject.SetActive(true);
             }
         }
     }
