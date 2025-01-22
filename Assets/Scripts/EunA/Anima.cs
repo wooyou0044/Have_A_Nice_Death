@@ -14,6 +14,7 @@ public class Anima : MonoBehaviour
     [SerializeField]
     private GameObject getItemEffect;
 
+
     private bool _activation = false;
     private Player _player = null;
 
