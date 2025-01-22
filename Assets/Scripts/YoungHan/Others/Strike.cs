@@ -33,6 +33,12 @@ public struct Strike
         }
     }
 
+    public Strike(int power, byte extension)
+    {
+        this.power = power;
+        this.extension = extension;
+    }
+
     /// <summary>
     /// 해당 대상이 타격 대상인지 구별하는 클래스(단 이 값이 null이라면 대상을 구별하지 않고 광역 타격)
     /// </summary>

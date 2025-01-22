@@ -385,10 +385,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: StateCanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3450433497174608864, guid: 903c53d9a29e94d4da88b5766323e9a0, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -11.9001465
-      objectReference: {fileID: 0}
     - target: {fileID: 4074505165292433073, guid: 903c53d9a29e94d4da88b5766323e9a0, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -606,6 +602,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &525902657 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6492931559769312231, guid: 903c53d9a29e94d4da88b5766323e9a0, type: 3}
+  m_PrefabInstance: {fileID: 405626606}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2977736e3cc18c343b3baf64ad3561d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &678895533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,6 +1160,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -3.22
       objectReference: {fileID: 0}
+    - target: {fileID: 5574728675960017130, guid: 871d5908166c9de4da60c903c290196f, type: 3}
+      propertyPath: _statusPanel
+      value: 
+      objectReference: {fileID: 525902657}
     - target: {fileID: 6443028241172958549, guid: 871d5908166c9de4da60c903c290196f, type: 3}
       propertyPath: m_Name
       value: GameManager
