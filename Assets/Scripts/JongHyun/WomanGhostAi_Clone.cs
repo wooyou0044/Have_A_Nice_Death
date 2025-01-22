@@ -59,13 +59,12 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     private bool movingRight = true;
     private Vector2 startPos;
-    CameraController camera;
-
+    BossCamera camera;
     public bool isAlive { get { return true; } }
 
     private void Start()
     {
-        camera = Camera.main.GetComponent<CameraController>();
+        camera = Camera.main.GetComponent<BossCamera>();
         startPos = transform.position;
         animatorPlayer = GetComponent<AnimatorPlayer>();        
         surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();
@@ -200,10 +199,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
             MoveStop();
             animatorPlayer.Play(hitClip, true);
             isHit = true;
-            if (camera != null)
-            {
-                camera.TriggerShake(); 
-            }
+            camera.TriggerShake();
         }
         else
         {
