@@ -148,12 +148,6 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public byte anima
-    {
-        private set;
-        get;
-    }
-
     private bool _stopping = false;
 
     private Action _shakeAction = null;
@@ -213,6 +207,7 @@ public sealed class Player : Runner, IHittable
         {
             _remainLife = (byte)(_maxLife - _lossLife);
         }
+        _reportAction?.Invoke(this, 0);
         if (_remainMana > _maxMana)
         {
             _remainMana = _maxMana;
@@ -459,7 +454,16 @@ public sealed class Player : Runner, IHittable
 
     public void Heal(byte value = 0)
     {
-
+        if(value > 0)
+        {
+            GameManager.anima += value;
+        }
+        else if(GameManager.anima > 0)
+        {
+            float recover = maxLife * 0.15f;
+            Hit(new Strike((int)recover, 0));
+            GameManager.anima--;
+        }
     }
 
     public void Hit(Strike strike)

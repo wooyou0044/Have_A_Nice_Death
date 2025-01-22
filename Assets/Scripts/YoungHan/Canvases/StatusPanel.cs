@@ -14,6 +14,8 @@ public class StatusPanel : MonoBehaviour
     private Text _soularyText;
     [SerializeField, Header("프리즈미움 이미지")]
     private Text _prismiumText;
+    [SerializeField, Header("아니마 오브젝트")]
+    private GameObject[] animaObjects;
 
     public byte soulary
     {
@@ -37,16 +39,34 @@ public class StatusPanel : MonoBehaviour
         }
     }
 
+    public byte anima
+    {
+        set
+        {
+            byte count = value;
+            foreach (GameObject animaObject in animaObjects)
+            {
+                if (count > 0)
+                {
+                    animaObject.SetActive(true);
+                    count--;
+                }
+                else
+                {
+                    animaObject?.SetActive(false);
+                }
+            }
+        }
+    }
+
     public void Set(Player player)
     {
-        if (player != null)
+        if (player != null && _lifeImage != null)
         {
-            if (_lifeImage != null)
-            {
-                float life = player.maxLife > 0 ? (float)player.remainLife / player.maxLife : 0;
-                _lifeImage.DOKill();
-                _lifeImage.DOFillAmount(life, _wainingValue);
-            }
+            float life = player.remainLife > 0 ? player.remainLife : 0;
+            float value = player.maxLife > 0 ? life / player.maxLife : 0;
+            _lifeImage.DOKill();
+            _lifeImage.DOFillAmount(value, _wainingValue);
         }
     }
 }

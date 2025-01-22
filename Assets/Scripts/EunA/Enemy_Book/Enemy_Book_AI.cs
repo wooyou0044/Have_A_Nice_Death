@@ -67,8 +67,6 @@ public class Enemy_Book_AI : Walker, IHittable
         }
     }
 
-    Transform IHittable.transform => transform;
-
     void Start()
     {
         MaxEnemyHealth = 20;

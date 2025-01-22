@@ -1,48 +1,52 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
 public class Anima : MonoBehaviour
 {
-    Collider2D animaCollider;
-    public GameObject animaImage;
-    public GameObject getItemEffect;
+    [SerializeField]
+    private byte _healValue = 1;
+    [SerializeField]
+    private float _dropWaitingTime = 0.5f;
+    [SerializeField]
+    private float _hideWaitingTime = 1.0f;
+    [SerializeField]
+    private GameObject animaImage;
+    [SerializeField]
+    private GameObject getItemEffect;
 
-    Player player;
-    float Destroytime;
-    bool isGetAnima = false;
+    private bool _activation = false;
+    private Player _player = null;
 
-    void Start()
+    private void OnEnable()
     {
-
-    }
-
-    private void Update()
-    {
-        if (isGetAnima == true)
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
         {
-            Destroytime += Time.deltaTime;
-
-            if (Destroytime >= 1.0f)
+            _activation = false;
+            yield return new WaitForSeconds(_dropWaitingTime);
+            _activation = true;
+            while(_player == null)
             {
-                Destroy(gameObject);
+                yield return null;
             }
-        }        
-    }
-
-    public void OnTriggerEnter2D(Collider2D collision)
-    {        
-        player = GetComponent<Player>();
-
-        if (collision.CompareTag("Player"))
-        {
+            _player.Heal(_healValue);
             animaImage.SetActive(false);
             getItemEffect.SetActive(true);
+            yield return new WaitForSeconds(_hideWaitingTime);
+            gameObject.SetActive(false);
+        }
+    }
 
-            player.Heal(1);
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 
-            isGetAnima = true;
+    public void OnTriggerStay2D(Collider2D collision)
+    {        
+        if (_activation == true && _player == null && collision.CompareTag("Player"))
+        {
+            _player = collision.gameObject.GetComponent<Player>();
         }     
     }
 }
