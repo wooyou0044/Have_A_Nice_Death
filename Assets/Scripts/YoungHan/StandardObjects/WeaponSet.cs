@@ -42,8 +42,6 @@ public class WeaponSet : MonoBehaviour
     private float _comboLastDelay = 0.9f;
     [SerializeField, Range(0, 5)]
     private float _comboStandDelay = 0.5f;
-    [SerializeField, Range(0, 5)]
-    private float _comboUpDelay = 0.2f;
     [SerializeField, Range(0, 1)]
     private float _jumpStartDelay = 0.1f;
     [SerializeField, Range(0, 1)]
@@ -62,9 +60,9 @@ public class WeaponSet : MonoBehaviour
     [SerializeField]
     private Skill _restAttackSkill;
     [SerializeField]
+    private GameObject _restAttackGameObject;
+    [SerializeField]
     private string[] _restAttackTags;
-    //[SerializeField]
-    //private bool _upAttack = false;
     private IEnumerator _coroutine = null;
 
     public bool TryScythe(Player player, bool pressed, Action action1, Action<GameObject, Vector2, Transform> action2, Action<Strike, Strike.Area, GameObject> action3, Func<Projectile, Projectile> func)
@@ -128,41 +126,10 @@ public class WeaponSet : MonoBehaviour
                                             }
                                             player?.Recover();
                                             _state = State.None;
-                                            //_upAttack = false;
                                             _coroutine = null;
                                         }
                                     }
                                     break;
-                              
-                                    //if (_upAttack == false && _coroutine == null && _scytheInfo.TryUse(getTransform, Weapon.Attack.Move_Up, action2, action3, func, animator) == true)
-                                    //{
-                                    //    if (hasAnimatorPlayer == true)
-                                    //    {
-                                    //        animatorPlayer.Flip(false);
-                                    //        animatorPlayer.Stop();
-                                    //    }
-                                    //    _coroutine = DoPlay();
-                                    //    StartCoroutine(_coroutine);
-                                    //    IEnumerator DoPlay()
-                                    //    {
-                                    //        _upAttack = true;
-                                    //        player.Dash(Vector2.up, 5, 4);
-                                    //        yield return new WaitForSeconds(_comboUpDelay);
-                                    //        player.Dash(Vector2.zero);
-                                    //        _concentrationTime = 0;
-                                    //        while (true)
-                                    //        {
-                                    //            yield return null;
-                                    //            if(player != null && player.isGrounded == true && player.GetVelocity().y <= 0)
-                                    //            {
-                                    //                break;
-                                    //            }
-                                    //        }
-                                    //        player?.Recover();
-                                    //        _upAttack = false;
-                                    //        _coroutine = null;
-                                    //    }
-                                    //}
                             }
                         }
                         else if(_concentrationTime > _comboStandDelay && player.isGrounded == true && _coroutine == null && _state == State.None)
@@ -172,6 +139,10 @@ public class WeaponSet : MonoBehaviour
                             IEnumerator DoPlay()
                             {
                                 animatorPlayer.Play(_concenteStartClip, _concenteLoopClip);
+                                if(_restAttackGameObject != null)
+                                {
+                                    _restAttackGameObject.SetActive(true);
+                                }
                                 while(player != null && player.isGrounded == true)
                                 {
                                     yield return null;
@@ -186,6 +157,10 @@ public class WeaponSet : MonoBehaviour
                 {
                     if (_coroutine != null && _state == State.None)
                     {
+                        if (_restAttackGameObject != null)
+                        {
+                            _restAttackGameObject.SetActive(false);
+                        }
                         AnimatorPlayer animatorPlayer = player.animatorPlayer;
                         if (animatorPlayer != null)
                         {

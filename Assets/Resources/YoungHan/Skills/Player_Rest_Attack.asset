@@ -17,6 +17,6 @@ MonoBehaviour:
     extension: 0
   shape: {fileID: 11400000, guid: 4daf54e951e348f409050d5fab104395, type: 2}
   shotObject: {fileID: 0}
-  splashObject: {fileID: 2274440354472428586, guid: 31e99f4ba8d06bd43a3fb4fd342a35f5, type: 3}
+  splashObject: {fileID: 2578730799100330525, guid: f38b5d0701f1dac4d9cc1253360a9152, type: 3}
   hitObject: {fileID: 0}
   projectile: {fileID: 0}
