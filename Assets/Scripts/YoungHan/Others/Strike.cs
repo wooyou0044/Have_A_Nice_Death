@@ -15,6 +15,9 @@ public struct Strike
     [SerializeField, Header("용도가 공격 시 피해량을 ")]
     private byte extension;
 
+    [SerializeField, Header("흔들림 효과")]
+    public bool shaking;
+
     //최종적으로 대상에게 가해질 결과값을 반환한다.
     public int result
     {

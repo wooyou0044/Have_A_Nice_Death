@@ -462,7 +462,7 @@ public sealed class Player : Runner, IHittable
 
     public void Hit(Strike strike)
     {
-        if (isAlive == true && _animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip)
+        if (isAlive == true && ((_animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip) || getWeaponSet.IsInvincibleState(_animatorPlayer) == false))
         {
             int result = strike.result;
             //피 채우는 용도라면
@@ -480,9 +480,8 @@ public sealed class Player : Runner, IHittable
                 }
             }
             //피 깎는 용도라면
-            else
+            else if(result < 0)
             {
-                //
                 if (-result < _remainLife)
                 {
                     _animatorPlayer?.Play(_hitClip, _idleClip);
