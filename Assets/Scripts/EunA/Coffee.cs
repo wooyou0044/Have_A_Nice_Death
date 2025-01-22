@@ -59,20 +59,22 @@ public class Coffee : MonoBehaviour
 
     public bool GetCoffee()
     {
-        if (CanGetDistance != null)
+        if (CanGetDistance != null && Coffee_Image.activeInHierarchy == true)
         {
             Coffee_Image.SetActive(false);
             Coffee_Info.SetActive(false);
             GetItemEffect.SetActive(true);
-            //isGetCoffee = true;
+            isGetCoffee = true;
             return true;
         }
         return false;
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(this.transform.position, ItemGetRange);
     }
+#endif
 }

@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using TMPro;
 using UnityEngine;
 
-public class Spooksmen_AI : Walker, IHittable
+public class Spooksmen_AI : Walker, IHittable, ILootable
 {
     LayerMask playerLayer;
 
@@ -44,6 +44,9 @@ public class Spooksmen_AI : Walker, IHittable
     [SerializeField] GameObject stunMark;
     [SerializeField] Transform stunPos;
     [SerializeField] GameObject[] deathGhost;
+
+    [Header("드롭하는 아이템")]
+    [SerializeField] MonoBehaviour dropItem;
 
     Animator myAnimator;
     AnimatorPlayer myPlayer;
@@ -509,7 +512,8 @@ public class Spooksmen_AI : Walker, IHittable
         surprised.SetActive(false);
         attack.SetActive(false);
         // 맞는 애니메이션 쓰고
-        hp += strike.result;
+        int result = strike.result;
+        hp += result;
 
         isHit = true;
 
@@ -520,7 +524,7 @@ public class Spooksmen_AI : Walker, IHittable
 
             if(isComboHit == true)
             {
-                comboHitNum -= strike.result;
+                comboHitNum -= result;
             }
 
             Debug.Log(comboHitNum);
@@ -567,10 +571,16 @@ public class Spooksmen_AI : Walker, IHittable
                 }
             }
         }
+        GameManager.Report(this, result);
     }
 
     public Collider2D GetCollider2D()
     {
         return damageCollider;
+    }
+
+    public MonoBehaviour GetLootObject()
+    {
+        return dropItem;
     }
 }

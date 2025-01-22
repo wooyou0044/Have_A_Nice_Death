@@ -72,6 +72,26 @@ public sealed class ObjectPooler : MonoBehaviour
         }
     }
 
+    public bool IsPickUp()
+    {
+        foreach (KeyValuePair<GameObject, List<GameObject>> kvp in _gameObjects)
+        {
+            Coffee coffee = kvp.Key.GetComponent<Coffee>();
+            if(coffee != null)
+            {
+                List<GameObject> list = kvp.Value;
+                foreach (GameObject item in list)
+                {
+                    if (item.activeInHierarchy == true && item.GetComponent<Coffee>().GetCoffee())
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// 해당 프리팹 클론을 반환하는 함수
     /// </summary>
