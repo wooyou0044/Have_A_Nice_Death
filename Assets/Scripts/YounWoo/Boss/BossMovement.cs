@@ -55,6 +55,8 @@ public class BossMovement : Runner, IHittable
     bool isEndPoint;
     bool isBox;
 
+    //체력바
+    //[SerializeField]Boss_Hp_Bar hpBar;
     // 최대 체력
     public float MaxHP
     {
@@ -130,6 +132,8 @@ public class BossMovement : Runner, IHittable
                 isAttacking = false;
             }
         }
+
+        
     }
 
     public Collider2D GetCollider2D()
@@ -140,11 +144,13 @@ public class BossMovement : Runner, IHittable
     public void Hit(Strike strike)
     {
         Debug.Log(HP);
+        //hpBar.UpdateBossHPBar();
         if (isAlive)
         {
             // HP 감소
             HP += strike.result;
-
+          
+            
             if (transform.rotation.eulerAngles.y == player.transform.rotation.eulerAngles.y)
             {
                 transform.rotation = Quaternion.Euler(0, -(180 - transform.rotation.eulerAngles.y), 0);
@@ -182,6 +188,8 @@ public class BossMovement : Runner, IHittable
                 myPlayer.Play(hitClip, idleClip, false);
             }
             // 만약에 나랑 같은 방향을 바라보고 있으면 턴 해야 함
+
+           
         }
         else
         {
