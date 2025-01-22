@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -41,6 +40,9 @@ public sealed class GameManager : Manager<GameManager>
             return _objectPooler;
         }
     }
+
+    [SerializeField]
+    private CameraController _cameraController;
 
     [SerializeField]
     private StatusPanel _statusPanel;
@@ -147,6 +149,7 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="result"></param>
     public static void Report(IHittable hittable, int result)
     {
+        instance._cameraController?.TriggerShake();
         //데미지가 이 대상에게 얼마나 들어왔는지 보고하고 ui로 값을 전송
         if (hittable.isAlive == false)
         {
@@ -178,6 +181,10 @@ public sealed class GameManager : Manager<GameManager>
     /// <param name="effect"></param>
     public static void Use(Strike strike, Strike.Area area, GameObject effect)
     {
+        if(strike.shaking == true)
+        {
+            instance._cameraController.TriggerShake();
+        }
         if (area != null)
         {
 #if UNITY_EDITOR

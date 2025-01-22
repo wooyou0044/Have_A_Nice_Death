@@ -212,4 +212,13 @@ public class WeaponSet : MonoBehaviour
         }
         return _coroutine != null;
     }
+
+    public bool IsInvincibleState(AnimatorPlayer animatorPlayer)
+    {
+        if(animatorPlayer != null && animatorPlayer.GetCurrentClips() == _restAttackClip)
+        {
+            return true;
+        }
+        return false;
+    }
 }
