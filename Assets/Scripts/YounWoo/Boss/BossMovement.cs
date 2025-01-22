@@ -19,7 +19,10 @@ public class BossMovement : Runner, IHittable
     [SerializeField] AnimationClip dashEndClip;
     [SerializeField] AnimationClip comboAttack1Clip;
     [SerializeField] AnimationClip comboAttack2Clip;
-    [SerializeField] AnimationClip deathClip;
+    [SerializeField] AnimationClip death1Clip;
+    [SerializeField] AnimationClip death2Clip;
+    [SerializeField] AnimationClip death3Clip;
+    [SerializeField] AnimationClip death4Clip;
 
     [Header("정보")]
     [SerializeField] float HP = 1300;
@@ -54,9 +57,22 @@ public class BossMovement : Runner, IHittable
     bool isAttacking;
     bool isMeetPlayer;
     bool isDead;
+    bool isDisappear;
 
     // 임시
     GameObject player;
+
+    public enum DeathType
+    {
+        Default,
+        Be_Rock,
+        Awake,
+        Be_AnotherBoss,
+        GoOutside,
+        Death
+    }
+
+    public DeathType deathState;
 
     //체력바
     [SerializeField]Boss_Hp_Bar hpBar;
@@ -111,6 +127,14 @@ public class BossMovement : Runner, IHittable
         }
     }
 
+    public bool IsDisappear
+    {
+        get
+        {
+            return isDisappear;
+        }
+    }
+
     void Awake()
     {
         bossCollider = GetComponent<Collider2D>();
@@ -133,6 +157,8 @@ public class BossMovement : Runner, IHittable
         fullHp = maxHp = HP;
         isStun = false;
         isMeetPlayer = false;
+        isDisappear = false;
+        deathState = DeathType.Default;
     }
 
     IHittable target;
@@ -155,6 +181,16 @@ public class BossMovement : Runner, IHittable
                 isAttacking = false;
             }
         }
+
+        if(isAlive == false && bossCollider.isActiveAndEnabled == true)
+        {
+            HP = 0;
+            MoveStop();
+            bossAI.enabled = false;
+            deathState = DeathType.Be_Rock;
+            DeathAnimation(deathState);
+            bossCollider.enabled = false;
+        }
     }
 
     public Collider2D GetCollider2D()
@@ -164,14 +200,9 @@ public class BossMovement : Runner, IHittable
 
     public void Hit(Strike strike)
     {
-        Debug.Log(HP);
         hpBar.UpdateBossHPBar();
-        if (isAlive)
+        if (HP > 0)
         {
-            // HP 감소
-            HP += strike.result;
-          
-            
             if (transform.rotation.eulerAngles.y == player.transform.rotation.eulerAngles.y)
             {
                 transform.rotation = Quaternion.Euler(0, -(180 - transform.rotation.eulerAngles.y), 0);
@@ -179,6 +210,13 @@ public class BossMovement : Runner, IHittable
 
             if (bossAI._skill != GargoyleBrain.Skill.Dash)
             {
+            }
+
+            // 스턴
+            if (HP <= fullHp / 2)
+            {
+                isStun = true;
+                myPlayer.Play(stunStartClip, stunIdleClip, false);
             }
 
             if (isStun == true)
@@ -197,32 +235,13 @@ public class BossMovement : Runner, IHittable
                 }
             }
 
-            // 스턴
-            if (HP <= fullHp / 2)
-            {
-                isStun = true;
-                myPlayer.Play(stunStartClip, stunIdleClip, false);
-            }
-
             if (isStun == false)
             {
                 myPlayer.Play(hitClip, idleClip, false);
             }
-            // 만약에 나랑 같은 방향을 바라보고 있으면 턴 해야 함
 
-           
-        }
-        else
-        {
-            if (bossCollider.isActiveAndEnabled == true)
-            {
-                HP = 0;
-                isDead = true;
-                bossCollider.enabled = false;
-                myRigid.gravityScale = 0;
-                // gameObject는 아직 죽이면 안 됨 => 대화 창 켜지고 새로운 애로 바뀌어야 함
-                myPlayer.Play(deathClip);
-            }
+            // HP 감소
+            HP += strike.result;
         }
     }
 
@@ -266,7 +285,10 @@ public class BossMovement : Runner, IHittable
     // 도착하면 안 움직이게 하는 함수 
     public override void MoveStop()
     {
-        myPlayer.Play(idleClip);
+        if(deathState == DeathType.Default)
+        {
+            myPlayer.Play(idleClip);
+        }
         if (myRigid.velocity.y != 0)
         {
             myRigid.velocity = new Vector2(0, 0);
@@ -455,7 +477,7 @@ public class BossMovement : Runner, IHittable
         isMeetPlayer = true;
     }
 
-    public bool IsEndSurprised()
+    public bool IsEndAnimation()
     {
         if(myPlayer.isEndofFrame)
         {
@@ -478,8 +500,58 @@ public class BossMovement : Runner, IHittable
         myRigid.velocity = destination * 0.8f;
     }
 
-    public void DeathAnimation()
+    void MoveToPointPosition(Vector2 pointSpotPos, float speed)
     {
-        myPlayer.Play(deathClip);
+        destination = pointSpotPos - (Vector2)transform.position;
+        myRigid.velocity = destination * speed;
+    }
+
+    bool IsArrivePointSpot(Vector2 pointSpotPos)
+    {
+        if(Vector2.Distance(transform.position, pointSpotPos) <= 1f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void DeathAnimation(DeathType state)
+    {
+        switch(state)
+        {
+            case DeathType.Be_Rock:
+                myPlayer.Play(death1Clip);
+                isDead = true;
+                break;
+            case DeathType.Awake:
+                myPlayer.Play(death2Clip);
+                break;
+            case DeathType.Be_AnotherBoss:
+                pointPos = new Vector2(transform.position.x, maxHeight / 2);
+                MoveToPointPosition(pointPos, 0.8f);
+                myPlayer.Play(death3Clip);
+                break;
+            case DeathType.GoOutside:
+                pointPos = new Vector2(transform.position.x, startPoint.y);
+                MoveToPointPosition(pointPos, 0.8f);
+                myPlayer.Play(death4Clip);
+                break;
+            case DeathType.Death:
+                if(transform.rotation.eulerAngles.y == 180)
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                pointPos = new Vector2(endPoint.x + 15.0f, transform.position.y);
+                MoveToPointPosition(pointPos, 1f);
+                if(IsArrivePointSpot(pointPos) == true)
+                {
+                    gameObject.SetActive(false);
+                    isDisappear = true;
+                }
+                break;
+        }
     }
 }

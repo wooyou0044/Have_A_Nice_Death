@@ -45,9 +45,7 @@ GameObject:
   - component: {fileID: 5469154240906854629}
   - component: {fileID: 256987344728768662}
   - component: {fileID: 79716899360246641}
-  - component: {fileID: 3892406297100971027}
   - component: {fileID: 2745180083543829129}
-  - component: {fileID: 3395902586490708408}
   - component: {fileID: 3101144888229220181}
   m_Layer: 7
   m_Name: Gargoyle
@@ -219,51 +217,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e4c81c291abf146a7472287813e289, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!61 &3892406297100971027
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6825786477796645821}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.63, y: 2.26}
-    newSize: {x: 1.63, y: 2.26}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.63, y: 2.26}
-  m_EdgeRadius: 0
 --- !u!114 &2745180083543829129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,59 +252,19 @@ MonoBehaviour:
   dashEndClip: {fileID: 7400000, guid: c09e7f78e55522d4096ef6287c4ff1d4, type: 2}
   comboAttack1Clip: {fileID: 7400000, guid: 38e1005f229c9de43bbde46da29c82b7, type: 2}
   comboAttack2Clip: {fileID: 7400000, guid: 8fc0ba196609699459e7e4bdbbae2081, type: 2}
-  deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
+  death1Clip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
+  death2Clip: {fileID: 7400000, guid: f6760e2872de4db45bca5660fc8aa2c2, type: 2}
+  death3Clip: {fileID: 7400000, guid: 3c9100539a9be62499790678ec27f94b, type: 2}
+  death4Clip: {fileID: 7400000, guid: e903c7fb399dbd140b415918af33a92a, type: 2}
   HP: 1300
   dropSpeed: 1
   flySpeed: 2
   maxHeight: 4
   stunPrefab: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
   stunPos: {fileID: 8118249707742697409}
+  deathState: 0
+  hpBar: {fileID: 0}
   _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
---- !u!61 &3395902586490708408
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6825786477796645821}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.63, y: 2.26}
-    newSize: {x: 1.63, y: 2.26}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.63, y: 2.26}
-  m_EdgeRadius: 0
 --- !u!114 &3101144888229220181
 MonoBehaviour:
   m_ObjectHideFlags: 0

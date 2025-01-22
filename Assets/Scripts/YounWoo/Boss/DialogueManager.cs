@@ -9,9 +9,11 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] GameObject dialogueCanavas;
     [SerializeField] GameObject bossCanavas;
     [SerializeField] GameObject desk;
+    [SerializeField] GameObject clearCanvas;
 
     GameObject canvas;
     GameObject boss;
+    GameObject clearWindow;
 
     BossMovement getBossMove;
     GargoyleBrain getBossAi;
@@ -34,6 +36,9 @@ public class DialogueManager : MonoBehaviour
         getDeskMove = desk.GetComponent<DeskMovement>();
 
         getCamera = Camera.main.GetComponent<BossCamera>();
+
+        clearWindow = Instantiate(clearCanvas);
+        clearWindow.SetActive(false);
     }
 
     void Start()
@@ -48,12 +53,12 @@ public class DialogueManager : MonoBehaviour
             getBossMove.PlayerEnterBossStage();
             getCamera.isArrive = false;
         }
-        if(getBossMove.IsMeetPlayer == true && getBossMove.IsEndSurprised() == true)
+        if(getBossMove.IsMeetPlayer == true && getBossMove.IsEndAnimation() == true)
         {
             canvas.SetActive(true);
             getBossMove.IsMeetPlayer = false;
         }
-        if(getDialogueUI.ConverationEnd == true)
+        if(getBossMove.isAlive == true && getDialogueUI.ConverationEnd == true)
         {
             getBossMove.FightParticipation();
             getDeskMove.TurnOnAnimator();
@@ -61,18 +66,65 @@ public class DialogueManager : MonoBehaviour
             IEnumerator DoStop()
             {
                 yield return new WaitForSeconds(1.5f);
-                getBossMove.MoveStop();
                 getBossAi.enabled = true;
+                getBossMove.MoveStop();
                 bossCanavas.SetActive(true);
             }
             getDialogueUI.ConverationEnd = false;
         }
 
-        if(getBossMove.IsDead == true)
+        if (getBossMove.IsDead == true && getBossMove.IsEndAnimation() == true)
         {
-            Debug.Log("Á×¾úÀ½");
-            getBossMove.DeathAnimation();
+            StartCoroutine(PlayDialogue());
+            IEnumerator PlayDialogue()
+            {
+                yield return new WaitForSeconds(1.0f);
+                canvas.SetActive(true);
+                bossCanavas.SetActive(false);
+            }
+            getBossMove.deathState = BossMovement.DeathType.Awake;
             getBossMove.IsDead = false;
+        }
+
+        if (getBossMove.deathState == BossMovement.DeathType.Awake && getDialogueUI.ConverationEnd == true)
+        {
+            getBossMove.DeathAnimation(getBossMove.deathState);
+            getBossMove.deathState = BossMovement.DeathType.Be_AnotherBoss;
+            getDialogueUI.ConverationEnd = false;
+        }
+
+        if(getBossMove.deathState == BossMovement.DeathType.Be_AnotherBoss && getBossMove.IsEndAnimation() == true)
+        {
+            getBossMove.DeathAnimation(getBossMove.deathState);
+            StartCoroutine(DoStop());
+            IEnumerator DoStop()
+            {
+                yield return new WaitForSeconds(1.5f);
+                getBossMove.MoveStop();
+            }
+            getBossMove.deathState = BossMovement.DeathType.GoOutside;
+        }
+
+        if (getBossMove.deathState == BossMovement.DeathType.GoOutside && getBossMove.IsEndAnimation() == true)
+        {
+            getBossMove.DeathAnimation(getBossMove.deathState);
+            StartCoroutine(DoStop());
+            IEnumerator DoStop()
+            {
+                yield return new WaitForSeconds(1f);
+                getBossMove.MoveStop();
+            }
+            getBossMove.deathState = BossMovement.DeathType.Death;
+        }
+
+        if (getBossMove.deathState == BossMovement.DeathType.Death && getBossMove.IsEndAnimation() == true)
+        {
+            getBossMove.DeathAnimation(getBossMove.deathState);
+        }
+
+        if(getBossMove.IsDisappear && clearWindow.activeSelf == false)
+        {
+            clearWindow.SetActive(true);
         }
     }
 }
