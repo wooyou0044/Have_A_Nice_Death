@@ -286,6 +286,8 @@ MonoBehaviour:
   _dashDelay: 0.2
   _dashCoolTime: 1.5
   _isDashed: 0
+  surprisedClip: {fileID: 7400000, guid: ee6cb53aa87880b47906f044d2597643, type: 2}
+  fightStartClip: {fileID: 7400000, guid: 62b93e474990d794fa7638a7c4f77da2, type: 2}
   idleClip: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
   uTurnClip: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
   hitClip: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
@@ -295,13 +297,13 @@ MonoBehaviour:
   dashStartClip: {fileID: 7400000, guid: 634e94faa6cee0242aab3334d48ec032, type: 2}
   dashLoopClip: {fileID: 7400000, guid: 5112ba5ea6b47d44fb3c65fbf8a273ac, type: 2}
   dashEndClip: {fileID: 7400000, guid: c09e7f78e55522d4096ef6287c4ff1d4, type: 2}
-  comboAttack1Clip: {fileID: 0}
-  comboAttack2Clip: {fileID: 0}
+  comboAttack1Clip: {fileID: 7400000, guid: 38e1005f229c9de43bbde46da29c82b7, type: 2}
+  comboAttack2Clip: {fileID: 7400000, guid: 8fc0ba196609699459e7e4bdbbae2081, type: 2}
   deathClip: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
   HP: 1300
   dropSpeed: 1
   flySpeed: 2
-  maxHeight: 4
+  maxHeight: 40
   stunPrefab: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
   stunPos: {fileID: 8118249707742697409}
   _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}

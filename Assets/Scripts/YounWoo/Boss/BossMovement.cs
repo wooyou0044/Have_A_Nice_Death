@@ -6,6 +6,8 @@ using UnityEngine;
 public class BossMovement : Runner, IHittable
 {
     [Header("애니메이션 클립")]
+    [SerializeField] AnimationClip surprisedClip;
+    [SerializeField] AnimationClip fightStartClip;
     [SerializeField] AnimationClip idleClip;
     [SerializeField] AnimationClip uTurnClip;
     [SerializeField] AnimationClip hitClip;
@@ -33,6 +35,7 @@ public class BossMovement : Runner, IHittable
     GargoyleBrain bossAI;
 
     GameObject stun;
+    GameObject dialogue;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 startPoint;
@@ -49,11 +52,10 @@ public class BossMovement : Runner, IHittable
 
     bool isStun;
     bool isAttacking;
+    bool isMeetPlayer;
 
     // 임시
     GameObject player;
-    bool isEndPoint;
-    bool isBox;
 
     //체력바
     //[SerializeField]Boss_Hp_Bar hpBar;
@@ -94,6 +96,18 @@ public class BossMovement : Runner, IHittable
         }
     }
 
+    public bool IsMeetPlayer
+    {
+        get
+        {
+            return isMeetPlayer;
+        }
+        set
+        {
+            isMeetPlayer = value;
+        }
+    }
+
     void Awake()
     {
         bossCollider = GetComponent<Collider2D>();
@@ -115,14 +129,20 @@ public class BossMovement : Runner, IHittable
         midPoint = (startPoint + endPoint) / 2;
         fullHp = maxHp = HP;
         isStun = false;
+        isMeetPlayer = false;
     }
 
     IHittable target;
 
     void Update()
     {
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
         // 싸움 중인지 확인
-        if(isAttacking)
+        if (isAttacking)
         {
             attackElapsedTime += Time.deltaTime;
             if (bossAI._rechargeTime <= attackElapsedTime)
@@ -422,13 +442,33 @@ public class BossMovement : Runner, IHittable
         projectile.Shot(getTransform, null, GameManager.ShowEffect, GameManager.Use, null, duration);
     }
 
-    // 임시 테스트용
-    void OnTriggerEnter2D(Collider2D collision)
+
+    public void PlayerEnterBossStage()
     {
-        if (collision.tag == "tempBox")
+        myPlayer.Play(surprisedClip,idleClip, false);
+        isMeetPlayer = true;
+    }
+
+    public bool IsEndSurprised()
+    {
+        if(myPlayer.isEndofFrame)
         {
-            Debug.Log("부딪힘");
-            isBox = true;
+            return true;
         }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void FightParticipation()
+    {
+        myPlayer.Play(fightStartClip, idleClip, false);
+
+        pointPos = new Vector2(endPoint.x, transform.position.y);
+        OnDrawGizmos();
+
+        destination = pointPos - (Vector2)transform.position;
+        myRigid.velocity = destination * 0.8f;
     }
 }
