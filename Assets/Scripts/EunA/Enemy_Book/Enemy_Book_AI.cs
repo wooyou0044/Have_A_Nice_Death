@@ -67,8 +67,6 @@ public class Enemy_Book_AI : Walker, IHittable
         }
     }
 
-    Transform IHittable.transform => transform;
-
     void Start()
     {
         MaxEnemyHealth = 20;
@@ -116,7 +114,6 @@ public class Enemy_Book_AI : Walker, IHittable
 
         else if (detectplayerErea == null)
         {
-            Debug.Log("방황 시작");           
             BookWander();
             SurprisedEffect.SetActive(false);
             isFind = true;

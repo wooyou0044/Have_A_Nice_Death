@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6995353156830581643}
   - component: {fileID: 4387891358971064903}
   - component: {fileID: 2795155397958220639}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Iamge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 6953569487295534185}
   - component: {fileID: 2581561009127360811}
   - component: {fileID: 233346067620237969}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SkeletonHand
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -208,6 +208,6 @@ MonoBehaviour:
   detectRange: 10
   attackRange: 3
   responTime: 5
-  attackTime: 2
   attackCoolTime: 2
   imageTransform: {fileID: 0}
+  skill: {fileID: 11400000, guid: 45082231fde18b24487ac1a3eb67836c, type: 2}

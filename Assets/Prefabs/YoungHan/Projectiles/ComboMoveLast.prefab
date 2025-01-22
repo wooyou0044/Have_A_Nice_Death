@@ -89,6 +89,7 @@ MonoBehaviour:
   _strike:
     power: -20
     extension: 10
+    shaking: 1
   _offset: {x: 1.5, y: 3}
   _shape: {fileID: 0}
   _hitObject: {fileID: 0}

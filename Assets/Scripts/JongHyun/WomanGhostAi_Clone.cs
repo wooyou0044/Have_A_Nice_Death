@@ -6,8 +6,10 @@ using UnityEditor.Animations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class WomanGhostAi_Clone : Walker,IHittable
-{    
+public class WomanGhostAi_Clone : Walker,IHittable,ILootable
+{
+    [SerializeField]
+    MonoBehaviour anima;
     bool isDeath = false;
     [SerializeField]
     int womanGhostHP = 50;
@@ -59,13 +61,10 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     private bool movingRight = true;
     private Vector2 startPos;
-    CameraController camera;
-
-    public bool isAlive { get { return true; } }
+    public bool isAlive { get { return womanGhostHP > 0; } }
 
     private void Start()
     {
-        camera = Camera.main.GetComponent<CameraController>();
         startPos = transform.position;
         animatorPlayer = GetComponent<AnimatorPlayer>();        
         surprisedAnimator = surprisedAnimator.gameObject.GetComponent<Animator>();
@@ -193,17 +192,14 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     public void Hit(Strike strike)
     {
-        womanGhostHP += strike.result;
+        int result = strike.result;
+        womanGhostHP += result;
         
         if (womanGhostHP>0)
         {
             MoveStop();
             animatorPlayer.Play(hitClip, true);
             isHit = true;
-            if (camera != null)
-            {
-                camera.TriggerShake(); 
-            }
         }
         else
         {
@@ -214,11 +210,17 @@ public class WomanGhostAi_Clone : Walker,IHittable
                 yield return new WaitForSeconds(0.3f);
                 gameObject.SetActive(false);
             }
-        }        
+        }
+        GameManager.Report(this, result);
     }
 
     public Collider2D GetCollider2D()
     {
         return getCollider2D;
+    }
+
+    public MonoBehaviour GetLootObject()
+    {
+        return anima;
     }
 }

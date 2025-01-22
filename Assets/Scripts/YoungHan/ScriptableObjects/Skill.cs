@@ -60,7 +60,7 @@ public class Skill : ScriptableObject
             }
             else
             {
-                action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
+                //action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
             }
         }
         //공격 모양이 없으면
@@ -69,15 +69,15 @@ public class Skill : ScriptableObject
             int length = tags != null ? tags.Length : 0;
             if(length > 0)
             {
-                action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
+                //action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
             }
             else if(target != null)
             {
-                action2?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
+                //action2?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
             }
             else
             {
-                action2?.Invoke(strike, null, hitObject);
+                //action2?.Invoke(strike, null, hitObject);
             }
         }
         //발사체를 반환하는 함수가 있다면

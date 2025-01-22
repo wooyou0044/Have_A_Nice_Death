@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public partial class BossMovement : Runner, IHittable
+public class BossMovement : Runner, IHittable
 {
     [Header("애니메이션 클립")]
     [SerializeField] AnimationClip idleClip;
@@ -45,6 +45,7 @@ public partial class BossMovement : Runner, IHittable
     float attackElapsedTime;
     float fullHp;
     float oppositePointX;
+    float maxHp;
 
     bool isStun;
     bool isAttacking;
@@ -53,6 +54,27 @@ public partial class BossMovement : Runner, IHittable
     GameObject player;
     bool isEndPoint;
     bool isBox;
+
+    //체력바
+    //[SerializeField]Boss_Hp_Bar hpBar;
+    // 최대 체력
+    public float MaxHP
+    {
+        get
+        {
+            return maxHp;
+        }
+    }
+
+    public float currentHP
+    {
+        get
+        {
+            return HP;
+        }
+    }
+
+    // 현재 체력
 
     public float StartPointX
     {
@@ -91,7 +113,7 @@ public partial class BossMovement : Runner, IHittable
         stun.transform.localScale = new Vector2(0.7f, 0.7f);
         stun.SetActive(false);
         midPoint = (startPoint + endPoint) / 2;
-        fullHp = HP;
+        fullHp = maxHp = HP;
         isStun = false;
     }
 
@@ -110,6 +132,8 @@ public partial class BossMovement : Runner, IHittable
                 isAttacking = false;
             }
         }
+
+        
     }
 
     public Collider2D GetCollider2D()
@@ -120,11 +144,13 @@ public partial class BossMovement : Runner, IHittable
     public void Hit(Strike strike)
     {
         Debug.Log(HP);
+        //hpBar.UpdateBossHPBar();
         if (isAlive)
         {
             // HP 감소
             HP += strike.result;
-
+          
+            
             if (transform.rotation.eulerAngles.y == player.transform.rotation.eulerAngles.y)
             {
                 transform.rotation = Quaternion.Euler(0, -(180 - transform.rotation.eulerAngles.y), 0);
@@ -162,6 +188,8 @@ public partial class BossMovement : Runner, IHittable
                 myPlayer.Play(hitClip, idleClip, false);
             }
             // 만약에 나랑 같은 방향을 바라보고 있으면 턴 해야 함
+
+           
         }
         else
         {
@@ -268,32 +296,24 @@ public partial class BossMovement : Runner, IHittable
     {
         myPlayer.Play(dashLoopClip);
         // 내 위치가 중간 지점보다 크면
-        if (transform.position.x > midPoint.x)
+        if (transform.position.x >= midPoint.x)
         {
             // 왼쪽 끝에 있는 곳이 목표
             pointPos = startPoint;
             oppositePointX = endPoint.x;
             OnDrawGizmos();
-
-            // 애니메이션 추가 필요
-
-            destination = (Vector2)transform.position - pointPos;
-            myRigid.velocity = -destination * (dropSpeed * 0.3f);
         }
         // 내 위치가 중간 지점보다 작으면
-        else if (transform.position.x < midPoint.x)
+        else
         {
             // 오른쪽 끝에 있는 곳이 목표
             pointPos = endPoint;
             oppositePointX = startPoint.x;
             OnDrawGizmos();
-
-            // 애니메이션 추가 필요
-
-            destination = (Vector2)transform.position - pointPos;
-            myRigid.velocity = -destination * (dropSpeed * 0.3f);
-
         }
+
+        destination = (Vector2)transform.position - pointPos;
+        myRigid.velocity = -destination * (dropSpeed * 0.3f);
     }
 
     // 공중으로 날라가는 함수
@@ -304,24 +324,21 @@ public partial class BossMovement : Runner, IHittable
             myPlayer.Play(dashLoopClip);
         }
 
-        Vector2 flyDestination = Vector2.zero;
         // 내 위치가 중간 지점보다 오른쪽에 있으면
         if (transform.position.x >= midPoint.x)
         {
             pointPos = new Vector2(startPoint.x, maxHeight);
             OnDrawGizmos();
-
-            destination = pointPos - (Vector2)transform.position;
-            myRigid.velocity = destination * (flySpeed * 0.3f);
         }
+
         else if (transform.position.x < midPoint.x)
         {
             pointPos = new Vector2(endPoint.x, maxHeight);
             OnDrawGizmos();
-
-            destination = pointPos - (Vector2)transform.position;
-            myRigid.velocity = destination * (flySpeed * 0.3f);
         }
+
+        destination = pointPos - (Vector2)transform.position;
+        myRigid.velocity = destination * (flySpeed * 0.3f);
     }
 
     // 내려 날아와서 반대쪽으로 이동하는 함수
@@ -362,7 +379,47 @@ public partial class BossMovement : Runner, IHittable
     public void ComboAttack2()
     {
         isAttacking = true;
+        // 위로 잠깐 떠오름 추가 필요(maxHeight / 2)
+        pointPos = new Vector2(transform.position.x, maxHeight / 2);
+        OnDrawGizmos();
+
+        destination = pointPos - (Vector2)transform.position;
+        myRigid.velocity = destination * (flySpeed * 0.2f);
+
         myPlayer.Play(comboAttack2Clip, idleClip, false);
+    }
+
+    // 중간으로 올라가는 함수 필요
+    public void MoveMiddleSpot()
+    {
+        pointPos = new Vector2(midPoint.x, maxHeight);
+        OnDrawGizmos();
+
+        destination = pointPos - (Vector2)transform.position;
+        myRigid.velocity = destination * (flySpeed * 0.3f);
+    }
+
+    [SerializeField]
+    private Projectile _dashProjectile;
+
+    public void AdjustRotation()
+    {
+        Vector2 velocity = getRigidbody2D.velocity;
+        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        if (velocity.x >= 0)
+        {
+            getTransform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+        else
+        {
+            getTransform.rotation = Quaternion.Euler(180, 0, -angle);
+        }
+    }
+
+    public void UseDashSkill(float duration)
+    {
+        Projectile projectile = GameManager.GetProjectile(_dashProjectile);
+        projectile.Shot(getTransform, null, GameManager.ShowEffect, GameManager.Use, null, duration);
     }
 
     // 임시 테스트용

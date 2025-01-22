@@ -148,14 +148,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public byte anima
-    {
-        private set;
-        get;
-    }
-
     private bool _stopping = false;
 
+    private Action _shakeAction = null;
     private Action<bool> _engageAction = null;
     private Action<IHittable, int> _reportAction = null;
     private Action<Strike, Strike.Area, GameObject> _useAction = null;
@@ -212,6 +207,7 @@ public sealed class Player : Runner, IHittable
         {
             _remainLife = (byte)(_maxLife - _lossLife);
         }
+        _reportAction?.Invoke(this, 0);
         if (_remainMana > _maxMana)
         {
             _remainMana = _maxMana;
@@ -340,8 +336,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action<bool> engage, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
+    public void Initialize(Action shake, Action<bool> engage, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
     {
+        _shakeAction = shake;
         _engageAction = engage;
         _reportAction = report;
         _effectAction = effect;
@@ -416,7 +413,7 @@ public sealed class Player : Runner, IHittable
     {
         if (Time.timeScale > 0)
         {
-            _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+            _stopping = getWeaponSet.TryScythe(this, pressed, _shakeAction, _effectAction, _useAction, _projectileFunction);
         }
     }
 
@@ -457,12 +454,21 @@ public sealed class Player : Runner, IHittable
 
     public void Heal(byte value = 0)
     {
-
+        if(value > 0)
+        {
+            GameManager.anima += value;
+        }
+        else if(GameManager.anima > 0)
+        {
+            float recover = maxLife * 0.15f;
+            Hit(new Strike((int)recover, 0));
+            GameManager.anima--;
+        }
     }
 
     public void Hit(Strike strike)
     {
-        if (isAlive == true && _animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip)
+        if (isAlive == true && ((_animatorPlayer != null && _animatorPlayer.GetCurrentClips() != _dashClip) || getWeaponSet.IsInvincibleState(_animatorPlayer) == false))
         {
             int result = strike.result;
             //피 채우는 용도라면
@@ -480,9 +486,8 @@ public sealed class Player : Runner, IHittable
                 }
             }
             //피 깎는 용도라면
-            else
+            else if(result < 0)
             {
-                //
                 if (-result < _remainLife)
                 {
                     _animatorPlayer?.Play(_hitClip, _idleClip);
