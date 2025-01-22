@@ -6,8 +6,10 @@ using UnityEditor.Animations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class WomanGhostAi_Clone : Walker,IHittable
-{    
+public class WomanGhostAi_Clone : Walker,IHittable,ILootable
+{
+    [SerializeField]
+    MonoBehaviour anima;
     bool isDeath = false;
     [SerializeField]
     int womanGhostHP = 50;
@@ -213,5 +215,10 @@ public class WomanGhostAi_Clone : Walker,IHittable
     public Collider2D GetCollider2D()
     {
         return getCollider2D;
+    }
+
+    public MonoBehaviour GetLootObject()
+    {
+        return anima;
     }
 }

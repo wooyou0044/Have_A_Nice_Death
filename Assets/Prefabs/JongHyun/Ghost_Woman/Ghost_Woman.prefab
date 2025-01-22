@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 405933473079492645}
   - component: {fileID: 6362224393105712357}
   - component: {fileID: 4901101567343981139}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stars2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 2254687384817045499}
   - component: {fileID: 8454776652132795314}
   - component: {fileID: 4915391896381060991}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stars1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 724223638403657929}
   - component: {fileID: 8025206838110778297}
   - component: {fileID: 9218249341089300515}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ghost_Woman
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -281,6 +281,7 @@ MonoBehaviour:
   _isGrounded: 0
   _movingSpeed: 2
   _gizmoColor: {r: 0.41568628, g: 0.34117648, b: 0.34117648, a: 1}
+  anima: {fileID: 2542494722539395041, guid: 9768e519fd62a4248a776b3eef6493db, type: 3}
   womanGhostHP: 50
   womanFire: {fileID: 6523782910941967994, guid: 93505746e44cce84e9b38b907ac57e7d, type: 3}
   Launcher: {fileID: 1257630064005575174}
@@ -455,7 +456,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8822096455251046423}
   - component: {fileID: 1244767873768844066}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: StunStars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -505,7 +506,7 @@ GameObject:
   - component: {fileID: 2765027715907586442}
   - component: {fileID: 1182362774488071502}
   - component: {fileID: 995860984952704547}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Find
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -611,7 +612,7 @@ GameObject:
   - component: {fileID: 2033949124933067517}
   - component: {fileID: 3640074320017328936}
   - component: {fileID: 8654247340468971032}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stars4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -718,7 +719,7 @@ GameObject:
   - component: {fileID: 6934755641620060765}
   - component: {fileID: 877417215362196851}
   - component: {fileID: 2051005651827460737}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Woman_suprised
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -837,7 +838,7 @@ GameObject:
   - component: {fileID: 3687483671455775244}
   - component: {fileID: 4824298984837446718}
   - component: {fileID: 463499815280941243}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Attack_Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -941,7 +942,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1257630064005575174}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SkillPresets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -974,7 +975,7 @@ GameObject:
   - component: {fileID: 1505867268714466270}
   - component: {fileID: 7145937013561833699}
   - component: {fileID: 1126852624357782938}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Stars3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
