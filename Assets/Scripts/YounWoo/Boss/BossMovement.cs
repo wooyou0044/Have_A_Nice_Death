@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public partial class BossMovement : Runner, IHittable
@@ -14,11 +15,12 @@ public partial class BossMovement : Runner, IHittable
     [SerializeField] AnimationClip dashStartClip;
     [SerializeField] AnimationClip dashLoopClip;
     [SerializeField] AnimationClip dashEndClip;
+    [SerializeField] AnimationClip comboAttack1Clip;
+    [SerializeField] AnimationClip comboAttack2Clip;
     [SerializeField] AnimationClip deathClip;
 
     [Header("정보")]
     [SerializeField] float HP = 1300;
-    [SerializeField] float attackCoolTime;
     [SerializeField] float dropSpeed;
     [SerializeField] float flySpeed;
     [SerializeField] float maxHeight;
@@ -45,7 +47,7 @@ public partial class BossMovement : Runner, IHittable
     float oppositePointX;
 
     bool isStun;
-    bool isArrive;
+    bool isAttacking;
 
     // 임시
     GameObject player;
@@ -97,6 +99,17 @@ public partial class BossMovement : Runner, IHittable
 
     void Update()
     {
+        // 싸움 중인지 확인
+        if(isAttacking)
+        {
+            attackElapsedTime += Time.deltaTime;
+            if (bossAI._rechargeTime <= attackElapsedTime)
+            {
+                attackElapsedTime = 0;
+                // 스킬 사용중이라는 값 반환
+                isAttacking = false;
+            }
+        }
     }
 
     public Collider2D GetCollider2D()
@@ -111,6 +124,15 @@ public partial class BossMovement : Runner, IHittable
         {
             // HP 감소
             HP += strike.result;
+
+            if (transform.rotation.eulerAngles.y == player.transform.rotation.eulerAngles.y)
+            {
+                transform.rotation = Quaternion.Euler(0, -(180 - transform.rotation.eulerAngles.y), 0);
+            }
+
+            if (bossAI._skill != GargoyleBrain.Skill.Dash)
+            {
+            }
 
             if (isStun == true)
             {
@@ -155,22 +177,23 @@ public partial class BossMovement : Runner, IHittable
     }
 
     // 스킬을 사용중인가에 대한 함수
-    public bool isAttacking()
+    public bool IsAttacking()
     {
-        attackElapsedTime += Time.deltaTime;
+        //attackElapsedTime += Time.deltaTime;
 
-        // attackCoolTime이 차서 공격 실행하면
-        if (attackCoolTime <= attackElapsedTime)
-        {
-            attackElapsedTime = 0;
-            // 스킬 사용중이라는 값 반환
-            return true;
-        }
-        else
-        {
-            // 스킬 사용중 아니라는 값 반환
-            return false;
-        }
+        //// attackCoolTime이 차서 공격 실행하면
+        //if (bossAI._rechargeTime <= attackElapsedTime)
+        //{
+        //    attackElapsedTime = 0;
+        //    // 스킬 사용중이라는 값 반환
+        //    return true;
+        //}
+        //else
+        //{
+        //    // 스킬 사용중 아니라는 값 반환
+        //    return false;
+        //}
+        return isAttacking;
     }
 
     public void MovePosition(float targetPosX)
@@ -310,7 +333,6 @@ public partial class BossMovement : Runner, IHittable
     // 플레이어 따라다니면서 이동하는 함수
     public void FollowPlayer(float playerPosX)
     {
-        UTurn();
         MovePosition(playerPosX);
     }
 
@@ -320,9 +342,16 @@ public partial class BossMovement : Runner, IHittable
         Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
-    public void ComboAttack()
+    public void ComboAttack1()
     {
+        isAttacking = true;
+        myPlayer.Play(comboAttack1Clip, idleClip, false);
+    }
 
+    public void ComboAttack2()
+    {
+        isAttacking = true;
+        myPlayer.Play(comboAttack2Clip, idleClip, false);
     }
 
     // 임시 테스트용

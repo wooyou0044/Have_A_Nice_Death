@@ -25,7 +25,7 @@ public class GargoyleBrain : MonoBehaviour
     [SerializeField, Header("스킬 준비 시간"), Range(0, byte.MaxValue)]
     private float _preparationTime = 2f;
     [SerializeField, Header("스킬 휴식 시간"), Range(0, byte.MaxValue)]
-    private float _rechargeTime = 3f;
+    public float _rechargeTime = 3f;
     [SerializeField, Header("스킬 시전 종류")]
     public Skill _skill = Skill.Dash;
     [SerializeField, Header("활동 범위 왼쪽")]

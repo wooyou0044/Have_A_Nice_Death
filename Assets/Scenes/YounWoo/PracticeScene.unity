@@ -701,20 +701,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6303869339168375241, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: _skill
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6303869339168375241, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Name
       value: Gargoyle
-      objectReference: {fileID: 0}
-    - target: {fileID: 8118249707742697409, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.09
-      objectReference: {fileID: 0}
-    - target: {fileID: 8118249707742697409, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.08
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
