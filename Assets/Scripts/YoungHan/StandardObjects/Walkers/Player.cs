@@ -156,6 +156,7 @@ public sealed class Player : Runner, IHittable
 
     private bool _stopping = false;
 
+    private Action _shakeAction = null;
     private Action<bool> _engageAction = null;
     private Action<IHittable, int> _reportAction = null;
     private Action<Strike, Strike.Area, GameObject> _useAction = null;
@@ -340,8 +341,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
-    public void Initialize(Action<bool> engage, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
+    public void Initialize(Action shake, Action<bool> engage, Action<IHittable, int>report, Action<GameObject, Vector2, Transform>effect, Action<Strike, Strike.Area, GameObject>use, Func<bool>fall, Func<bool, bool>ladder, Func<Projectile, Projectile>projectile)
     {
+        _shakeAction = shake;
         _engageAction = engage;
         _reportAction = report;
         _effectAction = effect;
@@ -416,7 +418,7 @@ public sealed class Player : Runner, IHittable
     {
         if (Time.timeScale > 0)
         {
-            _stopping = getWeaponSet.TryScythe(this, pressed, _effectAction, _useAction, _projectileFunction);
+            _stopping = getWeaponSet.TryScythe(this, pressed, _shakeAction, _effectAction, _useAction, _projectileFunction);
         }
     }
 

@@ -6,11 +6,13 @@ using DG.Tweening;
 [RequireComponent(typeof(RectTransform))]
 public class StatusPanel : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField, Header("게이지 줄어드는 속도"), Range(0.1f, 10f)]
+    private float _wainingValue = 1f;
+    [SerializeField, Header("체력바 이미지")]
     private Image _lifeImage;
-    [SerializeField]
+    [SerializeField, Header("소울라리 이미지")]
     private Text _soularyText;
-    [SerializeField]
+    [SerializeField, Header("프리즈미움 이미지")]
     private Text _prismiumText;
 
     public byte soulary
@@ -41,9 +43,9 @@ public class StatusPanel : MonoBehaviour
         {
             if (_lifeImage != null)
             {
-                float life = player.maxLife > 0 ? player.remainLife / player.maxLife : 0;
+                float life = player.maxLife > 0 ? (float)player.remainLife / player.maxLife : 0;
                 _lifeImage.DOKill();
-                _lifeImage.DOFillAmount(life, 2f);
+                _lifeImage.DOFillAmount(life, _wainingValue);
             }
         }
     }
