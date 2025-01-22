@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BossCamera : MonoBehaviour
+public class BossCamera : MonoBehaviour, ITriggerShake
 {
     public enum BossCameraMode
     {
@@ -11,16 +11,16 @@ public class BossCamera : MonoBehaviour
     public BossCameraMode currentMode = BossCameraMode.Follow;
     public GameObject Player;
     public GameObject BossRoomWall;
-    Vector3 bossRoom;
+    Vector3 bossRoomPos;
     Vector3 originalPos;
     float shakeElapsed = 0;
 
     private void Start()
     {
-        bossRoom = new Vector3(5.4f, 1.6f, -10);
+        bossRoomPos = new Vector3(5.4f, 1.6f, -10);
         originalPos = transform.position;
     }
-    private void FixedUpdate()
+    private void Update()
     {
         switch (currentMode)
         {
@@ -37,13 +37,18 @@ public class BossCamera : MonoBehaviour
         
     }
     void FollowPlayer()
-    {
+    {        
         if (transform.position.x >= -8f)
         {
-            transform.position = Vector3.Lerp(bossRoom, originalPos, Time.deltaTime*0.5f);
             Camera.main.orthographicSize = 9;
-            BossRoomWall.SetActive(true);
-            currentMode = BossCameraMode.BossRoom;
+            transform.position = Vector3.Lerp(transform.position, bossRoomPos, Time.deltaTime * 4f);
+            if (Vector3.Distance(transform.position, bossRoomPos) <= 1f)
+            {
+                transform.position = bossRoomPos;                
+                BossRoomWall.SetActive(true);
+                
+                currentMode = BossCameraMode.BossRoom;
+            }
         }
         else
         {
@@ -69,7 +74,7 @@ public class BossCamera : MonoBehaviour
     }
     void ShakeCamera()
     {
-        originalPos = bossRoom;
+        originalPos = bossRoomPos;
         if (shakeElapsed < 0.3f)
         {
             shakeElapsed += Time.deltaTime;
