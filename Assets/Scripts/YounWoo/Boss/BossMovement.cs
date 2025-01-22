@@ -193,6 +193,7 @@ public partial class BossMovement : Runner, IHittable
     // 도착하면 안 움직이게 하는 함수 
     public override void MoveStop()
     {
+        myPlayer.Play(idleClip);
         if (myRigid.velocity.y != 0)
         {
             myRigid.velocity = new Vector2(0, 0);
