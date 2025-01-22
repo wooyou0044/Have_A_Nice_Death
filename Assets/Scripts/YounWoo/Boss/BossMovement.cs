@@ -107,7 +107,7 @@ public partial class BossMovement : Runner, IHittable
     public void Hit(Strike strike)
     {
         Debug.Log(HP);
-        if(isAlive)
+        if (isAlive)
         {
             // HP 감소
             HP += strike.result;
@@ -145,7 +145,7 @@ public partial class BossMovement : Runner, IHittable
         }
         else
         {
-            if(bossCollider.isActiveAndEnabled == true)
+            if (bossCollider.isActiveAndEnabled == true)
             {
                 HP = 0;
                 bossCollider.enabled = false;
@@ -162,7 +162,7 @@ public partial class BossMovement : Runner, IHittable
         attackElapsedTime += Time.deltaTime;
 
         // attackCoolTime이 차서 공격 실행하면
-        if(attackCoolTime <= attackElapsedTime)
+        if (attackCoolTime <= attackElapsedTime)
         {
             attackElapsedTime = 0;
             // 스킬 사용중이라는 값 반환
@@ -177,16 +177,16 @@ public partial class BossMovement : Runner, IHittable
 
     public void MovePosition(float targetPosX)
     {
-        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        if (bossAI._skill == GargoyleBrain.Skill.Dash)
         {
             myPlayer.Play(dashLoopClip);
         }
 
-        if(transform.position.x < targetPosX)
+        if (transform.position.x < targetPosX)
         {
             MoveRight();
         }
-        else if(transform.position.x > targetPosX)
+        else if (transform.position.x > targetPosX)
         {
             MoveLeft();
         }
@@ -207,9 +207,9 @@ public partial class BossMovement : Runner, IHittable
 
     public void UTurn()
     {
-        if(transform.position.x > midPoint.x)
+        if (transform.position.x > midPoint.x)
         {
-            if(transform.rotation.eulerAngles.y <= 0)
+            if (transform.rotation.eulerAngles.y <= 0)
             {
                 MoveStop();
                 if (bossAI._skill == GargoyleBrain.Skill.Dash)
@@ -225,7 +225,7 @@ public partial class BossMovement : Runner, IHittable
         }
         else
         {
-            if(transform.rotation.eulerAngles.y >= 180)
+            if (transform.rotation.eulerAngles.y >= 180)
             {
                 MoveStop();
                 if (bossAI._skill == GargoyleBrain.Skill.Dash)
@@ -277,7 +277,7 @@ public partial class BossMovement : Runner, IHittable
     // 공중으로 날라가는 함수
     public void FlyMove()
     {
-        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        if (bossAI._skill == GargoyleBrain.Skill.Dash)
         {
             myPlayer.Play(dashLoopClip);
         }
@@ -329,7 +329,7 @@ public partial class BossMovement : Runner, IHittable
     // 임시 테스트용
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "tempBox")
+        if (collision.tag == "tempBox")
         {
             Debug.Log("부딪힘");
             isBox = true;
