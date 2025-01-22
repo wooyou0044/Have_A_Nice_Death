@@ -115,6 +115,7 @@ public partial class BossMovement : Runner, IHittable
             if (isStun == true)
             {
                 Debug.Log("스턴");
+                Debug.Log("안 됨");
                 // 스턴을 일정 시간동안 계속 재생
                 myPlayer.Play(stunIdleClip);
                 stun.SetActive(true);
