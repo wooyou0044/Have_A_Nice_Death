@@ -25,9 +25,25 @@ public class DialogueUI : MonoBehaviour
     int charLength;
     int charIndex;
 
+    string currentSpeaker;
+
     float textElapsedTime;
 
     bool isAllOut;
+    bool isConversationEnd;
+    bool isSpaceBar;
+
+    public bool ConverationEnd
+    {
+        get
+        {
+            return isConversationEnd;
+        }
+        set
+        {
+            isConversationEnd = value;
+        }
+    }
 
     void Awake()
     {
@@ -38,45 +54,48 @@ public class DialogueUI : MonoBehaviour
 
     void Start()
     {
+        currentSpeaker = dialogues[0].character;
         SaveDialogue(0);
         isAllOut = false;
         DialogueText.text = string.Empty;
+        SpeakerText.text = string.Empty;
+        isConversationEnd = false;
+        ChangeSpeaker(0);
+        ChangeImage(0);
     }
 
     void Update()
     {
-        //if(isAllOut)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Space))
-        //    {
+        if (spaceBarNum >= dialogues.Length)
+        {
+            // 죽고 나서 대화하려면 0으로 하면 안 됨
+            spaceBarNum = 0;
+            isConversationEnd = true;
+            gameObject.SetActive(false);
+        }
 
-        //        if(spaceBarNum < dialogues.Length)
-        //        {
-        //            // 몇 번 스페이스바 눌렸는지 확인
-        //            spaceBarNum++;
-        //            // 다음 대화 char 배열에 저장
-        //            SaveDialogue(spaceBarNum);
-        //        }
-        //    }
-        //}
-        //else
-        //{
-
-        //}
-        
-        if(isAllOut == false)
+        if (isAllOut == false)
         {
             if(nextAnimator.enabled == true)
             {
+                NextImage.transform.position = nextPos;
                 nextAnimator.enabled = false;
             }
 
-            textElapsedTime += Time.deltaTime;
-            if(textSpeed < textElapsedTime)
+            if(Input.GetKeyDown(KeyCode.Space))
             {
-                PrintDialogue(charIndex, spaceBarNum);
-                textElapsedTime = 0;
-                charIndex++;
+                PrintAllDialogue(charIndex);
+            }
+
+            else
+            {
+                textElapsedTime += Time.deltaTime;
+                if (textSpeed < textElapsedTime)
+                {
+                    PrintDialogue(charIndex, spaceBarNum);
+                    textElapsedTime = 0;
+                    charIndex++;
+                }
             }
         }
         else
@@ -93,24 +112,28 @@ public class DialogueUI : MonoBehaviour
                 textElapsedTime = 0;
                 spaceBarNum++;
                 SaveDialogue(spaceBarNum);
+                ChangeSpeaker(spaceBarNum);
+                ChangeImage(spaceBarNum);
                 isAllOut = false;
             }
-            //DialogueText.text = string.Empty;
         }
     }
 
     void SaveDialogue(int dialogueIndex)
     {
-        int length = dialogues[dialogueIndex].dialogue.Length;
-        charLength = length;
-        dialogueChar = new char[length];
-
-        int num = 0;
-
-        foreach(char c in dialogues[dialogueIndex].dialogue)
+        if(dialogueIndex < dialogues.Length)
         {
-            dialogueChar[num] = c;
-            num++;
+            int length = dialogues[dialogueIndex].dialogue.Length;
+            charLength = length;
+            dialogueChar = new char[length];
+
+            int num = 0;
+
+            foreach (char c in dialogues[dialogueIndex].dialogue)
+            {
+                dialogueChar[num] = c;
+                num++;
+            }
         }
     }
 
@@ -120,7 +143,7 @@ public class DialogueUI : MonoBehaviour
         {
             if (charIndex == 27)
             {
-                ///Debug.Log(dialogueChar[charIndex - 1]);
+                DialogueText.text += "\n";
             }
             DialogueText.text += dialogueChar[charIndex].ToString();
             isAllOut = false;
@@ -128,6 +151,46 @@ public class DialogueUI : MonoBehaviour
         else
         {
             isAllOut = true;
+        }
+    }
+
+    void PrintAllDialogue(int charIndex)
+    {
+        for(int i=charIndex; i< dialogueChar.Length; i++)
+        {
+            if (i == 27)
+            {
+                DialogueText.text += "\n";
+            }
+            DialogueText.text += dialogueChar[i].ToString();
+        }
+        isAllOut = true;
+    }
+
+    void ChangeSpeaker(int dialogueIndex)
+    {
+        if (dialogueIndex < dialogues.Length)
+        {
+            SpeakerText.text = dialogues[dialogueIndex].character;
+        }
+    }
+
+    void ChangeImage(int dialogueIndex)
+    {
+        if (dialogueIndex < dialogues.Length)
+        {
+            currentSpeaker = dialogues[dialogueIndex].character;
+        }
+
+        if (currentSpeaker == "데스")
+        {
+            PlayerImage.color = new Color(1,1,1,1);
+            BossImage.color = new Color(1, 1, 1, 0.9f);
+        }
+        else
+        {
+            PlayerImage.color = new Color(1, 1, 1, 0.9f);
+            BossImage.color = new Color(1, 1, 1, 1);
         }
     }
 }

@@ -4,9 +4,23 @@ using UnityEngine;
 
 public class EnterSpot : MonoBehaviour
 {
+    bool isPlayerEnter;
+
+    public bool IsEnter
+    {
+        get
+        {
+            return isPlayerEnter;
+        }
+        set
+        {
+            isPlayerEnter = value;
+        }
+    }
+
     void Start()
     {
-
+        isPlayerEnter = false;
     }
 
 
@@ -15,7 +29,7 @@ public class EnterSpot : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
-            //Debug.Log("µé¾î¿È");
+            isPlayerEnter = true;
         }
     }
 }
