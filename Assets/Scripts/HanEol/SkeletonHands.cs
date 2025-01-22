@@ -18,14 +18,14 @@ public class SkeletonHands : MonoBehaviour, IHittable
     [SerializeField]float responTime = 5f;
     [SerializeField]float attackTime;//공격에 걸리는 시간
     [SerializeField] float attackCoolTime;//공격 후 재시전 까지 걸리는 시간
-    private Vector2 rotation = new Vector2(0, 0);//Rotation.y로 방향 조절
+    private Quaternion rotation = new Quaternion(0,0,0,0);//Rotation.y로 방향 조절
     [SerializeField] IEnumerator currentCoroutine;
     Strike strike;
     [SerializeField]private Transform imageTransform;
-    float left = -180f;
-    float right = 0f;
+    float left = 0;
+    float right =-180f;
     private Collider2D thisCol;//IHittable 규격을 위한 자신의 콜라이더
-
+    [SerializeField]private Skill skill;
 
     //미구현 항목: 방향 틀기, 데미지 주기 / Fix: 잘 안맞음 이거
     public bool isAlive
@@ -38,14 +38,18 @@ public class SkeletonHands : MonoBehaviour, IHittable
 
     public void Hit(Strike strike)
     {
-        Debug.Log("때렸다");
         if (isAlive == true)
         {
-            Debug.Log("나 쳐맞음");
+            if(currentCoroutine != null)
+            {
+                StopCoroutine(currentCoroutine);
+            }
             currentCoroutine = IamDead();
             StartCoroutine(currentCoroutine);
         }
     }
+
+
 
     public Collider2D GetCollider2D()
     {
@@ -81,11 +85,24 @@ public class SkeletonHands : MonoBehaviour, IHittable
     {
         //플레이어 감지 범위
         detectRangeCol = Physics2D.OverlapCircle(transform.position, detectRange, playerMask);
+       
         //플레이어를 감지했다!
         if(detectRangeCol != null)
         {
             detectPlayer = true;
             animator.SetBool("DetectPlayer",true);
+            float calPosition = detectRangeCol.transform.position.x - transform.position.x;
+            //플레이어가 바라보는 방향으로 바꾸기. 그런데 이제 역순
+            if (calPosition < 0)
+            {
+                rotation.y = right;
+                transform.rotation = rotation;
+            }
+            else
+            {
+                rotation.y = left;
+                transform.rotation = rotation;
+            }
 
             //공격 범위 설정
             attackRangeCol = Physics2D.OverlapCircle(transform.position, attackRange, playerMask);
@@ -136,8 +153,15 @@ public class SkeletonHands : MonoBehaviour, IHittable
             {
 
                 animator.SetBool("Attack", true);
-                yield return new WaitForSeconds(1);
-             
+
+                yield return new WaitForSeconds(0.72f);
+                if (detectRangeCol != null)
+                {
+                    IHittable hittable = detectRangeCol.transform.GetComponent<IHittable>();
+                    skill.Use(transform, hittable, new string[] {"Player"}, GameManager.ShowEffect, GameManager.Use, GameManager.GetProjectile);
+                    Debug.Log("때렸다!");
+                }
+                yield return new WaitForSeconds(0.28f);
                 animator.SetBool("Attack", false);
                 attackCoolTime = 2;
             }
