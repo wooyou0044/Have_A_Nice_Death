@@ -9,11 +9,11 @@ public struct Strike
 {
     //타격하는 강도
     [SerializeField, Header("양수면 회복, 음수면 공격")]
-    private int power;
+    public int power;
 
     //만약 타격 용도가 공격이라면 공격량을 확장하는 용도
     [SerializeField, Header("용도가 공격 시 피해량을 ")]
-    private byte extension;
+    public byte extension;
 
     //최종적으로 대상에게 가해질 결과값을 반환한다.
     public int result

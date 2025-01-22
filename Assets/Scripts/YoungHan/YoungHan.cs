@@ -1,37 +1,49 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class YoungHan :MonoBehaviour
+[RequireComponent(typeof(Collider2D))]
+public class YoungHan : MonoBehaviour, IHittable, ILootable
 {
-    private bool _hasRigidbody2D = false;
+    [SerializeField]
+    private MonoBehaviour _prefab;
 
-    private Rigidbody2D _rigidbody2D = null;
-
-    private Rigidbody2D getRigidbody2D
+    public bool isAlive
     {
         get
         {
-            if (_hasRigidbody2D == false)
-            {
-                _hasRigidbody2D = true;
-                _rigidbody2D = GetComponent<Rigidbody2D>();
-                _rigidbody2D.freezeRotation = true;
-            }
-            return _rigidbody2D;
+            return false;
         }
     }
 
-    [SerializeField]
-    private Vector2 point;
+    private bool _hasCollider2D = false;
 
-    private void OnDrawGizmos()
+    private Collider2D _collider2D = null;
+
+    private Collider2D getCollider2D
     {
-        Debug.DrawRay(point, (Vector2)transform.position - point);
+        get
+        {
+            if (_hasCollider2D == false)
+            {
+                _hasCollider2D = true;
+                _collider2D = GetComponent<Collider2D>();
+            }
+            return _collider2D;
+        }
+    }
+    public void Hit(Strike strike)
+    {
+        GameManager.Report(this, strike.result);
     }
 
-    private void Start()
+    public Collider2D GetCollider2D()
     {
-        Vector2 direction = (Vector2)transform.position - point;
-        getRigidbody2D.velocity -= direction;
+        return getCollider2D;
     }
+
+    public MonoBehaviour GetLootObject()
+    {
+        return null;
+    }
+
 }

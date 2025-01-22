@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -42,8 +41,10 @@ public sealed class GameManager : Manager<GameManager>
         }
     }
 
-    private List<IHittable> _hittableList = new List<IHittable>();
+    [SerializeField]
+    private StatusPanel _statusPanel;
 
+    private List<IHittable> _hittableList = new List<IHittable>();
     private List<Ladder> _ladderList = new List<Ladder>();
     private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
@@ -53,7 +54,7 @@ public sealed class GameManager : Manager<GameManager>
     protected override void Initialize()
     {
         _destroyOnLoad = true;
-        getController._player?.Initialize(Engage, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
+        getController._player?.Initialize(Shake, Engage, Report, ShowEffect, Use, TryFalling, TryLadder, GetProjectile);
         MonoBehaviour[] monoBehaviours = FindObjectsOfType<MonoBehaviour>();
         foreach (MonoBehaviour monoBehaviour in monoBehaviours)
         {
@@ -128,6 +129,15 @@ public sealed class GameManager : Manager<GameManager>
     }
 
     /// <summary>
+    /// 카메라 흔들어주는 효과
+    /// </summary>
+    public static void Shake()
+    {
+        ITriggerShake triggerShake = Camera.main.GetComponent<ITriggerShake>();
+        triggerShake?.TriggerShake();
+    }
+
+    /// <summary>
     ///  특정 위치에 일어나는 효과 오브젝트를 보여주는 함수
     /// </summary>
     /// <param name="original"></param>
@@ -162,6 +172,10 @@ public sealed class GameManager : Manager<GameManager>
                 }
             }
         }
+        else if (instance._controller._player == (Object)hittable)
+        {
+            instance._statusPanel?.Set(instance._controller._player);
+        }
     }
 
     /// <summary>
@@ -180,13 +194,22 @@ public sealed class GameManager : Manager<GameManager>
                 polygonArea.Show(Color.red, 1);
             }
 #endif
+            bool shake = false;
             foreach (IHittable hittable in instance._hittableList)
             {
                 if (area.CanStrike(hittable) == true && hittable.transform.gameObject.activeInHierarchy == true)
                 {
+                    if (shake == false && strike.power < 0)
+                    {
+                        shake = true;
+                    }
                     instance.getObjectPooler.ShowEffect(effect, hittable.GetCollider2D().bounds.center, hittable.transform);
                     hittable.Hit(strike);
                 }
+            }
+            if(shake == true)
+            {
+                Shake();
             }
         }
     }

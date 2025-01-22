@@ -55,11 +55,10 @@ public class WomanGhostAi_Clone : Walker,IHittable
     float moveDistance = 1f;
 
     IHittable attackPlayer;
-
+    bool isHit = false;
 
     private bool movingRight = true;
     private Vector2 startPos;
-
     public bool isAlive { get { return true; } }
 
     private void Start()
@@ -74,8 +73,6 @@ public class WomanGhostAi_Clone : Walker,IHittable
     {
         Move();        
         DetectPlayer();
-        
-        
         
         
         //만약 내 하위 오브젝트 불값이 false라면?
@@ -124,7 +121,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
     IEnumerator DoFire(float delay)
     {
-        while (true)
+        while (isHit == false)
         {
             yield return new WaitForSeconds(delay);
             AttackEffect.gameObject.SetActive(false);
@@ -147,6 +144,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
 
                 attackPlayer = player.GetComponent<IHittable>();
                 StartCoroutine(DoFire(1.3f));
+                isHit = false;
             }
             target = player.transform;
 
@@ -193,11 +191,12 @@ public class WomanGhostAi_Clone : Walker,IHittable
     public void Hit(Strike strike)
     {
         womanGhostHP += strike.result;
-
-        if(womanGhostHP>0)
+        
+        if (womanGhostHP>0)
         {
             MoveStop();
             animatorPlayer.Play(hitClip, true);
+            isHit = true;
         }
         else
         {
@@ -205,7 +204,7 @@ public class WomanGhostAi_Clone : Walker,IHittable
             StartCoroutine(DoHide());
             IEnumerator DoHide()
             {
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.3f);
                 gameObject.SetActive(false);
             }
         }        

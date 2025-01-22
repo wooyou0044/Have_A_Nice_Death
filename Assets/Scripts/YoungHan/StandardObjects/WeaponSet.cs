@@ -39,7 +39,7 @@ public class WeaponSet : MonoBehaviour
     [SerializeField, Range(0, 5)]
     private float _comboMoveDelay = 0.4f;
     [SerializeField, Range(0, 5)]
-    private float _comboLastDelay = 1.0f;
+    private float _comboLastDelay = 0.9f;
     [SerializeField, Range(0, 5)]
     private float _comboStandDelay = 0.5f;
     [SerializeField, Range(0, 1)]
@@ -64,7 +64,7 @@ public class WeaponSet : MonoBehaviour
 
     private IEnumerator _coroutine = null;
 
-    public bool TryScythe(Player player, bool pressed, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Func<Projectile, Projectile> func)
+    public bool TryScythe(Player player, bool pressed, Action action1, Action<GameObject, Vector2, Transform> action2, Action<Strike, Strike.Area, GameObject> action3, Func<Projectile, Projectile> func)
     {
         if (player != null && player.isAlive == true)
         {
@@ -83,7 +83,7 @@ public class WeaponSet : MonoBehaviour
                             {
                                 case Player.Direction.Center:
                                     if (_state < State.Combo4 && player.CompareConstraints(RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation) == false &&
-                                        _scytheInfo.TryUse(getTransform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action1, action2, func, animator) == true)
+                                        _scytheInfo.TryUse(getTransform, player.isGrounded == true ? Weapon.Attack.Move : Weapon.Attack.Stand, action2, action3, func, animator) == true)
                                     {
                                         if (hasAnimatorPlayer == true)
                                         {
@@ -118,6 +118,7 @@ public class WeaponSet : MonoBehaviour
                                                     break;
                                                 case State.Combo4:
                                                     yield return new WaitForSeconds(_comboLastDelay);
+                                                    action1?.Invoke();
                                                     break;
                                             }
                                             player?.Recover();
@@ -175,7 +176,8 @@ public class WeaponSet : MonoBehaviour
                                     yield return new WaitForSeconds(_jumpFallingDelay);
                                     player?.Dash(Vector2.down);
                                     yield return new WaitUntil(() => (player != null && player.isGrounded == true));
-                                    _restAttackSkill?.Use(getTransform, null, _restAttackTags, action1, action2, func);
+                                    _restAttackSkill?.Use(getTransform, null, _restAttackTags, action2, action3, func);
+                                    action1?.Invoke();
                                     yield return new WaitForSeconds(_jumpLandingDelay);
                                     player?.Recover();
                                     _coroutine = null;
@@ -211,5 +213,14 @@ public class WeaponSet : MonoBehaviour
             }
         }
         return _coroutine != null;
+    }
+
+    public bool IsInvincibleState(AnimatorPlayer animatorPlayer)
+    {
+        if(animatorPlayer != null && animatorPlayer.GetCurrentClips() == _restAttackClip)
+        {
+            return true;
+        }
+        return false;
     }
 }
