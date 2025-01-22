@@ -353,74 +353,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &872419675 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-  m_PrefabInstance: {fileID: 1063757213}
-  m_PrefabAsset: {fileID: 0}
---- !u!61 &872419684
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 872419675}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.63, y: 2.26}
-    newSize: {x: 1.63, y: 2.26}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.63, y: 2.26}
-  m_EdgeRadius: 0
---- !u!114 &872419685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 872419675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d5e8741da510f7429b4c16534204dfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _preparationTime: 2
-  _rechargeTime: 3
-  _skill: 1
-  _leftBoundary: -23.63
-  _rightBoundary: 62.62
-  _rayLength: 10
 --- !u!1001 &901967389
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -724,82 +656,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 767055249796999312, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: hitClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 6d3e0219491b3dd4bb1dc11764120dab, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunPos
-      value: 
-      objectReference: {fileID: 1980683877}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: flySpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: idleClip
-      value: 
-      objectReference: {fileID: 7400000, guid: cc329d25f090f28488441c167ec64751, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: deathClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 27a2625ddbf5eed4b827072dad3403e0, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: dropSpeed
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: maxHeight
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: uTurnClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 51679825e50b9804995770eb25d272cf, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunPrefab
-      value: 
-      objectReference: {fileID: 9127381910078831721, guid: 173aa615463691b419290c429d2170ee, type: 3}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: dashEndClip
-      value: 
-      objectReference: {fileID: 7400000, guid: c09e7f78e55522d4096ef6287c4ff1d4, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunEndClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 5e479aad6a388b648848ea855ca816a5, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _movingSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: dashLoopClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 5112ba5ea6b47d44fb3c65fbf8a273ac, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunIdleClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 7a08d63b7e1bb164d89420773b92f0b7, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: dashStartClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 634e94faa6cee0242aab3334d48ec032, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: stunStartClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 762d080de6cf46744acf8075f376b9e1, type: 2}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: attackCoolTime
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _dashProjectile
-      value: 
-      objectReference: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -840,26 +700,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6303869339168375241, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Name
       value: Gargoyle
       objectReference: {fileID: 0}
+    - target: {fileID: 8118249707742697409, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 8118249707742697409, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.08
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 872419684}
-    - targetCorrespondingSourceObject: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 872419685}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 194dd06b90758044e94c7be151db813d, type: 3}
---- !u!4 &1980683877 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8118249707742697409, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-  m_PrefabInstance: {fileID: 1063757213}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2030439239 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1671469481644130997, guid: b967f7eea0e9ff24680d7b70f1d2d0e8, type: 3}
