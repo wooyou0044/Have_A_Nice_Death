@@ -40,7 +40,7 @@ public class Anima : MonoBehaviour
             animaImage.SetActive(false);
             getItemEffect.SetActive(true);
 
-            player.Heal(1);
+            player?.Heal(1);
 
             isGetAnima = true;
         }     

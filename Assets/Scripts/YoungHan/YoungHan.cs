@@ -7,11 +7,13 @@ public class YoungHan : MonoBehaviour, IHittable, ILootable
     [SerializeField]
     private MonoBehaviour _prefab;
 
+    private byte life = 1;
+
     public bool isAlive
     {
         get
         {
-            return false;
+            return life > 0;
         }
     }
 
@@ -33,6 +35,8 @@ public class YoungHan : MonoBehaviour, IHittable, ILootable
     }
     public void Hit(Strike strike)
     {
+        life = 0;
+        gameObject.SetActive(false);
         GameManager.Report(this, strike.result);
     }
 
@@ -43,7 +47,7 @@ public class YoungHan : MonoBehaviour, IHittable, ILootable
 
     public MonoBehaviour GetLootObject()
     {
-        return null;
+        return _prefab;
     }
 
 }
