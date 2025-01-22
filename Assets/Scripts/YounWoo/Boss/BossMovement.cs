@@ -329,11 +329,22 @@ public partial class BossMovement : Runner, IHittable
     {
         MovePosition(oppositePointX);
     }
-
+    /// <summary>
+    /// 내가 플레이어 위치를 넣어야 하는 플레이어 따라가는 함수
+    /// </summary>
+    /// <param name="playerPosX"> 플레이어 위치</param>
     // 플레이어 따라다니면서 이동하는 함수
     public void FollowPlayer(float playerPosX)
     {
         MovePosition(playerPosX);
+    }
+
+   /// <summary>
+   /// 플레이어 위치가 이미 들어있는 플레이어 따라 가는 함수
+   /// </summary>
+    public void FollowPlayer()
+    {
+        MovePosition(player.transform.position.x);
     }
 
     // 임시

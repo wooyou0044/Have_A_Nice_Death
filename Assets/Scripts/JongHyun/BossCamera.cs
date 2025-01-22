@@ -14,7 +14,7 @@ public class BossCamera : MonoBehaviour
         bossRoom = new Vector3(5.4f, 1.6f, CameraZ);
     }
     private void FixedUpdate()
-    {        
+    {
         if (transform.position.x >= -8f)
         {
             transform.position = Vector3.Lerp(bossRoom, transform.position, 0.9f);
