@@ -94,12 +94,12 @@ public class SkeletonHands : MonoBehaviour, IHittable
             //플레이어가 바라보는 방향으로 바꾸기. 그런데 이제 역순
             if (calPosition < 0)
             {
-                rotation.y = right;
+                rotation.y = left;
                 transform.rotation = rotation;
             }
             else
             {
-                rotation.y = left;
+                rotation.y = right;
                 transform.rotation = rotation;
             }
 
