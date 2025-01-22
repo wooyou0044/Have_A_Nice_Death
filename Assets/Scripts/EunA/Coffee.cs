@@ -37,31 +37,37 @@ public class Coffee : MonoBehaviour
             Coffee_Info.SetActive(false);
         }
 
-        if (isGetCoffee == true)
-        {
-            Destroytime += Time.deltaTime;
+        //if (isGetCoffee == true)
+        //{
+        //    Destroytime += Time.deltaTime;
 
-            if (Destroytime >= 1.0f)
-            {
-                Destroy(gameObject);
-            }
-        }
+        //    if (Destroytime >= 1.0f)
+        //    {
+        //        Destroy(gameObject);
+        //    }
+        //}
     }    
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (Input.GetKey(KeyCode.F))
-        {
-            GetCoffee();
-            isGetCoffee = true;
-        }
-    }
+    //private void OnTriggerStay2D(Collider2D collision)
+    //{
+    //    if (Input.GetKey(KeyCode.F))
+    //    {
+    //        GetCoffee();
+    //        isGetCoffee = true;
+    //    }
+    //}
 
-    void GetCoffee()
+    public bool GetCoffee()
     {
-        Coffee_Image.SetActive(false);
-        Coffee_Info.SetActive(false);
-        GetItemEffect.SetActive(true);
+        if (CanGetDistance != null)
+        {
+            Coffee_Image.SetActive(false);
+            Coffee_Info.SetActive(false);
+            GetItemEffect.SetActive(true);
+            //isGetCoffee = true;
+            return true;
+        }
+        return false;
     }
 
     private void OnDrawGizmosSelected()
