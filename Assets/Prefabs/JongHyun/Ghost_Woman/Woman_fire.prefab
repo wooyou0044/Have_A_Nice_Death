@@ -176,7 +176,7 @@ MonoBehaviour:
     extension: 0
   _offset: {x: 0, y: 0}
   _shape: {fileID: 0}
-  _hitObject: {fileID: 0}
+  _hitObject: {fileID: 6828598917612356073, guid: 439974881638366459313151d71ac69e, type: 3}
   _explosionObject: {fileID: 0}
   _gizmoDuration: 1
   _gizmoColor: {r: 1, g: 0, b: 0, a: 1}

@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 11.284485, y: -81.87291}
-  m_SizeDelta: {x: -232.7915, y: -163.7459}
+  m_AnchoredPosition: {x: 11.284485, y: -95.78618}
+  m_SizeDelta: {x: -232.7915, y: -191.5724}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1199981318739515366
 CanvasRenderer:
@@ -77,7 +77,7 @@ MonoBehaviour:
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
-    m_LineSpacing: 10
+    m_LineSpacing: 1
   m_Text: "\uB3C4\uB300\uCCB4 \uC774\uAC8C \uB2E4 \uBB54\uAC00, \uBE0C\uB798\uB4DC?
     \uC774 \uC601\uD63C\uB4E4\uC740 \uC804\uBD80 \uC5B4\uB514\uC11C \uB098\uD0C0\uB09C
     \uAC70\uC9C0?!"
@@ -234,7 +234,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uB370\uC2A4"
+  m_Text: "\uBE0C\uB798\uB4DC"
 --- !u!1 &3935450456824760748
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,7 +254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6863824742862767579
 RectTransform:
   m_ObjectHideFlags: 0

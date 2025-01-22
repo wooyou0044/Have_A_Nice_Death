@@ -48,8 +48,66 @@ public sealed class GameManager : Manager<GameManager>
     private List<Ladder> _ladderList = new List<Ladder>();
     private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
-    public static byte soulary = 0;
-    public static byte prismium = 0;
+    private static byte _anima = 0;
+
+    public static byte anima
+    {
+        set
+        {
+            _anima = value;
+            if(_anima > 3)
+            {
+                _anima = 3;
+            }
+            StatusPanel statusPanel = instance._statusPanel;
+            if (statusPanel != null)
+            {
+                statusPanel.anima = _anima;
+            }
+        }
+        get
+        {
+            return _anima;
+        }
+    }
+
+    private static byte _soulary = 0;
+
+    public static byte soulary
+    {
+        set
+        {
+            _soulary = value;
+            StatusPanel statusPanel = instance._statusPanel;
+            if (statusPanel != null)
+            {
+                statusPanel.soulary = _soulary;
+            }
+        }
+        get
+        {
+            return _soulary;
+        }
+    }
+
+    private static byte _prismium = 0;
+
+    public static byte prismium
+    {
+        set
+        {
+            _prismium = value;
+            StatusPanel statusPanel = instance._statusPanel;
+            if (statusPanel != null)
+            {
+                statusPanel.prismium = _prismium;
+            }
+        }
+        get
+        {
+            return _prismium;
+        }
+    }
 
     protected override void Initialize()
     {
@@ -87,7 +145,10 @@ public sealed class GameManager : Manager<GameManager>
         }
         else
         {
-            //아이템 줍기 또는 대화
+            if(getObjectPooler.IsPickUp() == true)
+            {
+                _controller._player.Hit(new Strike(15, 0));
+            }
         }
     }
 
@@ -172,7 +233,7 @@ public sealed class GameManager : Manager<GameManager>
                 }
             }
         }
-        else if (instance._controller._player == (Object)hittable)
+        if (instance._controller._player == (Object)hittable)
         {
             instance._statusPanel?.Set(instance._controller._player);
         }
@@ -197,7 +258,7 @@ public sealed class GameManager : Manager<GameManager>
             bool shake = false;
             foreach (IHittable hittable in instance._hittableList)
             {
-                if (area.CanStrike(hittable) == true && hittable.transform.gameObject.activeInHierarchy == true)
+                if (hittable.Equals(null) == false && hittable.transform.gameObject.activeInHierarchy == true && hittable.isAlive == true && area.CanStrike(hittable) == true)
                 {
                     if (shake == false && strike.power < 0)
                     {
