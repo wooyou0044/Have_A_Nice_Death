@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healValue: 1
-  _dropWaitingTime: 2
+  _dropWaitingTime: 0.5
   _hideWaitingTime: 1
   animaImage: {fileID: 5840285724258584646}
   getItemEffect: {fileID: 6858888809399250078}
