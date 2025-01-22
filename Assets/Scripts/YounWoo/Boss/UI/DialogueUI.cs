@@ -7,11 +7,15 @@ using UnityEngine.UI;
 public class DialogueUI : MonoBehaviour
 {
     [SerializeField] float textSpeed;
+    [SerializeField] int introDialogueNum;
+    [SerializeField] int outroDialogueNum;
     [SerializeField] Text SpeakerText;
     [SerializeField] Text DialogueText;
     // 대화할 때 알파값 조절
-    [SerializeField] Image PlayerImage;
-    [SerializeField] Image BossImage;
+    [SerializeField] Image IntroPlayerImage;
+    [SerializeField] Image IntroBossImage;
+    [SerializeField] Image OutroPlayerImage;
+    [SerializeField] Image OutroBossImage;
     [SerializeField] Image NextImage;
 
     [SerializeField] Dialogue[] dialogues;
@@ -19,11 +23,15 @@ public class DialogueUI : MonoBehaviour
     Animator nextAnimator;
     Vector2 nextPos;
 
+    GameObject introParent;
+    GameObject outroParent;
+
     char[] dialogueChar;
 
     int spaceBarNum;
     int charLength;
     int charIndex;
+    int diaIndexLength;
 
     string currentSpeaker;
 
@@ -31,7 +39,7 @@ public class DialogueUI : MonoBehaviour
 
     bool isAllOut;
     bool isConversationEnd;
-    bool isSpaceBar;
+    bool isIntro;
 
     public bool ConverationEnd
     {
@@ -55,22 +63,34 @@ public class DialogueUI : MonoBehaviour
     void Start()
     {
         currentSpeaker = dialogues[0].character;
-        SaveDialogue(0);
         isAllOut = false;
         DialogueText.text = string.Empty;
         SpeakerText.text = string.Empty;
         isConversationEnd = false;
+        isIntro = true;
+        diaIndexLength = isIntro ? introDialogueNum : outroDialogueNum;
+        SaveDialogue(0);
         ChangeSpeaker(0);
-        ChangeImage(0);
+        ChangeImage(0, isIntro);
+        introParent = transform.GetChild(1).gameObject;
+        outroParent = transform.GetChild(2).gameObject;
+        outroParent.SetActive(false);
     }
 
     void Update()
     {
-        if (spaceBarNum >= dialogues.Length)
+        //if (spaceBarNum >= dialogues.Length)
+        if (spaceBarNum >= diaIndexLength)
         {
-            // 죽고 나서 대화하려면 0으로 하면 안 됨
-            spaceBarNum = 0;
             isConversationEnd = true;
+            isIntro = !isIntro;
+            if(isIntro == false)
+            {
+                outroParent.SetActive(true);
+                introParent.SetActive(false);
+            }
+            ChangeImage(spaceBarNum, isIntro);
+            diaIndexLength = isIntro ? introDialogueNum : introDialogueNum + outroDialogueNum;
             gameObject.SetActive(false);
         }
 
@@ -113,7 +133,7 @@ public class DialogueUI : MonoBehaviour
                 spaceBarNum++;
                 SaveDialogue(spaceBarNum);
                 ChangeSpeaker(spaceBarNum);
-                ChangeImage(spaceBarNum);
+                ChangeImage(spaceBarNum, isIntro);
                 isAllOut = false;
             }
         }
@@ -158,7 +178,7 @@ public class DialogueUI : MonoBehaviour
     {
         for(int i=charIndex; i< dialogueChar.Length; i++)
         {
-            if (i == 27)
+            if (i == 27 || i == 54)
             {
                 DialogueText.text += "\n";
             }
@@ -175,7 +195,7 @@ public class DialogueUI : MonoBehaviour
         }
     }
 
-    void ChangeImage(int dialogueIndex)
+    void ChangeImage(int dialogueIndex, bool isConversIntro)
     {
         if (dialogueIndex < dialogues.Length)
         {
@@ -184,13 +204,29 @@ public class DialogueUI : MonoBehaviour
 
         if (currentSpeaker == "데스")
         {
-            PlayerImage.color = new Color(1,1,1,1);
-            BossImage.color = new Color(1, 1, 1, 0.9f);
+            if(isConversIntro)
+            {
+                IntroPlayerImage.color = new Color(1, 1, 1, 1);
+                IntroBossImage.color = new Color(1, 1, 1, 0.9f);
+            }
+            else
+            {
+                OutroPlayerImage.color = new Color(1, 1, 1, 1);
+                OutroBossImage.color = new Color(1, 1, 1, 0.9f);
+            }
         }
         else
         {
-            PlayerImage.color = new Color(1, 1, 1, 0.9f);
-            BossImage.color = new Color(1, 1, 1, 1);
+            if(isConversIntro)
+            {
+                IntroPlayerImage.color = new Color(1, 1, 1, 0.9f);
+                IntroBossImage.color = new Color(1, 1, 1, 1);
+            }
+            else
+            {
+                OutroPlayerImage.color = new Color(1, 1, 1, 0.9f);
+                OutroBossImage.color = new Color(1, 1, 1, 1);
+            }
         }
     }
 }

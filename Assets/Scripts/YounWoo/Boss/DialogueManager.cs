@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     [SerializeField] GameObject dialogueCanavas;
+    [SerializeField] GameObject bossCanavas;
     [SerializeField] GameObject desk;
 
     GameObject canvas;
@@ -16,9 +18,8 @@ public class DialogueManager : MonoBehaviour
     DialogueUI getDialogueUI;
     DeskMovement getDeskMove;
 
-    // 임시로
-    EnterSpot getEnterSpot;
-    Collider2D enterSpotCollider;
+    BossCamera getCamera;
+
 
     void Awake()
     {
@@ -30,10 +31,9 @@ public class DialogueManager : MonoBehaviour
         getDialogueUI = canvas.GetComponent<DialogueUI>();
         canvas.SetActive(false);
 
-        getEnterSpot = GameObject.Find("TempSpot").GetComponent<EnterSpot>();
-        enterSpotCollider = getEnterSpot.gameObject.GetComponent<Collider2D>();
-
         getDeskMove = desk.GetComponent<DeskMovement>();
+
+        getCamera = Camera.main.GetComponent<BossCamera>();
     }
 
     void Start()
@@ -43,14 +43,10 @@ public class DialogueManager : MonoBehaviour
 
     void Update()
     {
-        // 임시로
-        if(getEnterSpot.IsEnter == true)
+        if(getCamera.isArrive == true)
         {
             getBossMove.PlayerEnterBossStage();
-            getEnterSpot.IsEnter = false;
-
-            // 임시
-            enterSpotCollider.enabled = false;
+            getCamera.isArrive = false;
         }
         if(getBossMove.IsMeetPlayer == true && getBossMove.IsEndSurprised() == true)
         {
@@ -67,8 +63,16 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(1.5f);
                 getBossMove.MoveStop();
                 getBossAi._skill = GargoyleBrain.Skill.Dash;
+                bossCanavas.SetActive(true);
             }
             getDialogueUI.ConverationEnd = false;
+        }
+
+        if(getBossMove.IsDead == true)
+        {
+            Debug.Log("죽었음");
+            getBossMove.DeathAnimation();
+            getBossMove.IsDead = false;
         }
     }
 }

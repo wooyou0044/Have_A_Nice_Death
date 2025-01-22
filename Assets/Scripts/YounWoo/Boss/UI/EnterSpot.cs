@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnterSpot : MonoBehaviour
 {
     bool isPlayerEnter;
+    [SerializeField] GameObject canvas;
 
     public bool IsEnter
     {
@@ -29,6 +30,7 @@ public class EnterSpot : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
+            canvas.SetActive(true);
             isPlayerEnter = true;
         }
     }

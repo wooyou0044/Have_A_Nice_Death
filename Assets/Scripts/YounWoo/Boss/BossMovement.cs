@@ -53,6 +53,7 @@ public class BossMovement : Runner, IHittable
     bool isStun;
     bool isAttacking;
     bool isMeetPlayer;
+    bool isDead;
 
     // 임시
     GameObject player;
@@ -60,14 +61,6 @@ public class BossMovement : Runner, IHittable
     //체력바
     [SerializeField]Boss_Hp_Bar hpBar;
     // 최대 체력
-    public float MaxHP
-    {
-        get
-        {
-            return maxHp;
-        }
-    }
-
     public float currentHP
     {
         get
@@ -75,8 +68,6 @@ public class BossMovement : Runner, IHittable
             return HP;
         }
     }
-
-    // 현재 체력
 
     public float StartPointX
     {
@@ -105,6 +96,18 @@ public class BossMovement : Runner, IHittable
         set
         {
             isMeetPlayer = value;
+        }
+    }
+
+    public bool IsDead
+    {
+        get
+        {
+            return isDead;
+        }
+        set
+        {
+            isDead = value;
         }
     }
 
@@ -151,12 +154,6 @@ public class BossMovement : Runner, IHittable
                 // 스킬 사용중이라는 값 반환
                 isAttacking = false;
             }
-        }
-
-        if(HP <= 0)
-        {
-            HP = 0;
-            // 할 애니메이션 
         }
     }
 
@@ -220,6 +217,7 @@ public class BossMovement : Runner, IHittable
             if (bossCollider.isActiveAndEnabled == true)
             {
                 HP = 0;
+                isDead = true;
                 bossCollider.enabled = false;
                 myRigid.gravityScale = 0;
                 // gameObject는 아직 죽이면 안 됨 => 대화 창 켜지고 새로운 애로 바뀌어야 함
@@ -453,7 +451,7 @@ public class BossMovement : Runner, IHittable
 
     public void PlayerEnterBossStage()
     {
-        myPlayer.Play(surprisedClip,idleClip, false);
+        myPlayer.Play(surprisedClip);
         isMeetPlayer = true;
     }
 
@@ -478,5 +476,10 @@ public class BossMovement : Runner, IHittable
 
         destination = pointPos - (Vector2)transform.position;
         myRigid.velocity = destination * 0.8f;
+    }
+
+    public void DeathAnimation()
+    {
+        myPlayer.Play(deathClip);
     }
 }
