@@ -100,10 +100,8 @@ public class GargoyleBrain : MonoBehaviour
                 //}
                 switch(_skill)
                 {
-                    case Skill.Scratching:                     
-                        //콤보1 공격 함수 필요
-                        //기술이 끝났음을 알려주는 함수 필요
-                        //콤보2 공격 함수 필요
+                    case Skill.Scratching:
+                        getBossMovement.FollowPlayer(hittable.transform.position.x);
                         break;
                     case Skill.Dash:
                         if((hittable.transform.position.x < transform.position.x && transform.eulerAngles.y == 0) ||
@@ -114,7 +112,9 @@ public class GargoyleBrain : MonoBehaviour
                         }
                         getBossMovement.FlyMove();  //공중으로 이동하는 함수 필요
                         getBossMovement.AdjustRotation();
-                        while (_leftBoundary < transform.position.x && _rightBoundary > transform.position.x) //특정 위치에 도달할 때 까지 기다림
+                        Collider2D collider2D = getBossMovement.GetCollider2D();
+                        while ((transform.eulerAngles.y == 0 && collider2D.bounds.max.x < _rightBoundary) ||
+                           (transform.eulerAngles.y == 180 && collider2D.bounds.min.x > _leftBoundary))
                         {
                             yield return null;
                         }
@@ -131,13 +131,13 @@ public class GargoyleBrain : MonoBehaviour
                         yield return new WaitForSeconds(0.5f);
                         getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
                         getBossMovement.UseDashSkill(3.82f);
-                        Collider2D collider2D = getBossMovement.GetCollider2D();
                         while (_leftBoundary < collider2D.bounds.min.x && _rightBoundary > collider2D.bounds.max.x) //특정 위치에 도달할 때 까지 기다림
                         {
                             yield return null;
                         }
-                        getBossMovement.MoveStop();
                         getBossMovement.UTurn();
+                        yield return new WaitForSeconds(0.2f);
+                        getBossMovement.MoveStop();
                         break;
                     case Skill.Stone:
                         break;

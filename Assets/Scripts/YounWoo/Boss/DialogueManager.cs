@@ -62,7 +62,7 @@ public class DialogueManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(1.5f);
                 getBossMove.MoveStop();
-                getBossAi._skill = GargoyleBrain.Skill.Dash;
+                getBossAi.enabled = true;
                 bossCanavas.SetActive(true);
             }
             getDialogueUI.ConverationEnd = false;

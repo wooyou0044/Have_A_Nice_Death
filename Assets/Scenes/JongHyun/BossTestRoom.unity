@@ -2990,7 +2990,7 @@ PrefabInstance:
       objectReference: {fileID: 7400000, guid: 62b93e474990d794fa7638a7c4f77da2, type: 2}
     - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: _skill
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Enabled

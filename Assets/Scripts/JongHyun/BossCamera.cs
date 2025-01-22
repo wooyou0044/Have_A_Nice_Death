@@ -15,8 +15,8 @@ public class BossCamera : MonoBehaviour, ITriggerShake
     Vector3 originalPos;
     float shakeElapsed = 0;
 
-    [SerializeField]
-    GameObject BossHP;
+    //[SerializeField]
+    //GameObject BossHP;
     public bool isArrive = false;
 
     private void Start()
@@ -51,7 +51,7 @@ public class BossCamera : MonoBehaviour, ITriggerShake
                 transform.position = bossRoomPos;                
                 BossRoomWall.SetActive(true);
                 currentMode = BossCameraMode.BossRoom;
-                BossHP.gameObject.SetActive(true);
+                //BossHP.gameObject.SetActive(true);
                 isArrive = true;
 
             }
