@@ -12,6 +12,7 @@ public class DialogueManager : MonoBehaviour
     GameObject boss;
 
     BossMovement getBossMove;
+    GargoyleBrain getBossAi;
     DialogueUI getDialogueUI;
     DeskMovement getDeskMove;
 
@@ -23,6 +24,7 @@ public class DialogueManager : MonoBehaviour
     {
         boss = GameObject.FindWithTag("Enemy");
         getBossMove = boss.GetComponent<BossMovement>();
+        getBossAi = boss.GetComponent<GargoyleBrain>();
 
         canvas = Instantiate(dialogueCanavas);
         getDialogueUI = canvas.GetComponent<DialogueUI>();
@@ -64,6 +66,7 @@ public class DialogueManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(1.5f);
                 getBossMove.MoveStop();
+                getBossAi._skill = GargoyleBrain.Skill.Dash;
             }
             getDialogueUI.ConverationEnd = false;
         }
