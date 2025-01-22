@@ -30,7 +30,7 @@ public class BookOfTheDead : MonoBehaviour
 
     private void Update()
     {
-        if(target != null)
+        if(target != null && target.gameObject.activeInHierarchy == true)
         {
             Vector2 offset = new Vector2(_offset.x * target.forward.z, _offset.y);
             getTransform.rotation = target.rotation;
