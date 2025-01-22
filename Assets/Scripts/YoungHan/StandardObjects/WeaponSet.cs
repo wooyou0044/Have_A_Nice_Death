@@ -128,10 +128,23 @@ public class WeaponSet : MonoBehaviour
                                     }
                                     break;
                                 case Player.Direction.Forward:
-                                    //if (_scytheInfo.TryUse(transform, Weapon.Attack.Move_Up, action1, action2, func, animator) == true)
-                                    //{
-                                        
-                                    //}
+                                    if (_coroutine == null && _scytheInfo.TryUse(getTransform, Weapon.Attack.Move_Up, action2, action3, func, animator) == true)
+                                    {
+                                        if (hasAnimatorPlayer == true)
+                                        {
+                                            animatorPlayer.Flip(false);
+                                            animatorPlayer.Stop();
+                                        }
+                                        _coroutine = DoPlay();
+                                        StartCoroutine(_coroutine);
+                                        IEnumerator DoPlay()
+                                        {
+                                            player.Dash(Vector2.up, _jumpStartDelay);
+                                            yield return new WaitForSeconds(1.0f);
+
+                                            _coroutine = null;
+                                        }
+                                    }
                                     break;
                                 case Player.Direction.Backward:
                                     break;
