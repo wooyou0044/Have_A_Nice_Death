@@ -145,7 +145,10 @@ public sealed class GameManager : Manager<GameManager>
         }
         else
         {
-            //아이템 줍기 또는 대화
+            if(getObjectPooler.IsPickUp() == true)
+            {
+                _controller._player.Hit(new Strike(15, 0));
+            }
         }
     }
 
