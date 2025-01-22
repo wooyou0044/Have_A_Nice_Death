@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public partial class BossMovement : Runner, IHittable
@@ -14,11 +15,12 @@ public partial class BossMovement : Runner, IHittable
     [SerializeField] AnimationClip dashStartClip;
     [SerializeField] AnimationClip dashLoopClip;
     [SerializeField] AnimationClip dashEndClip;
+    [SerializeField] AnimationClip comboAttack1Clip;
+    [SerializeField] AnimationClip comboAttack2Clip;
     [SerializeField] AnimationClip deathClip;
 
     [Header("정보")]
     [SerializeField] float HP = 1300;
-    [SerializeField] float attackCoolTime;
     [SerializeField] float dropSpeed;
     [SerializeField] float flySpeed;
     [SerializeField] float maxHeight;
@@ -45,7 +47,7 @@ public partial class BossMovement : Runner, IHittable
     float oppositePointX;
 
     bool isStun;
-    bool isArrive;
+    bool isAttacking;
 
     // 임시
     GameObject player;
@@ -97,6 +99,17 @@ public partial class BossMovement : Runner, IHittable
 
     void Update()
     {
+        // 싸움 중인지 확인
+        if(isAttacking)
+        {
+            attackElapsedTime += Time.deltaTime;
+            if (bossAI._rechargeTime <= attackElapsedTime)
+            {
+                attackElapsedTime = 0;
+                // 스킬 사용중이라는 값 반환
+                isAttacking = false;
+            }
+        }
     }
 
     public Collider2D GetCollider2D()
@@ -107,14 +120,22 @@ public partial class BossMovement : Runner, IHittable
     public void Hit(Strike strike)
     {
         Debug.Log(HP);
-        if(isAlive)
+        if (isAlive)
         {
             // HP 감소
             HP += strike.result;
 
+            if (transform.rotation.eulerAngles.y == player.transform.rotation.eulerAngles.y)
+            {
+                transform.rotation = Quaternion.Euler(0, -(180 - transform.rotation.eulerAngles.y), 0);
+            }
+
+            if (bossAI._skill != GargoyleBrain.Skill.Dash)
+            {
+            }
+
             if (isStun == true)
             {
-                Debug.Log("스턴");
                 // 스턴을 일정 시간동안 계속 재생
                 myPlayer.Play(stunIdleClip);
                 stun.SetActive(true);
@@ -122,19 +143,16 @@ public partial class BossMovement : Runner, IHittable
                 StartCoroutine(DoStun());
                 IEnumerator DoStun()
                 {
-                    yield return new WaitForSeconds(1.5f);
+                    yield return new WaitForSeconds(1.2f);
                     myPlayer.Play(stunEndClip, idleClip, false);
                     stun.SetActive(false);
                     isStun = false;
                 }
-                //isStun = false;
-                //fullHp = 0;
             }
 
             // 스턴
             if (HP <= fullHp / 2)
             {
-                Debug.Log("fullHP : " + fullHp);
                 isStun = true;
                 myPlayer.Play(stunStartClip, stunIdleClip, false);
             }
@@ -147,7 +165,7 @@ public partial class BossMovement : Runner, IHittable
         }
         else
         {
-            if(bossCollider.isActiveAndEnabled == true)
+            if (bossCollider.isActiveAndEnabled == true)
             {
                 HP = 0;
                 bossCollider.enabled = false;
@@ -159,36 +177,37 @@ public partial class BossMovement : Runner, IHittable
     }
 
     // 스킬을 사용중인가에 대한 함수
-    public bool isAttacking()
+    public bool IsAttacking()
     {
-        attackElapsedTime += Time.deltaTime;
+        //attackElapsedTime += Time.deltaTime;
 
-        // attackCoolTime이 차서 공격 실행하면
-        if(attackCoolTime <= attackElapsedTime)
-        {
-            attackElapsedTime = 0;
-            // 스킬 사용중이라는 값 반환
-            return true;
-        }
-        else
-        {
-            // 스킬 사용중 아니라는 값 반환
-            return false;
-        }
+        //// attackCoolTime이 차서 공격 실행하면
+        //if (bossAI._rechargeTime <= attackElapsedTime)
+        //{
+        //    attackElapsedTime = 0;
+        //    // 스킬 사용중이라는 값 반환
+        //    return true;
+        //}
+        //else
+        //{
+        //    // 스킬 사용중 아니라는 값 반환
+        //    return false;
+        //}
+        return isAttacking;
     }
 
     public void MovePosition(float targetPosX)
     {
-        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        if (bossAI._skill == GargoyleBrain.Skill.Dash)
         {
             myPlayer.Play(dashLoopClip);
         }
 
-        if(transform.position.x < targetPosX)
+        if (transform.position.x < targetPosX)
         {
             MoveRight();
         }
-        else if(transform.position.x > targetPosX)
+        else if (transform.position.x > targetPosX)
         {
             MoveLeft();
         }
@@ -197,6 +216,7 @@ public partial class BossMovement : Runner, IHittable
     // 도착하면 안 움직이게 하는 함수 
     public override void MoveStop()
     {
+        myPlayer.Play(idleClip);
         if (myRigid.velocity.y != 0)
         {
             myRigid.velocity = new Vector2(0, 0);
@@ -209,9 +229,9 @@ public partial class BossMovement : Runner, IHittable
 
     public void UTurn()
     {
-        if(transform.position.x > midPoint.x)
+        if (transform.position.x > midPoint.x)
         {
-            if(transform.rotation.eulerAngles.y <= 0)
+            if (transform.rotation.eulerAngles.y <= 0)
             {
                 MoveStop();
                 if (bossAI._skill == GargoyleBrain.Skill.Dash)
@@ -227,7 +247,7 @@ public partial class BossMovement : Runner, IHittable
         }
         else
         {
-            if(transform.rotation.eulerAngles.y >= 180)
+            if (transform.rotation.eulerAngles.y >= 180)
             {
                 MoveStop();
                 if (bossAI._skill == GargoyleBrain.Skill.Dash)
@@ -279,7 +299,7 @@ public partial class BossMovement : Runner, IHittable
     // 공중으로 날라가는 함수
     public void FlyMove()
     {
-        if(bossAI._skill == GargoyleBrain.Skill.Dash)
+        if (bossAI._skill == GargoyleBrain.Skill.Dash)
         {
             myPlayer.Play(dashLoopClip);
         }
@@ -313,7 +333,6 @@ public partial class BossMovement : Runner, IHittable
     // 플레이어 따라다니면서 이동하는 함수
     public void FollowPlayer(float playerPosX)
     {
-        UTurn();
         MovePosition(playerPosX);
     }
 
@@ -323,15 +342,22 @@ public partial class BossMovement : Runner, IHittable
         Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
-    public void ComboAttack()
+    public void ComboAttack1()
     {
+        isAttacking = true;
+        myPlayer.Play(comboAttack1Clip, idleClip, false);
+    }
 
+    public void ComboAttack2()
+    {
+        isAttacking = true;
+        myPlayer.Play(comboAttack2Clip, idleClip, false);
     }
 
     // 임시 테스트용
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "tempBox")
+        if (collision.tag == "tempBox")
         {
             Debug.Log("부딪힘");
             isBox = true;
