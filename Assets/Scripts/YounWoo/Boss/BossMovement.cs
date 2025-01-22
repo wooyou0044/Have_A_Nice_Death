@@ -127,14 +127,11 @@ public partial class BossMovement : Runner, IHittable
                     stun.SetActive(false);
                     isStun = false;
                 }
-                //isStun = false;
-                //fullHp = 0;
             }
 
             // Ω∫≈œ
             if (HP <= fullHp / 2)
             {
-                Debug.Log("fullHP : " + fullHp);
                 isStun = true;
                 myPlayer.Play(stunStartClip, stunIdleClip, false);
             }
