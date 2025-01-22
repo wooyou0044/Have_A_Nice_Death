@@ -61,7 +61,7 @@ public class WomanGhostAi_Clone : Walker,IHittable,ILootable
 
     private bool movingRight = true;
     private Vector2 startPos;
-    public bool isAlive { get { return true; } }
+    public bool isAlive { get { return womanGhostHP > 0; } }
 
     private void Start()
     {
@@ -192,7 +192,8 @@ public class WomanGhostAi_Clone : Walker,IHittable,ILootable
 
     public void Hit(Strike strike)
     {
-        womanGhostHP += strike.result;
+        int result = strike.result;
+        womanGhostHP += result;
         
         if (womanGhostHP>0)
         {
@@ -209,7 +210,8 @@ public class WomanGhostAi_Clone : Walker,IHittable,ILootable
                 yield return new WaitForSeconds(0.3f);
                 gameObject.SetActive(false);
             }
-        }        
+        }
+        GameManager.Report(this, result);
     }
 
     public Collider2D GetCollider2D()
