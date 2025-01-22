@@ -423,7 +423,7 @@ RectTransform:
   m_Father: {fileID: 4074505165292433073}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1.1146245, y: 1.0983607}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
@@ -572,6 +572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2977736e3cc18c343b3baf64ad3561d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _wainingValue: 1
   _lifeImage: {fileID: 5140244679429537808}
   _soularyText: {fileID: 302248383748950938}
   _prismiumText: {fileID: 3838784915413100216}
@@ -798,7 +799,7 @@ RectTransform:
   m_Father: {fileID: 4074505165292433073}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1.1146245, y: 1.0983607}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}

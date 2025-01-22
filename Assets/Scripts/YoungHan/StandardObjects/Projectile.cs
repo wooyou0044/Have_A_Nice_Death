@@ -62,6 +62,7 @@ public class Projectile : MonoBehaviour
     private bool _ignition = false;
     private Action<GameObject, Vector2, Transform> _effectAction = null;
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
+    private Action _shakeAction = null;
 
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]
@@ -172,9 +173,9 @@ public class Projectile : MonoBehaviour
     /// <param name="target"></param>
     /// <param name="action1"></param>
     /// <param name="action2"></param>
-    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2)
+    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Action action3 = null)
     {
-        Shot(user, target, action1, action2, _flyingTime);
+        Shot(user, target, action1, action2, action3, _flyingTime);
     }
 
     /// <summary>
@@ -185,7 +186,7 @@ public class Projectile : MonoBehaviour
     /// <param name="action1"></param>
     /// <param name="action2"></param>
     /// <param name="flyingTime"></param>
-    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, float flyingTime)
+    public void Shot(Transform user, IHittable target, Action<GameObject, Vector2, Transform> action1, Action<Strike, Strike.Area, GameObject> action2, Action action3, float flyingTime)
     {
         _flyingTime = flyingTime;
         if (user != null)

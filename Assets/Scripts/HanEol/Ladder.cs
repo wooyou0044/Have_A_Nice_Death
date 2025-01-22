@@ -19,15 +19,15 @@ public class Ladder : MonoBehaviour
     private bool isLadder = false; //사다리 안에 들어오면 true, 나가거나 아니면 false
     [SerializeField]float originalGravity; //복구해줄 원본 중력 값
     private bool movingUp = false;//올라가는지 아닌지 구분하는 변수
-    float time = 0f;
+    float time = 0f;//중복 적용 방지를 위한 변수
     [SerializeField] float enteryTime = 0.5f;
-    public bool MovingUp//만약 애니메이션 제어 값으로 조건문을 걸어서 실행 가능하면
-        //이거 필요 없어짐 
-    {
-        get { return movingUp; }
-    }
+    //public bool MovingUp//만약 애니메이션 제어 값으로 조건문을 걸어서 실행 가능하면
+    //    //이거 필요 없어짐 
+    //{
+    //    get { return movingUp; }
+    //}
 
-    private void Update()
+    private void Update()//중복 방지용
     {
        if(time > 0f)
         {
@@ -43,6 +43,7 @@ public class Ladder : MonoBehaviour
     /// </summary>
     public bool MoveUp()
     {
+        //중복 방지용 검사
         if(time > 0f)
         {
             return false;
@@ -122,7 +123,6 @@ public class Ladder : MonoBehaviour
             
             if(currentCoroutine != null)
             {
-                Debug.Log("멈춰라!");
                 StopCoroutine(currentCoroutine);
                 currentCoroutine = null;
             }
@@ -155,8 +155,7 @@ public class Ladder : MonoBehaviour
         //땅바닥에 닿으면 초기화
         if(playerWalker.isGrounded == true)
         {
-
-            playerRb.gravityScale = originalGravity;
+            playerRb.gravityScale = originalGravity; 
         }
         currentCoroutine = null;
     }
@@ -168,7 +167,7 @@ public class Ladder : MonoBehaviour
     /// <returns></returns>
     IEnumerator GettingUp()
     {
-        //최초 실행시 중력 제거, X 정지
+        //최초 실행시 중력 제거
         if (playerRb.gravityScale != 0.001f)
         {
             
@@ -193,11 +192,6 @@ public class Ladder : MonoBehaviour
         }
         currentCoroutine = null;
     }
-    /// <summary>
-    /// 사다리를 올라가는 도중 사다리를 내려가게 하는 코루틴
-    /// </summary>
-    /// <returns></returns>
-
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player") == true)
