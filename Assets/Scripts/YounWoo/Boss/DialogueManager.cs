@@ -19,9 +19,9 @@ public class DialogueManager : MonoBehaviour
     GargoyleBrain getBossAi;
     DialogueUI getDialogueUI;
     DeskMovement getDeskMove;
+    Controller playerController;
 
     BossCamera getCamera;
-
 
     void Awake()
     {
@@ -56,10 +56,12 @@ public class DialogueManager : MonoBehaviour
         if(getBossMove.IsMeetPlayer == true && getBossMove.IsEndAnimation() == true)
         {
             canvas.SetActive(true);
+            GameManager.input = false;
             getBossMove.IsMeetPlayer = false;
         }
         if(getBossMove.isAlive == true && getDialogueUI.ConverationEnd == true)
         {
+            GameManager.input = true;
             getBossMove.FightParticipation();
             getDeskMove.TurnOnAnimator();
             StartCoroutine(DoStop());
@@ -79,6 +81,7 @@ public class DialogueManager : MonoBehaviour
             IEnumerator PlayDialogue()
             {
                 yield return new WaitForSeconds(1.0f);
+                GameManager.input = false;
                 canvas.SetActive(true);
                 bossCanavas.SetActive(false);
             }
@@ -88,6 +91,7 @@ public class DialogueManager : MonoBehaviour
 
         if (getBossMove.deathState == BossMovement.DeathType.Awake && getDialogueUI.ConverationEnd == true)
         {
+            GameManager.input = true;
             getBossMove.DeathAnimation(getBossMove.deathState);
             getBossMove.deathState = BossMovement.DeathType.Be_AnotherBoss;
             getDialogueUI.ConverationEnd = false;
@@ -101,6 +105,7 @@ public class DialogueManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(1.5f);
                 getBossMove.MoveStop();
+                getBossMove.SetActiveTornado(false);
             }
             getBossMove.deathState = BossMovement.DeathType.GoOutside;
         }
@@ -111,7 +116,7 @@ public class DialogueManager : MonoBehaviour
             StartCoroutine(DoStop());
             IEnumerator DoStop()
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(0.8f);
                 getBossMove.MoveStop();
             }
             getBossMove.deathState = BossMovement.DeathType.Death;

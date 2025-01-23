@@ -31,6 +31,8 @@ public class BossMovement : Runner, IHittable
     [SerializeField] float maxHeight;
     [SerializeField] GameObject stunPrefab;
     [SerializeField] Transform stunPos;
+    [SerializeField] GameObject darkTornado;
+    [SerializeField] Transform tornadoPos;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
@@ -38,7 +40,7 @@ public class BossMovement : Runner, IHittable
     GargoyleBrain bossAI;
 
     GameObject stun;
-    GameObject dialogue;
+    GameObject tornado;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 startPoint;
@@ -153,6 +155,8 @@ public class BossMovement : Runner, IHittable
         stun = Instantiate(stunPrefab, stunPos);
         stun.transform.localScale = new Vector2(0.7f, 0.7f);
         stun.SetActive(false);
+        tornado = Instantiate(darkTornado, tornadoPos);
+        tornado.SetActive(false);
         midPoint = (startPoint + endPoint) / 2;
         fullHp = maxHp = HP;
         isStun = false;
@@ -517,6 +521,10 @@ public class BossMovement : Runner, IHittable
             return false;
         }
     }
+    public void SetActiveTornado(bool isOn)
+    {
+        tornado.SetActive(isOn);
+    }
 
     public void DeathAnimation(DeathType state)
     {
@@ -533,6 +541,7 @@ public class BossMovement : Runner, IHittable
                 pointPos = new Vector2(transform.position.x, maxHeight / 2);
                 MoveToPointPosition(pointPos, 0.8f);
                 myPlayer.Play(death3Clip);
+                tornado.SetActive(true);
                 break;
             case DeathType.GoOutside:
                 pointPos = new Vector2(transform.position.x, startPoint.y);

@@ -2968,34 +2968,6 @@ PrefabInstance:
       propertyPath: hpBar
       value: 
       objectReference: {fileID: 464103202}
-    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: fightStartClip
-      value: 
-      objectReference: {fileID: 7400000, guid: 62b93e474990d794fa7638a7c4f77da2, type: 2}
-    - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _skill
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _leftBoundary
-      value: -6.38
-      objectReference: {fileID: 0}
-    - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: _rightBoundary
-      value: 18.94
-      objectReference: {fileID: 0}
-    - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 18.94
@@ -3039,10 +3011,6 @@ PrefabInstance:
     - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_Name
       value: Gargoyle
-      objectReference: {fileID: 0}
-    - target: {fileID: 6825786477796645821, guid: 194dd06b90758044e94c7be151db813d, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
