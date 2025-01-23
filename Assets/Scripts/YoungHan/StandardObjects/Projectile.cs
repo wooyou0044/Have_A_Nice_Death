@@ -62,7 +62,6 @@ public class Projectile : MonoBehaviour
     private bool _ignition = false;
     private Action<GameObject, Vector2, Transform> _effectAction = null;
     private Action<Strike, Strike.Area, GameObject> _strikeAction = null;
-    private Action _shakeAction = null;
 
 #if UNITY_EDITOR
     [SerializeField, Header("폭발 유효 거리 표시 시간"), Range(0, byte.MaxValue)]

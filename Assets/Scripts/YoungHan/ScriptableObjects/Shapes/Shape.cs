@@ -125,4 +125,15 @@ public abstract class Shape : ScriptableObject
         }
         return null;
     }
+
+    public static void Draw(Vector2[] vertices, Color color, float duration)
+    {
+#if UNITY_EDITOR
+        int length = vertices != null ? vertices.Length : 0;
+        for (int i = 0; i < length - 1; i++)
+        {
+            Debug.DrawLine(vertices[i], vertices[i + 1], color, duration);
+        }
+#endif
+    }
 }

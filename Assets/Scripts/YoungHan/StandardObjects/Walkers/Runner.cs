@@ -146,6 +146,10 @@ public class Runner : Walker
 
     public void Dash(Vector2 direction, float value, float coolTime)
     {
+        if (gameObject.activeInHierarchy == false)
+        {
+            return;
+        }
         if (_dashCoroutine != null)
         {
             StopCoroutine(_dashCoroutine);

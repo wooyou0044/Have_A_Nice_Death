@@ -298,6 +298,22 @@ MonoBehaviour:
   tornadoPos: {fileID: 970164065227573528}
   deathState: 0
   hpBar: {fileID: 0}
+  _comboAttack1Strike1:
+    power: -10
+    extension: 0
+  _comboAttack1Square: {x: 3, y: 2.5, z: 0.4, w: -0.2}
+  _comboAttack1Strike2:
+    power: -15
+    extension: 0
+  _comboAttack1Capsule: {x: 5, y: 4, z: 0, w: 0}
+  _hitObject: {fileID: 6828598917612356073, guid: 439974881638366459313151d71ac69e, type: 3}
+  _comboAttack1Delay1: 0.6
+  _comboAttack1Delay2: 0.65
+  _comboAttack2Strike:
+    power: -1
+    extension: 0
+  _comboAttack2Radius: 2
+  _comboAttack2Offset: {x: 0, y: 0}
   _dashProjectile: {fileID: 6079557242842956231, guid: 860127df29571db46bd98bfd887fd607, type: 3}
 --- !u!114 &3101144888229220181
 MonoBehaviour:
@@ -312,6 +328,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _preparationTime: 2
+  _waitingTime: 0.2
+  _dashTime: 0.6
   _rechargeTime: 3
   _skill: 0
   _leftBoundary: -6.38
