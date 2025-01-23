@@ -191,5 +191,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   playerRb: {fileID: 0}
-  Speed: 20
+  Speed: 50
   gonnaUp: 1

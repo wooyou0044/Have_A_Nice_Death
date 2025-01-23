@@ -87,7 +87,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 10
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -114,7 +114,7 @@ MonoBehaviour:
   _isGrounded: 0
   _movingSpeed: 10
   _gizmoColor: {r: 0, g: 0, b: 0, a: 1}
-  _jumpValue: 15
+  _jumpValue: 40
   _jumpLimit: 3
   _jumpCount: 0
   _dashValue: 50
