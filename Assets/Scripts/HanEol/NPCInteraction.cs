@@ -98,6 +98,20 @@ public class NPCInteraction : MonoBehaviour
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            if(UnityEngine.Input.GetKeyDown(KeyCode.F))
+            {
+                if (hadInteracted == false)
+                   {
+                       Interact();
+                   }
+            }
+        }
+    }
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -137,8 +151,8 @@ public class NPCInteraction : MonoBehaviour
             interactionableButton.SetActive(false);
         }
         conversationCanvas.SetActive(true);
-        //内风凭 利侩矫 内靛
-        //StartCoroutine(Conversation());
+
+        StartCoroutine(Conversation());
     }
 
     public void ContinueConversation()
@@ -168,20 +182,24 @@ public class NPCInteraction : MonoBehaviour
 
     IEnumerator Conversation()
     {
-        while(hadInteracted == true)
+        while(conversationCanvas == true)
         {
-            if (conversationTimes < conversationLines.Length)
+            if(UnityEngine.Input.GetKeyDown(KeyCode.F) == true)
             {
-                conversation.text = conversationLines[conversationTimes];
-                conversationTimes++;
-                if (Time.timeScale != 0f) Time.timeScale = 0f;
+                if (conversationTimes < conversationLines.Length)
+                {
+                    conversation.text = conversationLines[conversationTimes];
+                    conversationTimes++;
+                    if (Time.timeScale != 0f) Time.timeScale = 0f;
 
+                }
+                else
+                {
+                    EndInteraction();
+                    script.enabled = false;
+                }
             }
-            else
-            {
-                EndInteraction();
-                script.enabled = false;
-            }
+           
 
             yield return null;
         }
