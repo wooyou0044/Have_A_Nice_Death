@@ -148,6 +148,9 @@ public sealed class Player : Runner, IHittable
         }
     }
 
+    [SerializeField]
+    private GameObject _healObject = null;
+
     private bool _stopping = false;
 
     private Action _shakeAction = null;
@@ -462,6 +465,7 @@ public sealed class Player : Runner, IHittable
         {
             float recover = maxLife * 0.15f;
             Hit(new Strike((int)recover, 0));
+            _effectAction?.Invoke(_healObject, getCollider2D.bounds.center, getTransform);
             GameManager.anima--;
         }
     }

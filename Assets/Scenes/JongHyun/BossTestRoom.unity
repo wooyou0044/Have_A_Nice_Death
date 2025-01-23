@@ -3095,6 +3095,10 @@ PrefabInstance:
       value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: _skill
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3101144888229220181, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: _preparationTime
       value: 0
       objectReference: {fileID: 0}

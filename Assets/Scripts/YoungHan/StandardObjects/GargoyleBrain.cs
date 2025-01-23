@@ -100,14 +100,6 @@ public class GargoyleBrain : MonoBehaviour
                 {
                     _skill = Skill.Dash;
                 }
-                //else if(probability < 30)
-                //{
-                //    skill = Skill.Stone;
-                //}
-                //else if (probability < 10)
-                //{
-                //    skill = Skill.Fall;
-                //}
                 switch (_skill)
                 {
                     case Skill.Scratching:
@@ -189,7 +181,16 @@ public class GargoyleBrain : MonoBehaviour
                         yield return new WaitForSeconds(_waitingTime);
                         getBossMovement.DropDiagonalMove(); //사선 낙하
                         getBossMovement.AdjustRotation();
-                        getBossMovement.UseDashSkill(3.059f);
+                        //System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                        //stopwatch.Start();
+                        if (transform.eulerAngles.y == 180)
+                        {
+                            getBossMovement.UseDashSkill(2.278f);
+                        }
+                        else
+                        {
+                            getBossMovement.UseDashSkill(2.017f);
+                        }
                         while (getBossMovement.isGrounded == false)  //땅에 갈 때 까지 기다림
                         {
                             yield return null;
@@ -197,11 +198,13 @@ public class GargoyleBrain : MonoBehaviour
                         getBossMovement.UTurn();
                         yield return new WaitForSeconds(_waitingTime);
                         getBossMovement.MoveOppositeEndPoint(); //땅에 떨어진 후 반대방향으로 돌진
-                        getBossMovement.UseDashSkill(3.82f);
-                        while (_leftBoundary < collider2D.bounds.min.x && _rightBoundary > collider2D.bounds.max.x) //특정 위치에 도달할 때 까지 기다림
+                        while ((transform.eulerAngles.y == 0 && collider2D.bounds.max.x < _rightBoundary) ||
+                            (transform.eulerAngles.y == 180 && collider2D.bounds.min.x > _leftBoundary))
                         {
                             yield return null;
                         }
+                        //stopwatch.Stop();
+                        //Debug.Log(stopwatch.ElapsedMilliseconds);
                         getBossMovement.UTurn();
                         yield return new WaitForSeconds(_waitingTime);
                         getBossMovement.MoveStop();

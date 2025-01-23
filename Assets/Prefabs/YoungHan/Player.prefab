@@ -142,6 +142,7 @@ MonoBehaviour:
   _maxLife: 65
   _remainMana: 0
   _maxMana: 50
+  _healObject: {fileID: 2088505466904107254, guid: 60cefba192c793646aa50d8f6c4be779, type: 3}
 --- !u!114 &6128502948254598311
 MonoBehaviour:
   m_ObjectHideFlags: 0
