@@ -31,6 +31,8 @@ public class BossMovement : Runner, IHittable
     [SerializeField] float maxHeight;
     [SerializeField] GameObject stunPrefab;
     [SerializeField] Transform stunPos;
+    [SerializeField] GameObject darkTornado;
+    [SerializeField] Transform tornadoPos;
 
     Collider2D bossCollider;
     Rigidbody2D myRigid;
@@ -38,7 +40,9 @@ public class BossMovement : Runner, IHittable
     GargoyleBrain bossAI;
 
     GameObject stun;
-    GameObject dialogue;
+    GameObject tornado1;
+    GameObject tornado2;
+    GameObject tornado3;
 
     // 맵의 중간 지점을 박아놓고 오른쪽 왼쪽 판단
     Vector2 startPoint;
@@ -153,6 +157,12 @@ public class BossMovement : Runner, IHittable
         stun = Instantiate(stunPrefab, stunPos);
         stun.transform.localScale = new Vector2(0.7f, 0.7f);
         stun.SetActive(false);
+        tornado1 = Instantiate(darkTornado, tornadoPos);
+        tornado1.transform.localScale = new Vector2(1, 1);
+        tornado2 = Instantiate(darkTornado, tornadoPos);
+        tornado3 = Instantiate(darkTornado, tornadoPos);
+        tornado3.transform.localScale = new Vector2(5, 5);
+        SetActiveTornado(false);
         midPoint = (startPoint + endPoint) / 2;
         fullHp = maxHp = HP;
         isStun = false;
@@ -517,12 +527,19 @@ public class BossMovement : Runner, IHittable
             return false;
         }
     }
+    public void SetActiveTornado(bool isOn)
+    {
+        tornado1.SetActive(isOn);
+        tornado2.SetActive(isOn);
+        tornado3.SetActive(isOn);
+    }
 
     public void DeathAnimation(DeathType state)
     {
         switch(state)
         {
             case DeathType.Be_Rock:
+                transform.position = new Vector2(transform.position.x, startPoint.y + 2.0f);
                 myPlayer.Play(death1Clip);
                 isDead = true;
                 break;
@@ -533,6 +550,7 @@ public class BossMovement : Runner, IHittable
                 pointPos = new Vector2(transform.position.x, maxHeight / 2);
                 MoveToPointPosition(pointPos, 0.8f);
                 myPlayer.Play(death3Clip);
+                SetActiveTornado(true);
                 break;
             case DeathType.GoOutside:
                 pointPos = new Vector2(transform.position.x, startPoint.y);

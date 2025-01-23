@@ -51,6 +51,14 @@ public sealed class GameManager : Manager<GameManager>
     private List<Ladder> _ladderList = new List<Ladder>();
     private List<ThinGround> _thinGroundList = new List<ThinGround>();
 
+    public static bool input
+    {
+        set
+        {
+            instance._controller.enabled = value;
+        }
+    }
+
     private static byte _anima = 0;
 
     public static byte anima

@@ -101,7 +101,19 @@ public class GargoyleBrain : MonoBehaviour
                 switch(_skill)
                 {
                     case Skill.Scratching:
+                        if ((hittable.transform.position.x < transform.position.x && transform.eulerAngles.y == 0) ||
+                       (transform.position.x < hittable.transform.position.x && transform.eulerAngles.y == 180))
+                        {
+                            getBossMovement.UTurn();
+                            yield return new WaitForSeconds(0.5f);
+                        }
                         getBossMovement.FollowPlayer(hittable.transform.position.x);
+                        //if((transform.eulerAngles.y == 180 && hittable.transform.position.x < transform.position.x) ||
+                        //    (transform.eulerAngles.y == 0 && transform.position.x ))
+
+
+                        getBossMovement.MoveStop();
+                        getBossMovement.ComboAttack1();
                         break;
                     case Skill.Dash:
                         if((hittable.transform.position.x < transform.position.x && transform.eulerAngles.y == 0) ||

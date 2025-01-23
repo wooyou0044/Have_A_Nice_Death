@@ -1031,6 +1031,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 233346067620237969, guid: a9839989b0fbd3e49909a66ae9af18d4, type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6584958582742070085, guid: a9839989b0fbd3e49909a66ae9af18d4, type: 3}
       propertyPath: m_Name
       value: SkeletonHand (1)

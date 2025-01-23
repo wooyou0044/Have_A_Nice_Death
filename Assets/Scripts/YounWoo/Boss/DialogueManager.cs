@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] GameObject bossCanavas;
     [SerializeField] GameObject desk;
     [SerializeField] GameObject clearCanvas;
+    [SerializeField] SpriteRenderer backGround;
 
     GameObject canvas;
     GameObject boss;
@@ -19,9 +21,9 @@ public class DialogueManager : MonoBehaviour
     GargoyleBrain getBossAi;
     DialogueUI getDialogueUI;
     DeskMovement getDeskMove;
+    Controller playerController;
 
     BossCamera getCamera;
-
 
     void Awake()
     {
@@ -56,10 +58,12 @@ public class DialogueManager : MonoBehaviour
         if(getBossMove.IsMeetPlayer == true && getBossMove.IsEndAnimation() == true)
         {
             canvas.SetActive(true);
+            GameManager.input = false;
             getBossMove.IsMeetPlayer = false;
         }
         if(getBossMove.isAlive == true && getDialogueUI.ConverationEnd == true)
         {
+            GameManager.input = true;
             getBossMove.FightParticipation();
             getDeskMove.TurnOnAnimator();
             StartCoroutine(DoStop());
@@ -79,6 +83,7 @@ public class DialogueManager : MonoBehaviour
             IEnumerator PlayDialogue()
             {
                 yield return new WaitForSeconds(1.0f);
+                GameManager.input = false;
                 canvas.SetActive(true);
                 bossCanavas.SetActive(false);
             }
@@ -88,6 +93,7 @@ public class DialogueManager : MonoBehaviour
 
         if (getBossMove.deathState == BossMovement.DeathType.Awake && getDialogueUI.ConverationEnd == true)
         {
+            GameManager.input = true;
             getBossMove.DeathAnimation(getBossMove.deathState);
             getBossMove.deathState = BossMovement.DeathType.Be_AnotherBoss;
             getDialogueUI.ConverationEnd = false;
@@ -95,23 +101,26 @@ public class DialogueManager : MonoBehaviour
 
         if(getBossMove.deathState == BossMovement.DeathType.Be_AnotherBoss && getBossMove.IsEndAnimation() == true)
         {
+            backGround.color = new Color(1,0.5f, 1);
             getBossMove.DeathAnimation(getBossMove.deathState);
             StartCoroutine(DoStop());
             IEnumerator DoStop()
             {
                 yield return new WaitForSeconds(1.5f);
                 getBossMove.MoveStop();
+                getBossMove.SetActiveTornado(false);
             }
             getBossMove.deathState = BossMovement.DeathType.GoOutside;
         }
 
         if (getBossMove.deathState == BossMovement.DeathType.GoOutside && getBossMove.IsEndAnimation() == true)
         {
+            backGround.color = new Color(1, 1, 1);
             getBossMove.DeathAnimation(getBossMove.deathState);
             StartCoroutine(DoStop());
             IEnumerator DoStop()
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(0.8f);
                 getBossMove.MoveStop();
             }
             getBossMove.deathState = BossMovement.DeathType.Death;
