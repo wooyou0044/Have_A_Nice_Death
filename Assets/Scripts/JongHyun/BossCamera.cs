@@ -58,7 +58,7 @@ public class BossCamera : MonoBehaviour, ITriggerShake
         }
         else
         {
-            Vector3 targetPos = new Vector3(Player.transform.position.x, Player.transform.position.y + 3, -10);
+            Vector3 targetPos = new Vector3(Player.transform.position.x, 0, -10);
             MaxDistanceCamera();
             transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 2f);
         }

@@ -2854,7 +2854,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -30
   m_Sprite: {fileID: 21300000, guid: d8582ca36e2a60744b7b097155bf3057, type: 3}
-  m_Color: {r: 0.9507738, g: 1, b: 0.9386792, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2968,6 +2968,14 @@ PrefabInstance:
       propertyPath: hpBar
       value: 
       objectReference: {fileID: 464103202}
+    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: darkTornado1
+      value: 
+      objectReference: {fileID: 3435069673849422666, guid: ccb8e62c1cd712642a11473ba0b03e73, type: 3}
+    - target: {fileID: 2745180083543829129, guid: 194dd06b90758044e94c7be151db813d, type: 3}
+      propertyPath: darkTornado2
+      value: 
+      objectReference: {fileID: 3435069673849422666, guid: ccb8e62c1cd712642a11473ba0b03e73, type: 3}
     - target: {fileID: 3746375001716076305, guid: 194dd06b90758044e94c7be151db813d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 18.94
@@ -3065,6 +3073,7 @@ MonoBehaviour:
   bossCanavas: {fileID: 393572333}
   desk: {fileID: 1915154641}
   clearCanvas: {fileID: 4676962261842190784, guid: d24744d60ad6ef4459557ffe7978bff2, type: 3}
+  backGround: {fileID: 1950973004}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

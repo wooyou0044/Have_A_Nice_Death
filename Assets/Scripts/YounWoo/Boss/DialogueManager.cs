@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] GameObject bossCanavas;
     [SerializeField] GameObject desk;
     [SerializeField] GameObject clearCanvas;
+    [SerializeField] SpriteRenderer backGround;
 
     GameObject canvas;
     GameObject boss;
@@ -99,6 +101,7 @@ public class DialogueManager : MonoBehaviour
 
         if(getBossMove.deathState == BossMovement.DeathType.Be_AnotherBoss && getBossMove.IsEndAnimation() == true)
         {
+            backGround.color = new Color(1,0.5f, 1);
             getBossMove.DeathAnimation(getBossMove.deathState);
             StartCoroutine(DoStop());
             IEnumerator DoStop()
@@ -112,6 +115,7 @@ public class DialogueManager : MonoBehaviour
 
         if (getBossMove.deathState == BossMovement.DeathType.GoOutside && getBossMove.IsEndAnimation() == true)
         {
+            backGround.color = new Color(1, 1, 1);
             getBossMove.DeathAnimation(getBossMove.deathState);
             StartCoroutine(DoStop());
             IEnumerator DoStop()
