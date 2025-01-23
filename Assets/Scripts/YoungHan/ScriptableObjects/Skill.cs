@@ -66,14 +66,14 @@ public class Skill : ScriptableObject
         //공격 모양이 없으면
         else
         {
-            int length = tags != null ? tags.Length : 0;
-            if(length > 0)
+            //int length = tags != null ? tags.Length : 0;
+            //if(length > 0)
+            //{
+            //    action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
+            //}
+            /*else */if(target != null)
             {
-                //action2?.Invoke(strike, new Strike.TagArea(tags), hitObject);
-            }
-            else if(target != null)
-            {
-                //action2?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
+                action2?.Invoke(strike, new Strike.TargetArea(new IHittable[] { target }), hitObject);
             }
             else
             {

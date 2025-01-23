@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossMovement : Runner, IHittable
@@ -171,7 +169,7 @@ public class BossMovement : Runner, IHittable
         deathState = DeathType.Default;
     }
 
-    IHittable target;
+    public IHittable target;
 
     void Update()
     {
@@ -235,6 +233,7 @@ public class BossMovement : Runner, IHittable
                 myPlayer.Play(stunIdleClip);
                 stun.SetActive(true);
                 fullHp = -1;
+                StopAllCoroutines();
                 StartCoroutine(DoStun());
                 IEnumerator DoStun()
                 {
@@ -428,23 +427,109 @@ public class BossMovement : Runner, IHittable
         Debug.DrawRay(pointPos, (Vector2)transform.position - pointPos);
     }
 
+    [SerializeField]
+    private Strike _comboAttack1Strike1;
+    [SerializeField]
+    private Vector4 _comboAttack1Square;
+    [SerializeField]
+    private Strike _comboAttack1Strike2;
+    [SerializeField]
+    private Vector4 _comboAttack1Capsule;
+    [SerializeField]
+    private GameObject _hitObject;
+    [SerializeField]
+    private float _comboAttack1Delay1 = 0.6f;
+    [SerializeField]
+    private float _comboAttack1Delay2 = 0.2f;
+
+    [SerializeField]
+    private Strike _comboAttack2Strike;
+    [SerializeField]
+    private float _comboAttack2Radius;
+    [SerializeField]
+    private Vector2 _comboAttack2Offset;
+
+    private string playerTag = "Player";
+
     public void ComboAttack1()
     {
         isAttacking = true;
         myPlayer.Play(comboAttack1Clip, idleClip, false);
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            target = null;
+            yield return new WaitForSeconds(_comboAttack1Delay1);
+            Vector2 size = new Vector2(_comboAttack1Square.x, _comboAttack1Square.y);
+            Vector2 offset = new Vector2(_comboAttack1Square.z, _comboAttack1Square.w);
+#if UNITY_EDITOR
+            Shape.Draw(BoxShape.GetVertices(getTransform, size, offset), Color.red, 2);
+#endif
+            offset = new Vector2(offset.x * getTransform.forward.z, offset.y);
+            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll((Vector2)getTransform.position + offset, size, getTransform.eulerAngles.z);
+            for(int i = 0; i < collider2Ds.Length; i++)
+            {
+                IHittable hittable = collider2Ds[i].GetComponent<IHittable>();
+                if(hittable != null && hittable.tag == playerTag)
+                {
+                    target = hittable;
+                    GameManager.Use(_comboAttack1Strike1, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
+                }
+            }
+            yield return new WaitForSeconds(_comboAttack1Delay2);
+            size = new Vector2(_comboAttack1Capsule.x, _comboAttack1Capsule.y);
+            offset = new Vector2(_comboAttack1Capsule.z, _comboAttack1Capsule.w);
+#if UNITY_EDITOR
+            Shape.Draw(CapsuleShape.GetVertices(getTransform, CapsuleDirection2D.Horizontal, size, offset), Color.red, 2);
+#endif
+            offset = new Vector2(offset.x * getTransform.forward.z, offset.y);
+            collider2Ds = Physics2D.OverlapCapsuleAll((Vector2)getTransform.position + offset, size, CapsuleDirection2D.Horizontal, getTransform.eulerAngles.z);
+            for (int i = 0; i < collider2Ds.Length; i++)
+            {
+                IHittable hittable = collider2Ds[i].GetComponent<IHittable>();
+                if (hittable != null && hittable.tag == playerTag)
+                {
+                    target = hittable;
+                    GameManager.Use(_comboAttack2Strike, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
+                }
+            }
+        }
     }
 
     public void ComboAttack2()
     {
         isAttacking = true;
         // 위로 잠깐 떠오름 추가 필요(maxHeight / 2)
-        pointPos = new Vector2(transform.position.x, maxHeight / 2);
-        OnDrawGizmos();
-
-        destination = pointPos - (Vector2)transform.position;
-        myRigid.velocity = destination * (flySpeed * 0.2f);
-
+        //pointPos = new Vector2(transform.position.x, maxHeight / 2);
+        //OnDrawGizmos();
+        //destination = pointPos - (Vector2)transform.position;
+        //myRigid.velocity = destination * (flySpeed * 0.2f);
         myPlayer.Play(comboAttack2Clip, idleClip, false);
+        StartCoroutine(DoPlay());
+        IEnumerator DoPlay()
+        {
+            while (isGrounded == true)
+            {
+                yield return null;
+            }
+            while (isGrounded == false)
+            {
+                yield return null;
+            }
+#if UNITY_EDITOR
+            Shape.Draw(CircleShape.GetVertices(getTransform, _comboAttack2Radius, _comboAttack2Offset), Color.red, 2);
+#endif
+            Vector2 offset = new Vector2(_comboAttack2Offset.x * getTransform.forward.z, _comboAttack2Offset.y);
+            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll((Vector2)getTransform.position + offset, _comboAttack2Radius);
+            for (int i = 0; i < collider2Ds.Length; i++)
+            {
+                IHittable hittable = collider2Ds[i].GetComponent<IHittable>();
+                if (hittable != null && hittable.tag == playerTag)
+                {
+                    GameManager.Use(_comboAttack1Strike2, new Strike.TargetArea(new IHittable[] { hittable }), _hitObject);
+                }
+            }
+        }
     }
 
     // 중간으로 올라가는 함수 필요
