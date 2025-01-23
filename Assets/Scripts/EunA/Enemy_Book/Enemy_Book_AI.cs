@@ -32,9 +32,7 @@ public class Enemy_Book_AI : Walker, IHittable
     bool isFacingRight = true;
     bool isUturn = true;
     bool isFind = true;
-    bool isAttack = false;
     bool isDie = false;
-    bool AttackAnimationIsOver = true;
     int facingRight;
     float dieCooltime;
     float EffectCooltime;
@@ -50,7 +48,6 @@ public class Enemy_Book_AI : Walker, IHittable
     Vector2 leftEnemyLocation;
     Vector2 nowEnemyLocation;
     Vector2 rightEnemyLocation;
-    Transform target;
 
     [SerializeField]
     AnimatorPlayer BookAnimatorPlayer;
@@ -129,8 +126,6 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (isFind == true)
         {
-            Debug.Log("³î¶÷");
-    
             BookAnimatorPlayer.Play(findClip, idleClip);
             SurprisedEffect.SetActive(true);
             isFind = false;
@@ -138,7 +133,6 @@ public class Enemy_Book_AI : Walker, IHittable
 
         if (BookAnimatorPlayer.isEndofFrame && BookFindElapsedtime >= BookFindCooltime)
         {
-            Debug.Log("°ø°Ý");
             BookAnimatorPlayer.Play(attackClip, idleClip);
             AttackEffect.SetActive(true);
             FindEffect.SetActive(true);
