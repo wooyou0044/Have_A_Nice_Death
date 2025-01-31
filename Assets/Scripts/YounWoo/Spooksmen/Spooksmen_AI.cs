@@ -269,11 +269,12 @@ public class Spooksmen_AI : Walker, IHittable, ILootable
                     isHome = true;
                 }
                 // 아직 도착하지 않았으면
-                else
-                {
-                    // 만들어진 장소로 돌아가는 동작 실행
-                    MovePosition(createdPos.x);
-                }
+                //else
+                //{
+                //    isHome = false;
+                //    // 만들어진 장소로 돌아가는 동작 실행
+                //    MovePosition(createdPos.x);
+                //}
             }
 
             // 내 자리면 돌아다니기(WonderSpotRange)
@@ -332,7 +333,8 @@ public class Spooksmen_AI : Walker, IHittable, ILootable
     void WonderSpotRange()
     {
         // 나의 위치와 도착지의 거리 차이가 0보다 크면
-        if ((int)Vector2.Distance(transform.position, destination) > 0)
+        //if ((int)Vector2.Distance(transform.position, destination) > 5)
+        if (Mathf.Abs(destination.x - transform.position.x) > homeDistance)
         {
             MovePosition(destination.x);
         }
